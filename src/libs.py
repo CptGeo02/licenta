@@ -1,0 +1,17 @@
+# Centralized import of external libraries
+import threading
+import torch # PyTorch, used for YOLOv8 model inference
+import cv2  # OpenCV, used for video/image processing
+import tkinter as tk # Tkinter for GUI
+import os # To manage file and directory operations
+import numpy as np # NumPy for numerical operations
+import tkinter as tk
+from tkinter import filedialog
+from ultralytics import YOLO  # Import YOLO to load the model properly
+from PIL import Image, ImageTk
+from tkinter import Canvas, Frame, Button, Label, Tk
+from tkinter import *
+from PIL import Image, ImageTk
+
+# Check if CUDA is available and set the device to GPU if so
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
