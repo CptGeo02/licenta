@@ -1,4 +1,4 @@
-def filter_detections(detections, overlap_threshold=0.4):
+def filter_detections(detections, overlap_threshold=0.2):
     filtered_detections = []
 
     for i, det1 in enumerate(detections):

@@ -12,6 +12,6 @@ from PIL import Image, ImageTk
 from tkinter import Canvas, Frame, Button, Label, Tk
 from tkinter import *
 from PIL import Image, ImageTk
-
+import time
 # Check if CUDA is available and set the device to GPU if so
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

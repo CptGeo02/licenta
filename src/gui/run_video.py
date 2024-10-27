@@ -1,17 +1,14 @@
 from src.libs import *
 
 def run_video(app):
-    cap = cv2.VideoCapture(app.video_source)
-    while True:
-        ret, frame = cap.read()
+    cap = cv2.VideoCapture(app.video_source)  # Deschide sursa video selectată
+    while app.running:
+        ret, frame = cap.read()  # Citește un cadru din video
         if not ret:
             break
 
-        # Run detection using YOLO detector
-        detections = app.detector.detect(frame)
-        frame = app.detector.draw_detections(frame, detections)
-
-        # Save the current frame for displaying
-        app.current_frame = frame
-
-    cap.release()
+        # Salvăm cadrul curent pentru a fi afișat ulterior în funcția update_frame
+        app.current_frame = frame  # Cadrul brut, fără prelucrare
+        time.sleep(1 / 30)  # 30 cadre pe secundă
+    cap.release()  # Eliberăm resursele video
+    app.running = False

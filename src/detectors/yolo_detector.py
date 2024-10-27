@@ -3,11 +3,11 @@ from src.utils.detection_utils import filter_detections
 from src.utils.table_status import check_table_status
 
 class YoloDetector:
-    def __init__(self, model_path="models/yolov8n.pt"):  # Path to the YOLOv8 model
+    def __init__(self, model_path="models/yolov9e.pt"):  # Path to the YOLOv8 model
         self.model = YOLO(model_path).to(device)
         print(self.model.names)
-        self.person_id = 0
-        self.table_id = 0
+        self.table_ids = {}  # Aici stocăm ID-urile meselor
+        self.table_counter = 0  # Contor pentru ID-urile meselor
         self.special_object_classes = {
             39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife',
             44: 'spoon', 45: 'bowl', 46: 'banana', 47: 'apple', 48: 'sandwich',
@@ -39,6 +39,22 @@ class YoloDetector:
         filtered_detections = filter_detections(detections)
         return filtered_detections
 
+    def assign_table_id(self, detections):
+        for det in detections:
+            if det['class'] == 60:  # ID pentru mese
+                box = det['box']
+                # Verificăm dacă masa a fost deja detectată
+                if box not in self.table_ids.values():
+                    self.table_counter += 1
+                    self.table_ids[self.table_counter] = box
+
+    def is_overlap(self, box1, box2):
+        x1, y1, x2, y2 = box1
+        x3, y3, x4, y4 = box2
+
+        # Verificăm dacă există o suprapunere
+        return not (x2 < x3 or x4 < x1 or y2 < y3 or y4 < y1)
+
     def draw_detections(self, frame, detections, red_threshold=0.1, blue_threshold=0.1):
         people_count = 0
         tables_count = 0
@@ -46,6 +62,8 @@ class YoloDetector:
         table_statuses = {}
 
         if detections:
+            self.assign_table_id(detections)  # Atribuie ID-uri meselor
+
             for det in detections:
                 x1, y1, x2, y2 = det['box']
                 class_id = det['class']
@@ -55,13 +73,16 @@ class YoloDetector:
                     color = (255, 0, 0)
                     people_count += 1
                 elif class_id == 60:  # Table
-                    self.table_id += 1
-                    object_id = self.table_id
-                    status = check_table_status((x1, y1, x2, y2), detections, red_threshold, blue_threshold)
-                    table_statuses[object_id] = status
-                    label = f"ID: {object_id}, Status: {status}"
-                    color = (0, 255, 0)
-                    tables_count += 1
+                    # Căutăm ID-ul asociat mesei
+                    object_id = next((key for key, value in self.table_ids.items() if self.is_overlap(det['box'], value)), None)
+                    if object_id is not None:
+                        status = check_table_status((x1, y1, x2, y2), detections, red_threshold, blue_threshold)
+                        label = f"ID: {object_id}, Status: {status}"
+                        color = (0, 255, 0)
+                        tables_count += 1
+                    else:
+                        # Dacă masa nu are un ID valid, continuăm fără a o desena
+                        continue
                 elif class_id in self.special_object_classes:
                     label = f"{self.special_object_classes[class_id]}"
                     color = (0, 0, 255)
