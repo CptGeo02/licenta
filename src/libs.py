@@ -13,5 +13,8 @@ from tkinter import Canvas, Frame, Button, Label, Tk
 from tkinter import *
 from PIL import Image, ImageTk
 import time
+import pandas as pd
+from datetime import timedelta
+from openpyxl import Workbook
 # Check if CUDA is available and set the device to GPU if so
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

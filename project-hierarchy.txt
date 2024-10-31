@@ -1,0 +1,32 @@
+AI_restaurant
+├─ .gitignore
+├─ data
+│  ├─ images
+│  ├─ outputs
+│  │  └─ table_status_report.xlsx
+│  └─ videos
+├─ main.py
+├─ models
+│  ├─ yolov8l.pt
+│  ├─ yolov8n.pt
+│  └─ yolov9e.pt
+├─ project-hierarchy.txt
+├─ README.md
+└─ src
+   ├─ detectors
+   │  └─ yolo_detector.py
+   ├─ gui
+   │  ├─ display_frame.py
+   │  ├─ main_gui.py
+   │  ├─ run_camera.py
+   │  └─ run_video.py
+   ├─ libs.py
+   ├─ managers
+   │  └─ table_manager.py
+   └─ utils
+      ├─ detection_utils.py
+      ├─ extract_yt_video.py
+      ├─ images_to_video.py
+      ├─ image_utils.py
+      ├─ table_status.py
+      └─ time_utils.py

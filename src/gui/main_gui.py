@@ -4,10 +4,6 @@ from src.gui.run_video import run_video
 from src.gui.display_frame import display_frame  # Modificat
 from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
-import threading
-import tkinter as tk
-from tkinter import Frame, Button, Canvas, Label, filedialog
-
 
 class MainApp:
     def __init__(self, master):
@@ -18,7 +14,7 @@ class MainApp:
         # Inițializează YOLO Detector
         self.detector = YoloDetector()
 
-        # Create a frame for buttons
+        # Creează un frame pentru butoane
         self.button_frame = Frame(master)
         self.button_frame.pack(side=tk.TOP, fill=tk.X)
 
@@ -53,18 +49,21 @@ class MainApp:
         self.images = []  # Loaded images
         self.image_index = 0  # Current image index
 
+        # Adaugă un event pentru oprirea thread-ului în siguranță
+        self.stop_event = threading.Event()
+
     def start_camera(self):
         # Oprește thread-ul precedent
         self.stop_running_thread()
 
         # Pornește camera live
         self.running = True
+        self.stop_event.clear()
         self.image_thread = threading.Thread(target=run_camera, args=(self,))
         self.image_thread.start()
 
         # Actualizează canvas-ul cu frame-uri
         self.update_frame()
-
 
     def select_video(self):
         # Oprește thread-ul precedent
@@ -75,12 +74,12 @@ class MainApp:
         if video_path:
             self.video_source = video_path
             self.running = True
+            self.stop_event.clear()
             self.image_thread = threading.Thread(target=run_video, args=(self,))
             self.image_thread.start()
 
             # Actualizează canvas-ul cu frame-uri
             self.update_frame()
-
 
     def show_images(self):
         # Oprește thread-ul precedent
@@ -88,37 +87,41 @@ class MainApp:
 
         self.images = load_images('data/images/')
         self.image_index = 0
-        self.running = False  # Oprește executarea anterioară
+        self.running = False  # Oprește execuția anterioară
         if self.images:
             img_path = os.path.join('data/images/', self.images[self.image_index])
             self.current_frame = cv2.imread(img_path)  # Citește imaginea curentă
-            display_frame(self, self.current_frame)  # Folosește noua funcție display_frame
+            if self.current_frame is not None:
+                display_frame(self, self.current_frame)  # Folosește noua funcție display_frame
 
     def next_image(self):
         if self.images:
             self.image_index = (self.image_index + 1) % len(self.images)  # Incrementează indexul
             img_path = os.path.join('data/images/', self.images[self.image_index])
             self.current_frame = cv2.imread(img_path)  # Citește următoarea imagine
-            display_frame(self, self.current_frame)  # Afișează imaginea actualizată
+            if self.current_frame is not None:
+                display_frame(self, self.current_frame)  # Afișează imaginea actualizată
 
     def previous_image(self):
         if self.images:
             self.image_index = (self.image_index - 1) % len(self.images)  # Decrementează indexul
             img_path = os.path.join('data/images/', self.images[self.image_index])
             self.current_frame = cv2.imread(img_path)  # Citește imaginea anterioară
-            display_frame(self, self.current_frame)  # Afișează imaginea actualizată
+            if self.current_frame is not None:
+                display_frame(self, self.current_frame)  # Afișează imaginea actualizată
 
     def update_frame(self):
         if self.current_frame is not None:
             display_frame(self, self.current_frame)  # Afișează cadrul curent
-        self.master.after(100, self.update_frame)
+        # Adaptează intervalul în funcție de viteza de detectare și afișare
+        self.master.after(200, self.update_frame)
 
     def stop_running_thread(self):
         self.running = False
+        self.stop_event.set()  # Setează eventul pentru a opri thread-ul
         if self.image_thread is not None and self.image_thread.is_alive():
             self.image_thread.join()  # Așteaptă ca thread-ul să se termine
-
-
+        
 if __name__ == "__main__":
     root = tk.Tk()
     app = MainApp(root)

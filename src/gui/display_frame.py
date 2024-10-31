@@ -1,5 +1,7 @@
 from src.libs import *
+from src.utils.table_status import TableStatus
 
+# Adăugăm o funcție pentru redimensionarea cadrului la dimensiuni compatibile YOLO
 def resize_frame_for_yolo(frame):
     """Redimensionează imaginea/cadrul la o dimensiune divizibilă cu 32."""
     h, w = frame.shape[:2]
@@ -8,14 +10,13 @@ def resize_frame_for_yolo(frame):
     return cv2.resize(frame, (new_w, new_h))
 
 def display_frame(app, frame):
-    """Afișează un cadru din orice sursă: imagine, video sau flux live."""
+    """Afișează un cadru din orice sursă: imagine, video sau flux live și actualizează statusul meselor."""
     if frame is not None:
         # Redimensionează cadrul pentru a fi compatibil cu YOLO
         frame = resize_frame_for_yolo(frame)
 
-        # Rulează detecția YOLO
-        detections = app.detector.detect(frame)
-        frame = app.detector.draw_detections(frame, detections)
+        # Rulează detecția YOLO și desenează detecțiile pe cadru
+        frame = app.detector.draw_detections(frame, app.detector.detect(frame))
 
         # Convert BGR (OpenCV) to RGB
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -23,9 +24,9 @@ def display_frame(app, frame):
         img_tk = ImageTk.PhotoImage(image=img)
 
         app.label.configure(image=img_tk)
-        app.label.image = img_tk  # Reference for garbage collection
+        app.label.image = img_tk  # Referință pentru garbage collection
 
-        # Center the image on the canvas
+        # Centrează imaginea pe canvas
         canvas_width = app.canvas.winfo_width()
         canvas_height = app.canvas.winfo_height()
         img_width, img_height = img.size

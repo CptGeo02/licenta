@@ -1,19 +1,39 @@
+# src/detectors/yolo_detector.py
+
+import os
+import pandas as pd
 from src.libs import *
 from src.utils.detection_utils import filter_detections
-from src.utils.table_status import check_table_status
+from src.managers.table_manager import TableManager
+from src.utils.time_utils import format_time
 
 class YoloDetector:
     def __init__(self, model_path="models/yolov9e.pt"):  # Path to the YOLOv8 model
         self.model = YOLO(model_path).to(device)
         print(self.model.names)
-        self.table_ids = {}  # Aici stocăm ID-urile meselor
-        self.table_counter = 0  # Contor pentru ID-urile meselor
+        self.table_manager = TableManager()  # Instanțiază managerul de mese
+        
+        # Aici definim clasele obiectelor speciale
         self.special_object_classes = {
             39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife',
             44: 'spoon', 45: 'bowl', 46: 'banana', 47: 'apple', 48: 'sandwich',
             49: 'orange', 50: 'broccoli', 51: 'carrot', 52: 'hot dog',
             53: 'pizza', 54: 'donut', 55: 'cake'
         }
+
+        # Inițializează fișierul Excel
+        self.output_path = "data/outputs/table_status_report.xlsx"
+        
+        # Șterge fișierul existent dacă există
+        if os.path.exists(self.output_path):
+            os.remove(self.output_path)
+        
+        # Creează un DataFrame nou cu coloanele corecte
+        self.initialize_excel_file()
+
+    def initialize_excel_file(self):
+        df = pd.DataFrame(columns=["ID", "Status", "Duration"])
+        df.to_excel(self.output_path, index=False)
 
     def detect(self, frame):
         frame = frame / 255.0
@@ -39,58 +59,57 @@ class YoloDetector:
         filtered_detections = filter_detections(detections)
         return filtered_detections
 
-    def assign_table_id(self, detections):
-        for det in detections:
-            if det['class'] == 60:  # ID pentru mese
-                box = det['box']
-                # Verificăm dacă masa a fost deja detectată
-                if box not in self.table_ids.values():
-                    self.table_counter += 1
-                    self.table_ids[self.table_counter] = box
-
-    def is_overlap(self, box1, box2):
-        x1, y1, x2, y2 = box1
-        x3, y3, x4, y4 = box2
-
-        # Verificăm dacă există o suprapunere
-        return not (x2 < x3 or x4 < x1 or y2 < y3 or y4 < y1)
-
     def draw_detections(self, frame, detections, red_threshold=0.1, blue_threshold=0.1):
-        people_count = 0
-        tables_count = 0
-        special_objects_count = 0
-        table_statuses = {}
-
         if detections:
-            self.assign_table_id(detections)  # Atribuie ID-uri meselor
+            self.table_manager.assign_table_id(detections)  # Atribuie ID-uri meselor
 
             for det in detections:
                 x1, y1, x2, y2 = det['box']
                 class_id = det['class']
 
-                if class_id == 0:  # Person
+                if class_id == 0:  # Persoană
                     label = "people"
                     color = (255, 0, 0)
-                    people_count += 1
-                elif class_id == 60:  # Table
+                elif class_id == 60:  # Masă
                     # Căutăm ID-ul asociat mesei
-                    object_id = next((key for key, value in self.table_ids.items() if self.is_overlap(det['box'], value)), None)
+                    object_id = next((key for key, value in self.table_manager.table_status_objects.items() if self.table_manager.is_overlap(det['box'], value.table_box)), None)
                     if object_id is not None:
-                        status = check_table_status((x1, y1, x2, y2), detections, red_threshold, blue_threshold)
-                        label = f"ID: {object_id}, Status: {status}"
+                        # Verificăm și actualizăm statusul mesei
+                        self.table_manager.check_and_update_status(detections)
+                        status, duration = self.table_manager.get_table_info(object_id)
+                        formatted_duration = format_time(duration)  # Formatează durata
+                        label = f"Table {object_id} {status} for {formatted_duration}"
+                        self.save_label_to_excel(object_id, status, formatted_duration)  # Salvează label-ul live
                         color = (0, 255, 0)
-                        tables_count += 1
                     else:
-                        # Dacă masa nu are un ID valid, continuăm fără a o desena
-                        continue
+                        continue  # Dacă masa nu are un ID valid, continuăm fără a o desena
                 elif class_id in self.special_object_classes:
                     label = f"{self.special_object_classes[class_id]}"
                     color = (0, 0, 255)
-                    special_objects_count += 1
                 else:
                     continue
 
                 frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
-                cv2.putText(frame, label, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+                frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         return frame
+
+    def save_label_to_excel(self, object_id, status, duration):
+        # Încarcă fișierul Excel existent
+        df_existing = pd.read_excel(self.output_path)
+
+        # Verifică dacă DataFrame-ul are coloanele corecte
+        if 'ID' not in df_existing.columns or 'Status' not in df_existing.columns or 'Duration' not in df_existing.columns:
+            df_existing = pd.DataFrame(columns=["ID", "Status", "Duration"])  # Creează un DataFrame nou
+
+        # Verifică dacă ID-ul există deja în DataFrame
+        if object_id in df_existing["ID"].values:
+            # Actualizează statusul și durata pentru ID-ul existent
+            df_existing.loc[df_existing["ID"] == object_id, ["Status", "Duration"]] = [status, duration]
+        else:
+            # Adaugă o nouă linie pentru ID-ul nou
+            new_row = pd.DataFrame([[object_id, status, duration]], columns=["ID", "Status", "Duration"])
+            df_existing = pd.concat([df_existing, new_row], ignore_index=True)
+
+        # Salvează DataFrame-ul actualizat înapoi în fișierul Excel
+        df_existing.to_excel(self.output_path, index=False)

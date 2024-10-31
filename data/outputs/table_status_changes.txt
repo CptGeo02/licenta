@@ -1,0 +1,52 @@
+6, available, 3.175236
+6, available, 1.750581
+6, ready to order, 1.27549
+2, available, 11.623551
+6, available, 6.267123
+2, ready to order, 4.873359
+4, available, 20.683186
+2, ready to order, 1.290124
+4, available, 2.10527
+4, available, 3.460134
+4, ready to order, 1.318287
+2, ready to order, 8.158574
+6, ready to order, 15.662238
+4, available, 2.200415
+2, available, 2.638802
+6, ready to order, 3.117387
+2, available, 7.27003
+8, ready to order, 1.62452
+1, eating, 1.790284
+2, need to clean, 1.796697
+1, ready to order, 1.874272
+3, eating, 1.867853
+3, available, 1.126777
+2, eating, 4.510187
+3, need to clean, 1.515547
+4, need to clean, 1.900023
+5, need to clean, 1.901023
+1, eating, 4.302665
+2, need to clean, 4.302665
+1, eating, 1.547669
+2, need to clean, 1.548669
+1, ready to order, 3.471408
+3, ready to order, 3.471441
+5, eating, 3.471441
+1, need to clean, 1.084421
+5, available, 1.084387
+6, need to clean, 1.084419
+1, eating, 1.616018
+2, available, 6.171843
+3, eating, 2.700402
+4, eating, 6.172845
+6, eating, 1.616016
+8, need to clean, 1.616016
+1, eating, 1.783206
+2, need to clean, 1.784209
+1, ready to order, 3.731134
+3, eating, 3.731132
+2, need to clean, 1.267533
+1, eating, 2.643512
+3, eating, 1.376979
+3, available, 1.308996
+2, available, 3.535842
