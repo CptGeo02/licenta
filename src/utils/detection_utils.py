@@ -32,35 +32,3 @@ def calculate_iou(box1, box2):
 def calculate_area(box):
     x1, y1, x2, y2 = box
     return (x2 - x1) * (y2 - y1)
-
-def compute_iou(rect1, rect2):
-    # Descompunem box-urile în coordonate
-    x1, y1, x2, y2 = rect1
-    x3, y3, x4, y4 = rect2
-
-    # Calculăm coordonatele intersecției
-    inter_x1 = max(x1, x3)
-    inter_y1 = max(y1, y3)
-    inter_x2 = min(x2, x4)
-    inter_y2 = min(y2, y4)
-
-    # Calculăm aria intersecției
-    inter_area = max(0, inter_x2 - inter_x1) * max(0, inter_y2 - inter_y1)
-
-    # Calculăm aria fiecărui box
-    rect1_area = (x2 - x1) * (y2 - y1)
-    rect2_area = (x4 - x3) * (y4 - y3)
-
-    # Calculăm aria de unire
-    total_area = rect1_area + rect2_area - inter_area
-
-    # Calculăm IoU
-    iou = inter_area / total_area if total_area > 0 else 0
-
-    return iou
-
-def are_tables_identical(rect1, rect2, threshold=0.9):
-    iou = compute_iou(rect1, rect2)
-    
-    # Verificăm dacă IoU depășește pragul stabilit
-    return iou >= threshold
