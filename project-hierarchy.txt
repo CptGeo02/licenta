@@ -3,6 +3,7 @@ AI_restaurant
 ├─ data
 │  ├─ images
 │  ├─ outputs
+│  │  ├─ table_status_changes.txt
 │  │  └─ table_status_report.xlsx
 │  └─ videos
 ├─ main.py
@@ -12,21 +13,30 @@ AI_restaurant
 │  └─ yolov9e.pt
 ├─ project-hierarchy.txt
 ├─ README.md
-└─ src
-   ├─ detectors
-   │  └─ yolo_detector.py
-   ├─ gui
-   │  ├─ display_frame.py
-   │  ├─ main_gui.py
-   │  ├─ run_camera.py
-   │  └─ run_video.py
-   ├─ libs.py
-   ├─ managers
-   │  └─ table_manager.py
-   └─ utils
-      ├─ detection_utils.py
-      ├─ extract_yt_video.py
-      ├─ images_to_video.py
-      ├─ image_utils.py
-      ├─ table_status.py
-      └─ time_utils.py
+├─ src
+│  ├─ detectors
+│  │  └─ yolo_detector.py
+│  ├─ gui
+│  │  ├─ display_frame.py
+│  │  ├─ main_gui.py
+│  │  ├─ run_camera.py
+│  │  └─ run_video.py
+│  ├─ libs.py
+│  ├─ managers
+│  │  └─ table_manager.py
+│  ├─ utils
+│  │  ├─ detection_utils.py
+│  │  ├─ extract_yt_video.py
+│  │  ├─ images_to_video.py
+│  │  ├─ image_utils.py
+│  │  ├─ table_status.py
+│  │  └─ time_utils.py
+│  └─ web
+│     └─ main_web.py
+├─ static
+│  ├─ css
+│  │  └─ style.css
+│  └─ js
+│     └─ script.js
+└─ templates
+   └─ index.html

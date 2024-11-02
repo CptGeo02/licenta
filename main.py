@@ -1,9 +1,24 @@
-# main.py
-
+import sys
+import argparse
+import tkinter as tk
 from src.gui.main_gui import MainApp
-from src.libs import tk
+from src.web.main_web import app as web_app
 
-if __name__ == "__main__":
+def run_local_gui():
     root = tk.Tk()
     app = MainApp(root)
     root.mainloop()
+
+def run_web_interface():
+    web_app.run(debug=True)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Select UI mode for AI Restaurant Monitoring System.")
+    parser.add_argument("--interface", choices=["local", "web"], required=True, help="Choose 'local' for the desktop GUI or 'web' for the web interface.")
+
+    args = parser.parse_args()
+
+    if args.interface == "local":
+        run_local_gui()
+    elif args.interface == "web":
+        run_web_interface()

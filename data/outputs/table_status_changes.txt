@@ -693,3 +693,24 @@
 2, available, 2.925744
 3, eating, 2.904636
 6, need to clean, 1.096078
+1, eating, 2.485502
+2, need to clean, 2.46215
+2, available, 2.286887
+3, eating, 2.266041
+6, available, 1.519158
+1, need to clean, 3.059537
+2, need to clean, 3.060533
+4, need to clean, 3.825207
+5, need to clean, 3.826206
+6, need to clean, 1.542371
+7, need to clean, 3.041348
+10, need to clean, 1.543371
+3, need to clean, 4.701753
+12, need to clean, 3.10612
+14, available, 1.64022
+1, available, 1.693198
+7, need to clean, 1.562819
+10, need to clean, 1.563819
+13, need to clean, 1.562819
+18, available, 2.24366
+23, need to clean, 1.442761

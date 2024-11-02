@@ -1,7 +1,7 @@
 from src.libs import *
 
 def run_camera(app):
-    cap = cv2.VideoCapture(0)  # Pornim camera
+    cap = cv2.VideoCapture()  # Pornim camera
     while app.running:
         ret, frame = cap.read()  # Citim un cadru de la cameră
         if not ret:

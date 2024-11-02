@@ -122,7 +122,7 @@ class MainApp:
         if self.image_thread is not None and self.image_thread.is_alive():
             self.image_thread.join()  # Așteaptă ca thread-ul să se termine
         
-if __name__ == "__main__":
+def run_local_gui():
     root = tk.Tk()
     app = MainApp(root)
     root.mainloop()
