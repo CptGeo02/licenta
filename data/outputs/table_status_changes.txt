@@ -191,3 +191,279 @@
 8, available, 4.419844
 2, ready to order, 2.588107
 8, ready to order, 2.588107
+1, eating, 1.274705
+2, need to clean, 1.275705
+1, ready to order, 2.837758
+3, ready to order, 2.836787
+5, eating, 2.836787
+1, need to clean, 1.132407
+3, need to clean, 1.13238
+5, available, 1.13292
+2, available, 4.945445
+4, eating, 4.944445
+10, need to clean, 1.09695
+11, need to clean, 1.09695
+2, need to clean, 2.610551
+7, available, 2.610613
+9, need to clean, 2.610613
+13, need to clean, 1.513683
+15, available, 1.514662
+2, available, 6.479543
+2, ready to order, 1.62686
+6, ready to order, 19.470383
+6, available, 1.679502
+8, ready to order, 10.92244
+8, ready to order, 3.988689
+8, available, 4.834157
+2, available, 3.973694
+6, available, 5.382713
+2, available, 2.646468
+6, ready to order, 2.118464
+2, available, 4.293483
+6, ready to order, 4.381356
+2, available, 1.21445
+2, ready to order, 1.64946
+2, available, 3.914117
+6, available, 5.657455
+2, available, 2.634664
+6, ready to order, 2.27281
+2, available, 6.196249
+6, ready to order, 4.699824
+2, ready to order, 1.587894
+2, ready to order, 7.295719
+2, ready to order, 1.767835
+2, ready to order, 4.101287
+1, availabe, 1.613113
+2, availabe, 1.613113
+1, ready to order, 1.991115
+3, availabe, 1.958446
+4, availabe, 1.95845
+2, available, 3.824747
+3, eating, 1.834635
+4, available, 1.83363
+7, availabe, 1.55357
+8, availabe, 1.554668
+9, availabe, 1.555668
+6, available, 4.105598
+10, availabe, 2.449049
+11, available, 1.536958
+12, availabe, 1.513203
+1, need to clean, 12.608223
+2, need to clean, 10.77559
+4, need to clean, 10.774587
+5, need to clean, 10.774594
+6, need to clean, 6.668996
+7, need to clean, 9.197897
+10, need to clean, 6.669994
+11, need to clean, 5.105774
+13, need to clean, 5.078041
+1, availabe, 4.164908
+2, availabe, 4.1659
+4, eating, 3.973201
+5, available, 3.974201
+6, availabe, 2.69787
+7, availabe, 2.69787
+8, availabe, 1.846232
+9, availabe, 1.847229
+10, availabe, 1.847229
+11, availabe, 1.847229
+2, available, 2.529634
+2, available, 1.87069
+2, ready to order, 1.238573
+1, availabe, 3.471262
+2, availabe, 3.472261
+3, availabe, 1.296715
+4, availabe, 1.297718
+5, availabe, 1.298718
+6, availabe, 3.904827
+7, availabe, 3.905949
+1, need to clean, 6.974465
+3, need to clean, 6.974465
+5, available, 6.972462
+6, need to clean, 1.220958
+1, ready to order, 1.360611
+2, available, 8.335234
+3, ready to order, 1.360769
+5, eating, 1.361773
+6, ready to order, 1.361559
+8, availabe, 1.904748
+9, availabe, 1.905749
+10, availabe, 1.905742
+11, availabe, 1.906885
+12, availabe, 1.906885
+13, availabe, 1.907892
+14, availabe, 1.908883
+15, availabe, 1.908883
+16, availabe, 1.909882
+17, availabe, 1.909882
+18, availabe, 1.909879
+19, availabe, 1.909879
+20, availabe, 1.911384
+21, availabe, 1.911384
+22, availabe, 1.912392
+23, availabe, 1.911395
+1, eating, 17.121515
+2, need to clean, 17.121359
+3, eating, 17.121359
+5, ready to order, 17.121357
+6, need to clean, 17.121358
+15, eating, 1.961165
+16, eating, 1.960166
+1, ready to order, 1.712288
+3, ready to order, 1.711287
+5, eating, 1.711287
+6, ready to order, 1.710285
+13, ready to order, 3.672448
+15, available, 1.710802
+16, ready to order, 1.710802
+1, need to clean, 1.134448
+3, need to clean, 1.134448
+5, available, 1.134446
+7, available, 22.547484
+13, available, 1.134447
+15, eating, 1.133937
+16, need to clean, 1.135064
+23, eating, 4.802518
+1, eating, 2.295143
+2, available, 5.141878
+3, eating, 2.296143
+4, eating, 30.597468
+7, need to clean, 2.296163
+13, ready to order, 2.296141
+15, ready to order, 2.296141
+16, ready to order, 2.296015
+2, need to clean, 1.419522
+7, available, 1.419502
+23, need to clean, 3.714537
+25, need to clean, 1.417362
+29, availabe, 1.389727
+30, availabe, 1.389727
+1, need to clean, 3.649843
+3, need to clean, 3.648843
+5, need to clean, 5.943986
+6, need to clean, 7.079432
+7, need to clean, 2.229321
+13, need to clean, 3.648843
+15, need to clean, 3.648843
+16, need to clean, 3.647842
+23, available, 2.22932
+28, need to clean, 3.647681
+29, need to clean, 2.230319
+30, need to clean, 2.230319
+32, availabe, 2.199627
+33, availabe, 2.199627
+1, availabe, 4.310357
+2, availabe, 4.311358
+1, ready to order, 2.635007
+3, availabe, 2.605987
+4, availabe, 2.605987
+1, need to clean, 1.134687
+3, eating, 1.134679
+4, available, 1.135696
+1, eating, 2.308065
+4, need to clean, 2.307051
+1, need to clean, 1.139657
+3, need to clean, 3.447725
+4, available, 1.18947
+1, ready to order, 1.736197
+2, available, 8.952612
+4, eating, 1.686376
+1, eating, 7.009667
+2, need to clean, 7.010661
+4, ready to order, 7.009667
+3, eating, 10.389504
+1, availabe, 5.056886
+2, availabe, 5.057914
+1, ready to order, 1.167299
+3, availabe, 1.143421
+4, availabe, 1.143421
+5, availabe, 1.622356
+6, availabe, 1.623353
+1, need to clean, 3.359148
+4, available, 3.359152
+1, ready to order, 3.270156
+2, available, 7.795575
+4, eating, 3.270156
+5, ready to order, 3.270156
+1, eating, 15.529849
+2, need to clean, 15.530846
+3, eating, 22.159151
+4, ready to order, 15.530844
+5, need to clean, 15.530844
+1, availabe, 3.609809
+2, availabe, 3.610809
+1, ready to order, 4.496821
+3, availabe, 4.472401
+4, availabe, 4.472401
+2, available, 6.388838
+3, eating, 1.892988
+4, available, 1.894008
+7, availabe, 1.576177
+8, availabe, 1.577176
+9, availabe, 1.577176
+8, available, 2.49695
+9, available, 2.49695
+10, availabe, 2.425113
+2, need to clean, 5.514219
+3, need to clean, 5.513218
+6, available, 5.513197
+7, need to clean, 3.911909
+8, need to clean, 1.414962
+9, need to clean, 1.414962
+1, need to clean, 9.959496
+2, need to clean, 2.525825
+4, need to clean, 8.065458
+5, need to clean, 8.06664
+6, need to clean, 2.553443
+9, available, 2.553445
+1, ready to order, 1.765209
+4, eating, 1.764209
+5, ready to order, 1.764026
+7, eating, 4.317469
+9, ready to order, 1.764024
+11, ready to order, 1.764024
+1, need to clean, 11.161186
+3, eating, 15.479656
+4, ready to order, 11.162187
+5, need to clean, 11.162189
+7, ready to order, 11.162189
+11, eating, 11.161187
+12, availabe, 11.135107
+1, availabe, 3.24608
+2, availabe, 3.246977
+1, ready to order, 1.19433
+2, available, 1.193432
+3, availabe, 1.170714
+4, availabe, 1.170714
+1, eating, 6.124629
+2, need to clean, 6.125528
+4, ready to order, 6.125528
+1, ready to order, 2.887845
+2, available, 2.887836
+4, eating, 2.886834
+1, eating, 1.480506
+2, need to clean, 1.480507
+4, ready to order, 1.481473
+1, ready to order, 1.929065
+4, eating, 1.928143
+2, available, 4.919032
+3, eating, 15.412901
+4, available, 2.990923
+7, availabe, 1.403233
+8, availabe, 1.40423
+9, availabe, 1.40423
+8, available, 8.182895
+9, available, 8.183895
+10, availabe, 8.088301
+2, need to clean, 12.784785
+3, need to clean, 12.784786
+6, available, 12.784785
+7, need to clean, 11.358484
+8, need to clean, 3.175797
+9, need to clean, 3.174797
+1, need to clean, 18.523527
+2, need to clean, 2.71429
+4, need to clean, 15.532566
+5, need to clean, 15.531564
+6, need to clean, 2.74778
+9, available, 2.746575

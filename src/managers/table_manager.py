@@ -2,27 +2,43 @@
 
 from src.utils.table_status import TableStatus
 from src.utils.detection_utils import *
+from src.libs import *
+
 class TableManager:
     def __init__(self):
         self.table_ids = {}  # Aici stocăm ID-urile meselor
         self.table_counter = 0  # Contor pentru ID-urile meselor
-        self.table_status_objects = {}  # Aici stocăm obiectele TableStatus
+        self.tables = {}  # Aici stocăm obiectele TableStatus
 
-    def assign_table_id(self, detections):
-        for det in detections:
-            if det['class'] == 60:  # ID pentru mese
-                box = det['box']
-                # Verifică dacă masa a fost deja detectată prin suprapunere
-                object_id = next((key for key, value in self.table_status_objects.items() if are_tables_identical(box, value.table_box)), None)
+    def assign_table_id(self, table_id, box):
+        if table_id is None:
+            self.table_counter += 1
+            new_table = TableStatus(self.table_counter, table_box=box)
+            self.tables[self.table_counter] = new_table
+        else:
+            # Dacă masa a fost detectată, actualizează doar box-ul
+            self.update_table_box(table_id, box)
+    
+    def get_box_center(self, box):
+        x1, y1, x2, y2 = box
+        return (0.5 * (x1 + x2), 0.5 * (y1 + y2))
 
-                if object_id is None:
-                    # Masa e nou detectată
-                    self.table_counter += 1
-                    new_table_status = TableStatus(self.table_counter, table_box=box)
-                    self.table_status_objects[self.table_counter] = new_table_status
-                else:
-                    # Masa deja detectată, doar actualizăm box-ul
-                    self.table_status_objects[object_id].update_table_box(box)
+    def get_table_id_by_box(self, box):
+        center = self.get_box_center(box)
+        for table_id, table_status in self.tables.items():
+            table_center = self.get_box_center(table_status.table_box)
+            if np.linalg.norm(np.array(center) - np.array(table_center)) < 100:  # Pragul de proximitate
+                return table_id
+        return None
+    
+    def get_table_id_by_overlap(self, box):
+        for table_id, table_status in self.tables.items():
+            if self.is_overlap(box, table_status.table_box):
+                return table_id
+        return None
+    
+    def update_table_box(self, table_id, box):
+        self.tables[table_id].update_table_box(box)
 
     def is_overlap(self, box1, box2):
         # Extrage coordonatele box-urilor
@@ -51,11 +67,11 @@ class TableManager:
 
 
     def check_and_update_status(self, detections):
-        for _, table_status in self.table_status_objects.items():
+        for _, table_status in self.tables.items():
             table_status.check_and_update_status(detections)
     
     def get_table_info(self, object_id):
-        table_status = self.table_status_objects.get(object_id)
+        table_status = self.tables.get(object_id)
         if table_status:
             return table_status.current_status, table_status.get_current_status_duration()
         return None, None

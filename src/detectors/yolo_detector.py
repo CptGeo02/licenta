@@ -61,34 +61,33 @@ class YoloDetector:
 
     def draw_detections(self, frame, detections, red_threshold=0.1, blue_threshold=0.1):
         if detections:
-            self.table_manager.assign_table_id(detections)  # Atribuie ID-uri meselor
-
             for det in detections:
-                x1, y1, x2, y2 = det['box']
+                box = det['box']
                 class_id = det['class']
 
                 if class_id == 0:  # Persoană
                     label = "people"
                     color = (255, 0, 0)
                 elif class_id == 60:  # Masă
-                    # Căutăm ID-ul asociat mesei
-                    object_id = next((key for key, value in self.table_manager.table_status_objects.items() if self.table_manager.is_overlap(det['box'], value.table_box)), None)
-                    if object_id is not None:
+                    table_id = self.table_manager.get_table_id_by_overlap(box)
+                    self.table_manager.assign_table_id(table_id, box)
+                    if table_id is not None:
                         # Verificăm și actualizăm statusul mesei
                         self.table_manager.check_and_update_status(detections)
-                        status, duration = self.table_manager.get_table_info(object_id)
+                        status, duration = self.table_manager.get_table_info(table_id)
                         formatted_duration = format_time(duration)  # Formatează durata
-                        label = f"Table {object_id} {status} for {formatted_duration}"
-                        self.save_label_to_excel(object_id, status, formatted_duration)  # Salvează label-ul live
+                        label = f"Table {table_id} {status} for {formatted_duration}"
+                        self.save_label_to_excel(table_id, status, formatted_duration)  # Salvează label-ul live
                         color = (0, 255, 0)
                     else:
+                        color = (0, 255, 0)
                         continue  # Dacă masa nu are un ID valid, continuăm fără a o desena
                 elif class_id in self.special_object_classes:
                     label = f"{self.special_object_classes[class_id]}"
                     color = (0, 0, 255)
                 else:
                     continue
-
+                x1, y1, x2, y2 = det['box']
                 frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
                 frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
