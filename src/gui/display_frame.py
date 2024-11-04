@@ -9,15 +9,17 @@ def resize_frame_for_yolo(frame):
     new_h = (h // 32) * 32
     return cv2.resize(frame, (new_w, new_h))
 
+
 def display_frame(app, frame):
     """Afișează un cadru din orice sursă: imagine, video sau flux live și actualizează statusul meselor."""
     if frame is not None:
         # Redimensionează cadrul pentru a fi compatibil cu YOLO
         frame = resize_frame_for_yolo(frame)
 
-        # Rulează detecția YOLO și desenează detecțiile pe cadru
-        frame = app.detector.draw_detections(frame, app.detector.detect(frame))
-
+        # Apelează detectarea YOLO doar dacă switch-ul de auto-detect este activat
+        if app.auto_detect_enabled.get():
+            frame = app.detector.draw_detections(frame, app.detector.detect(frame))
+            app.update_status_label()
         # Convert BGR (OpenCV) to RGB
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(frame_rgb)

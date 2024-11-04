@@ -36,11 +36,19 @@ class MainApp:
         self.exit_btn = Button(self.button_frame, text="Exit", command=master.quit)
         self.exit_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
+        # Adaugă un switch pentru activarea YOLO
+        self.auto_detect_enabled = BooleanVar(value=False)
+        self.auto_detect_switch = Checkbutton(self.button_frame, text="Auto-Detect", variable=self.auto_detect_enabled, onvalue=True, offvalue=False)
+        self.auto_detect_switch.pack(side=tk.LEFT, padx=5, pady=5)
+
         self.canvas = Canvas(master, width=640, height=480)
         self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
         self.label = Label(self.canvas)
         self.label.pack()
+
+        self.status_label = Label(master, text="", wraplength=780)  # Label pentru statusul meselor
+        self.status_label.pack(side=tk.BOTTOM, pady=10)  # Afișează la baza ferestrei
 
         self.video_source = None
         self.current_frame = None
@@ -53,23 +61,16 @@ class MainApp:
         self.stop_event = threading.Event()
 
     def start_camera(self):
-        # Oprește thread-ul precedent
         self.stop_running_thread()
-
-        # Pornește camera live
         self.running = True
         self.stop_event.clear()
         self.image_thread = threading.Thread(target=run_camera, args=(self,))
         self.image_thread.start()
-
-        # Actualizează canvas-ul cu frame-uri
+        self.auto_detect_switch.config(state=tk.NORMAL)  # Activează butonul "Auto-Detect"
         self.update_frame()
 
     def select_video(self):
-        # Oprește thread-ul precedent
         self.stop_running_thread()
-
-        # Selectează și pornește redarea video
         video_path = filedialog.askopenfilename(filetypes=[("Video Files", "*.mp4;*.avi;*.mov")])
         if video_path:
             self.video_source = video_path
@@ -77,52 +78,60 @@ class MainApp:
             self.stop_event.clear()
             self.image_thread = threading.Thread(target=run_video, args=(self,))
             self.image_thread.start()
-
-            # Actualizează canvas-ul cu frame-uri
+            self.auto_detect_switch.config(state=tk.NORMAL)  # Activează butonul "Auto-Detect"
             self.update_frame()
 
     def show_images(self):
-        # Oprește thread-ul precedent
         self.stop_running_thread()
-
         self.images = load_images('data/images/')
         self.image_index = 0
-        self.running = False  # Oprește execuția anterioară
+        self.running = False
+        self.auto_detect_switch.config(state=tk.NORMAL)  # Activează butonul "Auto-Detect"
         if self.images:
             img_path = os.path.join('data/images/', self.images[self.image_index])
-            self.current_frame = cv2.imread(img_path)  # Citește imaginea curentă
+            self.current_frame = cv2.imread(img_path)
             if self.current_frame is not None:
-                display_frame(self, self.current_frame)  # Folosește noua funcție display_frame
+                display_frame(self, self.current_frame)
 
-    def next_image(self):
-        if self.images:
-            self.image_index = (self.image_index + 1) % len(self.images)  # Incrementează indexul
-            img_path = os.path.join('data/images/', self.images[self.image_index])
-            self.current_frame = cv2.imread(img_path)  # Citește următoarea imagine
-            if self.current_frame is not None:
-                display_frame(self, self.current_frame)  # Afișează imaginea actualizată
-
-    def previous_image(self):
-        if self.images:
-            self.image_index = (self.image_index - 1) % len(self.images)  # Decrementează indexul
-            img_path = os.path.join('data/images/', self.images[self.image_index])
-            self.current_frame = cv2.imread(img_path)  # Citește imaginea anterioară
-            if self.current_frame is not None:
-                display_frame(self, self.current_frame)  # Afișează imaginea actualizată
+    def update_status_label(self):
+        """
+        Obține statusul tuturor meselor și actualizează label-ul de status.
+        """
+        status_report = self.detector.get_tables_status_report()
+        self.status_label.config(text=status_report)
 
     def update_frame(self):
         if self.current_frame is not None:
-            display_frame(self, self.current_frame)  # Afișează cadrul curent
-        # Adaptează intervalul în funcție de viteza de detectare și afișare
+            display_frame(self, self.current_frame)  # Afișează doar cadrul, fără detecție
         self.master.after(200, self.update_frame)
 
     def stop_running_thread(self):
-        self.running = False
-        self.stop_event.set()  # Setează eventul pentru a opri thread-ul
-        if self.image_thread is not None and self.image_thread.is_alive():
+        """Oprește thread-ul curent de afișare a imaginilor în mod sigur."""
+        if self.image_thread and self.image_thread.is_alive():
+            self.stop_event.set()  # Trimite semnalul de oprire
             self.image_thread.join()  # Așteaptă ca thread-ul să se termine
-        
-def run_local_gui():
+        self.running = False
+        # Dezactivează switch-ul de "Auto-Detect" (dacă este necesar)
+        self.auto_detect_switch.config(state=tk.DISABLED)
+
+    def next_image(self):
+        if self.images:
+            self.image_index = (self.image_index + 1) % len(self.images)
+            img_path = os.path.join('data/images/', self.images[self.image_index])
+            self.current_frame = cv2.imread(img_path)
+            if self.current_frame is not None:
+                display_frame(self, self.current_frame)
+
+    def previous_image(self):
+        if self.images:
+            self.image_index = (self.image_index - 1) % len(self.images)
+            img_path = os.path.join('data/images/', self.images[self.image_index])
+            self.current_frame = cv2.imread(img_path)
+            if self.current_frame is not None:
+                display_frame(self, self.current_frame)
+
+# Lansare aplicație
+if __name__ == "__main__":
     root = tk.Tk()
     app = MainApp(root)
     root.mainloop()

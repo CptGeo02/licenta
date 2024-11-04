@@ -56,23 +56,6 @@ class TableStatus:
         """
         current_time = datetime.now()
         return (current_time - self.start_time).total_seconds()
-    
-    def export_status_data(self):
-        """
-        Exportă datele statusurilor într-un format dict pentru salvare în Excel.
-        """
-        # Include statusul curent dacă aplicația este oprită înainte de a se schimba
-        if self.current_status:
-            current_time = datetime.now()
-            duration = (current_time - self.start_time).total_seconds()
-            self.status_durations.append((self.current_status, duration))
-
-        # Structura dict-ului pentru export
-        return {
-            "Table ID": self.table_id,
-            "Status": [entry[0] for entry in self.status_durations],
-            "Duration (s)": [entry[1] for entry in self.status_durations]
-        }
 
     def check_table_status(self, table_box, detections):
         """
@@ -115,5 +98,7 @@ class TableStatus:
         return "unknown"
 
     def log_status_change(self, object_id, status, duration):
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        formatted_duration = format_time(duration)  # Transformă durata în hh:mm:ss
         with open(self.txt_output_path, "a") as f:
-            f.write(f"{object_id}, {status}, {duration}\n")
+            f.write(f"{timestamp}, Table ID: {object_id}, Status: {status}, Duration: {formatted_duration}\n")

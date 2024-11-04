@@ -18,7 +18,26 @@ class TableManager:
         else:
             # Dacă masa a fost detectată, actualizează doar box-ul
             self.update_table_box(table_id, box)
-
+            
+    def get_all_tables_status(self):
+            """
+            Returnează un string cu statusul pentru fiecare masă în formatul:
+            'Table <table_id> Status: <current_status> Start Time: <start_time> Duration: <status_duration>'
+            """
+            status_strings = []
+            
+            for table_id, table_status in self.tables.items():
+                start_time_str = table_status.start_time.strftime("%Y-%m-%d %H:%M:%S")
+                duration = table_status.get_current_status_duration()
+                duration_str = f"{int(duration // 3600):02}:{int((duration % 3600) // 60):02}:{int(duration % 60):02}"
+                
+                status_strings.append(
+                    f"Table {table_id} Status: {table_status.current_status} "
+                    f"Start Time: {start_time_str} Duration: {duration_str}"
+                )
+            
+            return "\n".join(status_strings)
+    
     def get_table_id_by_box(self, box):
         center = self._get_box_center(box)
         for table_id, table_status in self.tables.items():

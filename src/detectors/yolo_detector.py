@@ -8,7 +8,7 @@ from src.managers.table_manager import TableManager
 from src.utils.time_utils import format_time
 
 class YoloDetector:
-    def __init__(self, model_path="models/yolov8n.pt"):  # Path to the YOLOv8 model
+    def __init__(self, model_path="models/yolov9e.pt"):  # Path to the YOLOv8 model
         self.model = YOLO(model_path).to(device)
         print(self.model.names)
         self.table_manager = TableManager()  # Instanțiază managerul de mese
@@ -90,7 +90,13 @@ class YoloDetector:
                 frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
         return frame
-
+    
+    def get_tables_status_report(self):
+            """
+            Apelează funcția din TableManager pentru a obține statusul tuturor meselor și returnează șirul rezultat.
+            """
+            return self.table_manager.get_all_tables_status()
+    
     def save_label_to_excel(self, object_id, status, duration):
         # Încarcă fișierul Excel existent
         df_existing = pd.read_excel(self.output_path)

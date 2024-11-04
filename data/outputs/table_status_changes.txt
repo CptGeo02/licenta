@@ -714,3 +714,524 @@
 13, need to clean, 1.562819
 18, available, 2.24366
 23, need to clean, 1.442761
+4, available, 1.193389
+2, available, 3.980836
+2, available, 2.669532
+4, available, 1.197456
+6, available, 5.633085
+2, available, 6.892945
+6, ready to order, 1.994348
+6, ready to order, 1.680784
+1, eating, 7.041003
+2, need to clean, 7.017795
+1, ready to order, 4.985975
+3, eating, 4.913749
+1, ready to order, 1.560327
+3, eating, 1.505894
+6, available, 3.456506
+1, need to clean, 2.7952
+4, available, 4.830319
+3, available, 5.192978
+3, ready to order, 1.197418
+4, available, 1.90825
+4, ready to order, 4.234017
+3, available, 5.658311
+3, ready to order, 2.540653
+2, available, 16.012724
+2, available, 1.016341
+7, available, 15.224061
+9, available, 1.621183
+3, ready to order, 8.069089
+8, available, 5.18945
+3, ready to order, 2.600321
+3, available, 5.149388
+2024-11-05 00:25:52, Table ID: 1, Status: ready to order, Duration: 00:00:07
+2024-11-05 00:25:52, Table ID: 3, Status: eating, Duration: 00:00:07
+2024-11-05 00:25:58, Table ID: 1, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:25:58, Table ID: 3, Status: available, Duration: 00:00:06
+2024-11-05 00:26:06, Table ID: 1, Status: eating, Duration: 00:00:08
+2024-11-05 00:26:06, Table ID: 2, Status: eating, Duration: 00:00:22
+2024-11-05 00:26:06, Table ID: 5, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:26:08, Table ID: 7, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:26:08, Table ID: 8, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:26:11, Table ID: 1, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:26:11, Table ID: 2, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:26:11, Table ID: 3, Status: need to clean, Duration: 00:00:13
+2024-11-05 00:26:11, Table ID: 4, Status: need to clean, Duration: 00:00:13
+2024-11-05 00:26:11, Table ID: 6, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:26:13, Table ID: 12, Status: available, Duration: 00:00:01
+2024-11-05 00:26:16, Table ID: 14, Status: available, Duration: 00:00:04
+2024-11-05 00:26:19, Table ID: 15, Status: available, Duration: 00:00:07
+2024-11-05 00:26:19, Table ID: 14, Status: available, Duration: 00:00:03
+2024-11-05 00:26:21, Table ID: 15, Status: ready to order, Duration: 00:00:02
+2024-11-05 00:26:26, Table ID: 12, Status: available, Duration: 00:00:11
+2024-11-05 00:26:26, Table ID: 14, Status: available, Duration: 00:00:05
+2024-11-05 00:26:26, Table ID: 15, Status: ready to order, Duration: 00:00:04
+2024-11-05 00:26:28, Table ID: 14, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:26:30, Table ID: 12, Status: available, Duration: 00:00:04
+2024-11-05 00:26:35, Table ID: 20, Status: available, Duration: 00:00:01
+2024-11-05 00:26:38, Table ID: 19, Status: available, Duration: 00:00:11
+2024-11-05 00:26:42, Table ID: 14, Status: ready to order, Duration: 00:00:14
+2024-11-05 00:26:43, Table ID: 19, Status: ready to order, Duration: 00:00:04
+2024-11-05 00:29:29, Table ID: 1, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:29:31, Table ID: 1, Status: eating, Duration: 00:00:01
+2024-11-05 00:29:31, Table ID: 3, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:32, Table ID: 5, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:32, Table ID: 6, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:33, Table ID: 3, Status: available, Duration: 00:00:02
+2024-11-05 00:29:33, Table ID: 7, Status: available, Duration: 00:00:01
+2024-11-05 00:29:35, Table ID: 8, Status: available, Duration: 00:00:01
+2024-11-05 00:29:36, Table ID: 1, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:29:36, Table ID: 2, Status: need to clean, Duration: 00:00:07
+2024-11-05 00:29:36, Table ID: 3, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:29:36, Table ID: 4, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:29:36, Table ID: 7, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:29:36, Table ID: 8, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:36, Table ID: 10, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:38, Table ID: 2, Status: available, Duration: 00:00:02
+2024-11-05 00:29:38, Table ID: 3, Status: available, Duration: 00:00:02
+2024-11-05 00:29:38, Table ID: 4, Status: available, Duration: 00:00:02
+2024-11-05 00:29:38, Table ID: 7, Status: available, Duration: 00:00:02
+2024-11-05 00:29:38, Table ID: 8, Status: available, Duration: 00:00:02
+2024-11-05 00:29:38, Table ID: 10, Status: available, Duration: 00:00:02
+2024-11-05 00:29:38, Table ID: 14, Status: available, Duration: 00:00:02
+2024-11-05 00:29:38, Table ID: 17, Status: available, Duration: 00:00:02
+2024-11-05 00:29:38, Table ID: 13, Status: available, Duration: 00:00:02
+2024-11-05 00:29:43, Table ID: 2, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:29:43, Table ID: 8, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:29:43, Table ID: 9, Status: need to clean, Duration: 00:00:09
+2024-11-05 00:29:43, Table ID: 11, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:29:43, Table ID: 12, Status: available, Duration: 00:00:07
+2024-11-05 00:29:43, Table ID: 14, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:29:43, Table ID: 17, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:29:43, Table ID: 18, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:29:43, Table ID: 19, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:29:43, Table ID: 1, Status: available, Duration: 00:00:07
+2024-11-05 00:29:45, Table ID: 2, Status: available, Duration: 00:00:01
+2024-11-05 00:29:45, Table ID: 4, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:29:45, Table ID: 7, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:29:45, Table ID: 10, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:29:45, Table ID: 12, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:45, Table ID: 14, Status: available, Duration: 00:00:01
+2024-11-05 00:29:45, Table ID: 16, Status: available, Duration: 00:00:08
+2024-11-05 00:29:45, Table ID: 17, Status: available, Duration: 00:00:01
+2024-11-05 00:29:45, Table ID: 21, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:29:46, Table ID: 2, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:46, Table ID: 3, Status: need to clean, Duration: 00:00:07
+2024-11-05 00:29:46, Table ID: 7, Status: available, Duration: 00:00:01
+2024-11-05 00:29:46, Table ID: 13, Status: need to clean, Duration: 00:00:07
+2024-11-05 00:29:46, Table ID: 14, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:46, Table ID: 16, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:46, Table ID: 17, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:46, Table ID: 22, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:47, Table ID: 2, Status: available, Duration: 00:00:01
+2024-11-05 00:29:47, Table ID: 7, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:29:47, Table ID: 13, Status: available, Duration: 00:00:01
+2024-11-05 00:29:47, Table ID: 14, Status: eating, Duration: 00:00:01
+2024-11-05 00:29:47, Table ID: 17, Status: eating, Duration: 00:00:01
+2024-11-05 00:29:47, Table ID: 22, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:15, Table ID: 2, Status: need to clean, Duration: 00:00:28
+2024-11-05 00:30:15, Table ID: 3, Status: available, Duration: 00:00:29
+2024-11-05 00:30:15, Table ID: 7, Status: available, Duration: 00:00:28
+2024-11-05 00:30:15, Table ID: 9, Status: available, Duration: 00:00:32
+2024-11-05 00:30:15, Table ID: 10, Status: available, Duration: 00:00:30
+2024-11-05 00:30:15, Table ID: 11, Status: available, Duration: 00:00:32
+2024-11-05 00:30:15, Table ID: 16, Status: available, Duration: 00:00:29
+2024-11-05 00:30:15, Table ID: 18, Status: available, Duration: 00:00:32
+2024-11-05 00:30:15, Table ID: 19, Status: available, Duration: 00:00:32
+2024-11-05 00:30:15, Table ID: 23, Status: need to clean, Duration: 00:00:29
+2024-11-05 00:30:17, Table ID: 2, Status: available, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 3, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 7, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 9, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 10, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 11, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 13, Status: need to clean, Duration: 00:00:29
+2024-11-05 00:30:17, Table ID: 16, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 18, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 19, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:17, Table ID: 24, Status: need to clean, Duration: 00:00:29
+2024-11-05 00:30:17, Table ID: 26, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:19, Table ID: 1, Status: need to clean, Duration: 00:00:35
+2024-11-05 00:30:19, Table ID: 2, Status: available, Duration: 00:00:02
+2024-11-05 00:30:19, Table ID: 3, Status: available, Duration: 00:00:02
+2024-11-05 00:30:19, Table ID: 4, Status: available, Duration: 00:00:34
+2024-11-05 00:30:19, Table ID: 9, Status: available, Duration: 00:00:02
+2024-11-05 00:30:19, Table ID: 10, Status: available, Duration: 00:00:02
+2024-11-05 00:30:19, Table ID: 15, Status: available, Duration: 00:00:42
+2024-11-05 00:30:19, Table ID: 17, Status: need to clean, Duration: 00:00:32
+2024-11-05 00:30:19, Table ID: 21, Status: available, Duration: 00:00:34
+2024-11-05 00:30:19, Table ID: 22, Status: need to clean, Duration: 00:00:32
+2024-11-05 00:30:19, Table ID: 25, Status: need to clean, Duration: 00:00:03
+2024-11-05 00:30:19, Table ID: 26, Status: available, Duration: 00:00:02
+2024-11-05 00:30:19, Table ID: 27, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:23, Table ID: 2, Status: need to clean, Duration: 00:00:03
+2024-11-05 00:30:23, Table ID: 10, Status: need to clean, Duration: 00:00:03
+2024-11-05 00:30:23, Table ID: 12, Status: available, Duration: 00:00:38
+2024-11-05 00:30:23, Table ID: 15, Status: need to clean, Duration: 00:00:03
+2024-11-05 00:30:23, Table ID: 16, Status: available, Duration: 00:00:05
+2024-11-05 00:30:23, Table ID: 17, Status: available, Duration: 00:00:03
+2024-11-05 00:30:23, Table ID: 18, Status: available, Duration: 00:00:05
+2024-11-05 00:30:23, Table ID: 22, Status: available, Duration: 00:00:03
+2024-11-05 00:30:23, Table ID: 23, Status: available, Duration: 00:00:07
+2024-11-05 00:30:23, Table ID: 25, Status: available, Duration: 00:00:03
+2024-11-05 00:30:23, Table ID: 27, Status: available, Duration: 00:00:03
+2024-11-05 00:30:24, Table ID: 1, Status: available, Duration: 00:00:04
+2024-11-05 00:30:24, Table ID: 3, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:30:24, Table ID: 4, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:30:24, Table ID: 7, Status: available, Duration: 00:00:06
+2024-11-05 00:30:24, Table ID: 8, Status: available, Duration: 00:00:40
+2024-11-05 00:30:24, Table ID: 9, Status: available, Duration: 00:00:04
+2024-11-05 00:30:24, Table ID: 11, Status: available, Duration: 00:00:06
+2024-11-05 00:30:24, Table ID: 13, Status: available, Duration: 00:00:06
+2024-11-05 00:30:24, Table ID: 19, Status: available, Duration: 00:00:06
+2024-11-05 00:30:24, Table ID: 21, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:30:24, Table ID: 24, Status: available, Duration: 00:00:06
+2024-11-05 00:30:24, Table ID: 26, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:30:24, Table ID: 28, Status: available, Duration: 00:00:06
+2024-11-05 00:30:24, Table ID: 30, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:30:25, Table ID: 2, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 3, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 7, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 8, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 9, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 10, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 11, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 13, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 16, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 17, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:25, Table ID: 18, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 19, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 21, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 24, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 25, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 26, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 27, Status: available, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 28, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:25, Table ID: 30, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:26, Table ID: 12, Status: available, Duration: 00:00:02
+2024-11-05 00:30:26, Table ID: 14, Status: need to clean, Duration: 00:00:38
+2024-11-05 00:30:26, Table ID: 23, Status: available, Duration: 00:00:02
+2024-11-05 00:30:26, Table ID: 1, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:26, Table ID: 5, Status: available, Duration: 00:00:54
+2024-11-05 00:30:27, Table ID: 16, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:27, Table ID: 18, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:27, Table ID: 22, Status: need to clean, Duration: 00:00:03
+2024-11-05 00:30:27, Table ID: 20, Status: available, Duration: 00:00:48
+2024-11-05 00:30:27, Table ID: 4, Status: available, Duration: 00:00:03
+2024-11-05 00:30:28, Table ID: 1, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 7, Status: available, Duration: 00:00:03
+2024-11-05 00:30:28, Table ID: 8, Status: available, Duration: 00:00:03
+2024-11-05 00:30:28, Table ID: 10, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 12, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 13, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 14, Status: available, Duration: 00:00:02
+2024-11-05 00:30:28, Table ID: 16, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 17, Status: available, Duration: 00:00:03
+2024-11-05 00:30:28, Table ID: 18, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 19, Status: available, Duration: 00:00:03
+2024-11-05 00:30:28, Table ID: 21, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 22, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 23, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 24, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 25, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 26, Status: available, Duration: 00:00:01
+2024-11-05 00:30:28, Table ID: 27, Status: available, Duration: 00:00:02
+2024-11-05 00:30:28, Table ID: 31, Status: available, Duration: 00:00:08
+2024-11-05 00:30:28, Table ID: 32, Status: available, Duration: 00:00:02
+2024-11-05 00:30:28, Table ID: 33, Status: available, Duration: 00:00:02
+2024-11-05 00:30:28, Table ID: 35, Status: available, Duration: 00:00:01
+2024-11-05 00:30:29, Table ID: 3, Status: available, Duration: 00:00:02
+2024-11-05 00:30:29, Table ID: 28, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 7, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 10, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 11, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 13, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 16, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 17, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 18, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 20, Status: available, Duration: 00:00:03
+2024-11-05 00:30:31, Table ID: 23, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 24, Status: need to clean, Duration: 00:00:03
+2024-11-05 00:30:31, Table ID: 26, Status: ready to order, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 27, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 29, Status: available, Duration: 00:00:14
+2024-11-05 00:30:31, Table ID: 31, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 32, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 33, Status: ready to order, Duration: 00:00:03
+2024-11-05 00:30:31, Table ID: 35, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 36, Status: available, Duration: 00:00:02
+2024-11-05 00:30:31, Table ID: 37, Status: available, Duration: 00:00:02
+2024-11-05 00:30:32, Table ID: 2, Status: available, Duration: 00:00:07
+2024-11-05 00:30:32, Table ID: 8, Status: available, Duration: 00:00:03
+2024-11-05 00:30:32, Table ID: 19, Status: available, Duration: 00:00:03
+2024-11-05 00:30:32, Table ID: 21, Status: available, Duration: 00:00:03
+2024-11-05 00:30:33, Table ID: 4, Status: available, Duration: 00:00:04
+2024-11-05 00:30:33, Table ID: 6, Status: available, Duration: 00:01:01
+2024-11-05 00:30:33, Table ID: 18, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:33, Table ID: 25, Status: available, Duration: 00:00:04
+2024-11-05 00:30:33, Table ID: 30, Status: available, Duration: 00:00:07
+2024-11-05 00:30:34, Table ID: 7, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:34, Table ID: 8, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:34, Table ID: 10, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:34, Table ID: 13, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:34, Table ID: 19, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:34, Table ID: 23, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:34, Table ID: 24, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:34, Table ID: 33, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:35, Table ID: 1, Status: eating, Duration: 00:00:05
+2024-11-05 00:30:35, Table ID: 2, Status: available, Duration: 00:00:01
+2024-11-05 00:30:35, Table ID: 5, Status: available, Duration: 00:00:07
+2024-11-05 00:30:35, Table ID: 12, Status: eating, Duration: 00:00:06
+2024-11-05 00:30:35, Table ID: 14, Status: eating, Duration: 00:00:05
+2024-11-05 00:30:35, Table ID: 16, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:35, Table ID: 27, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:35, Table ID: 28, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:30:35, Table ID: 38, Status: eating, Duration: 00:00:03
+2024-11-05 00:30:36, Table ID: 6, Status: available, Duration: 00:00:01
+2024-11-05 00:30:36, Table ID: 15, Status: available, Duration: 00:00:13
+2024-11-05 00:30:36, Table ID: 34, Status: available, Duration: 00:00:09
+2024-11-05 00:30:36, Table ID: 37, Status: available, Duration: 00:00:03
+2024-11-05 00:30:36, Table ID: 39, Status: available, Duration: 00:00:03
+2024-11-05 00:30:36, Table ID: 4, Status: available, Duration: 00:00:02
+2024-11-05 00:30:36, Table ID: 8, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:36, Table ID: 11, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:36, Table ID: 12, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:36, Table ID: 14, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:36, Table ID: 16, Status: available, Duration: 00:00:01
+2024-11-05 00:30:36, Table ID: 21, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:36, Table ID: 26, Status: need to clean, Duration: 00:00:03
+2024-11-05 00:30:36, Table ID: 33, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:36, Table ID: 35, Status: available, Duration: 00:00:03
+2024-11-05 00:30:36, Table ID: 38, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 7, Status: available, Duration: 00:00:03
+2024-11-05 00:30:37, Table ID: 8, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 11, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 13, Status: available, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 16, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 18, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 21, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 24, Status: available, Duration: 00:00:03
+2024-11-05 00:30:37, Table ID: 25, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 26, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 27, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 28, Status: available, Duration: 00:00:02
+2024-11-05 00:30:37, Table ID: 30, Status: available, Duration: 00:00:03
+2024-11-05 00:30:37, Table ID: 33, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 35, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 37, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 38, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 40, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:37, Table ID: 41, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:38, Table ID: 1, Status: eating, Duration: 00:00:02
+2024-11-05 00:30:38, Table ID: 2, Status: eating, Duration: 00:00:02
+2024-11-05 00:30:38, Table ID: 3, Status: eating, Duration: 00:00:08
+2024-11-05 00:30:38, Table ID: 4, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:38, Table ID: 12, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:38, Table ID: 14, Status: eating, Duration: 00:00:01
+2024-11-05 00:30:38, Table ID: 17, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:30:38, Table ID: 20, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:30:38, Table ID: 22, Status: eating, Duration: 00:00:08
+2024-11-05 00:30:38, Table ID: 32, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:30:38, Table ID: 34, Status: available, Duration: 00:00:01
+2024-11-05 00:30:38, Table ID: 15, Status: available, Duration: 00:00:01
+2024-11-05 00:30:38, Table ID: 6, Status: available, Duration: 00:00:02
+2024-11-05 00:30:39, Table ID: 5, Status: available, Duration: 00:00:03
+2024-11-05 00:30:39, Table ID: 8, Status: available, Duration: 00:00:02
+2024-11-05 00:30:39, Table ID: 9, Status: available, Duration: 00:00:12
+2024-11-05 00:30:39, Table ID: 11, Status: available, Duration: 00:00:01
+2024-11-05 00:30:39, Table ID: 20, Status: available, Duration: 00:00:01
+2024-11-05 00:30:39, Table ID: 21, Status: available, Duration: 00:00:02
+2024-11-05 00:30:39, Table ID: 36, Status: available, Duration: 00:00:07
+2024-11-05 00:30:39, Table ID: 40, Status: available, Duration: 00:00:01
+2024-11-05 00:30:39, Table ID: 46, Status: available, Duration: 00:00:01
+2024-11-05 00:30:39, Table ID: 47, Status: available, Duration: 00:00:01
+2024-11-05 00:30:40, Table ID: 7, Status: available, Duration: 00:00:01
+2024-11-05 00:30:40, Table ID: 18, Status: available, Duration: 00:00:01
+2024-11-05 00:30:40, Table ID: 35, Status: available, Duration: 00:00:02
+2024-11-05 00:30:40, Table ID: 37, Status: available, Duration: 00:00:01
+2024-11-05 00:30:41, Table ID: 11, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:41, Table ID: 47, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:30:41, Table ID: 57, Status: available, Duration: 00:00:01
+2024-11-05 00:32:28, Table ID: 1, Status: eating, Duration: 00:00:02
+2024-11-05 00:32:28, Table ID: 2, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:32:29, Table ID: 1, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:32:29, Table ID: 4, Status: eating, Duration: 00:00:01
+2024-11-05 00:32:31, Table ID: 2, Status: available, Duration: 00:00:02
+2024-11-05 00:32:31, Table ID: 3, Status: eating, Duration: 00:00:02
+2024-11-05 00:32:32, Table ID: 6, Status: available, Duration: 00:00:01
+2024-11-05 00:32:35, Table ID: 1, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:35, Table ID: 2, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:35, Table ID: 4, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:35, Table ID: 5, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:35, Table ID: 6, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:32:35, Table ID: 7, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:35, Table ID: 10, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:32:35, Table ID: 11, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:32:35, Table ID: 13, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 2, Status: available, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 4, Status: available, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 5, Status: available, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 6, Status: available, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 7, Status: available, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 10, Status: available, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 11, Status: available, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 13, Status: available, Duration: 00:00:01
+2024-11-05 00:32:36, Table ID: 15, Status: available, Duration: 00:00:01
+2024-11-05 00:32:40, Table ID: 2, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:40, Table ID: 3, Status: need to clean, Duration: 00:00:09
+2024-11-05 00:32:40, Table ID: 5, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:40, Table ID: 11, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:40, Table ID: 12, Status: need to clean, Duration: 00:00:07
+2024-11-05 00:32:40, Table ID: 14, Status: available, Duration: 00:00:05
+2024-11-05 00:32:40, Table ID: 16, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:40, Table ID: 20, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:40, Table ID: 21, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:40, Table ID: 1, Status: available, Duration: 00:00:05
+2024-11-05 00:32:45, Table ID: 1, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:45, Table ID: 4, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:32:45, Table ID: 6, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:32:45, Table ID: 7, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:32:45, Table ID: 10, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:32:45, Table ID: 13, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:32:45, Table ID: 14, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:32:45, Table ID: 15, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:32:45, Table ID: 23, Status: need to clean, Duration: 00:00:08
+2024-11-05 00:32:47, Table ID: 27, Status: available, Duration: 00:00:02
+2024-11-05 00:32:50, Table ID: 28, Status: available, Duration: 00:00:05
+2024-11-05 00:32:52, Table ID: 29, Status: available, Duration: 00:00:06
+2024-11-05 00:32:53, Table ID: 28, Status: available, Duration: 00:00:02
+2024-11-05 00:32:54, Table ID: 29, Status: ready to order, Duration: 00:00:02
+2024-11-05 00:32:59, Table ID: 27, Status: available, Duration: 00:00:11
+2024-11-05 00:32:59, Table ID: 28, Status: available, Duration: 00:00:05
+2024-11-05 00:32:59, Table ID: 29, Status: ready to order, Duration: 00:00:04
+2024-11-05 00:33:01, Table ID: 28, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:33:04, Table ID: 27, Status: available, Duration: 00:00:04
+2024-11-05 00:33:06, Table ID: 28, Status: ready to order, Duration: 00:00:04
+2024-11-05 00:33:08, Table ID: 33, Status: available, Duration: 00:00:01
+2024-11-05 00:33:09, Table ID: 32, Status: available, Duration: 00:00:02
+2024-11-05 00:33:11, Table ID: 32, Status: available, Duration: 00:00:01
+2024-11-05 00:33:12, Table ID: 28, Status: ready to order, Duration: 00:00:04
+2024-11-05 00:33:15, Table ID: 28, Status: ready to order, Duration: 00:00:02
+2024-11-05 00:33:16, Table ID: 32, Status: ready to order, Duration: 00:00:04
+2024-11-05 00:33:34, Table ID: 1, Status: available, Duration: 00:00:49
+2024-11-05 00:33:34, Table ID: 2, Status: available, Duration: 00:00:53
+2024-11-05 00:33:34, Table ID: 4, Status: available, Duration: 00:00:49
+2024-11-05 00:33:34, Table ID: 5, Status: available, Duration: 00:00:53
+2024-11-05 00:33:34, Table ID: 6, Status: available, Duration: 00:00:49
+2024-11-05 00:33:34, Table ID: 15, Status: available, Duration: 00:00:49
+2024-11-05 00:33:34, Table ID: 16, Status: available, Duration: 00:00:53
+2024-11-05 00:33:34, Table ID: 18, Status: available, Duration: 00:00:59
+2024-11-05 00:33:34, Table ID: 32, Status: ready to order, Duration: 00:00:16
+2024-11-05 00:33:34, Table ID: 33, Status: ready to order, Duration: 00:00:26
+2024-11-05 00:33:36, Table ID: 2, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:36, Table ID: 4, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:36, Table ID: 5, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:36, Table ID: 6, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:36, Table ID: 10, Status: available, Duration: 00:00:51
+2024-11-05 00:33:36, Table ID: 15, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:36, Table ID: 16, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:36, Table ID: 18, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:36, Table ID: 35, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:38, Table ID: 2, Status: available, Duration: 00:00:01
+2024-11-05 00:33:38, Table ID: 4, Status: available, Duration: 00:00:01
+2024-11-05 00:33:38, Table ID: 5, Status: eating, Duration: 00:00:01
+2024-11-05 00:33:38, Table ID: 10, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:38, Table ID: 15, Status: available, Duration: 00:00:01
+2024-11-05 00:33:38, Table ID: 16, Status: eating, Duration: 00:00:01
+2024-11-05 00:33:38, Table ID: 35, Status: eating, Duration: 00:00:01
+2024-11-05 00:33:41, Table ID: 2, Status: need to clean, Duration: 00:00:02
+2024-11-05 00:33:41, Table ID: 3, Status: available, Duration: 00:01:00
+2024-11-05 00:33:41, Table ID: 6, Status: available, Duration: 00:00:04
+2024-11-05 00:33:41, Table ID: 10, Status: available, Duration: 00:00:02
+2024-11-05 00:33:41, Table ID: 12, Status: available, Duration: 00:01:00
+2024-11-05 00:33:41, Table ID: 13, Status: available, Duration: 00:00:56
+2024-11-05 00:33:41, Table ID: 18, Status: available, Duration: 00:00:04
+2024-11-05 00:33:41, Table ID: 20, Status: available, Duration: 00:01:00
+2024-11-05 00:33:41, Table ID: 21, Status: available, Duration: 00:01:00
+2024-11-05 00:33:41, Table ID: 36, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:33:43, Table ID: 2, Status: available, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 3, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 4, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:33:43, Table ID: 6, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 10, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 12, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 13, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 15, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:33:43, Table ID: 18, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 20, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 21, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:43, Table ID: 37, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:33:43, Table ID: 39, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:47, Table ID: 1, Status: need to clean, Duration: 00:00:13
+2024-11-05 00:33:47, Table ID: 2, Status: available, Duration: 00:00:04
+2024-11-05 00:33:47, Table ID: 4, Status: available, Duration: 00:00:04
+2024-11-05 00:33:47, Table ID: 5, Status: need to clean, Duration: 00:00:09
+2024-11-05 00:33:47, Table ID: 6, Status: available, Duration: 00:00:04
+2024-11-05 00:33:47, Table ID: 7, Status: available, Duration: 00:01:02
+2024-11-05 00:33:47, Table ID: 12, Status: available, Duration: 00:00:04
+2024-11-05 00:33:47, Table ID: 13, Status: available, Duration: 00:00:04
+2024-11-05 00:33:47, Table ID: 17, Status: available, Duration: 00:01:12
+2024-11-05 00:33:47, Table ID: 23, Status: available, Duration: 00:01:02
+2024-11-05 00:33:47, Table ID: 35, Status: need to clean, Duration: 00:00:09
+2024-11-05 00:33:47, Table ID: 38, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:33:47, Table ID: 39, Status: available, Duration: 00:00:04
+2024-11-05 00:33:47, Table ID: 40, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:33:49, Table ID: 2, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:49, Table ID: 5, Status: available, Duration: 00:00:01
+2024-11-05 00:33:49, Table ID: 13, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:49, Table ID: 14, Status: available, Duration: 00:01:04
+2024-11-05 00:33:49, Table ID: 17, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:33:49, Table ID: 18, Status: available, Duration: 00:00:06
+2024-11-05 00:33:49, Table ID: 20, Status: available, Duration: 00:00:06
+2024-11-05 00:33:49, Table ID: 35, Status: available, Duration: 00:00:01
+2024-11-05 00:33:49, Table ID: 36, Status: available, Duration: 00:00:07
+2024-11-05 00:33:49, Table ID: 38, Status: available, Duration: 00:00:01
+2024-11-05 00:33:49, Table ID: 40, Status: available, Duration: 00:00:01
+2024-11-05 00:33:54, Table ID: 2, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 4, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:33:54, Table ID: 5, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 6, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:33:54, Table ID: 7, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:33:54, Table ID: 14, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 16, Status: need to clean, Duration: 00:00:16
+2024-11-05 00:33:54, Table ID: 18, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 20, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 23, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:33:54, Table ID: 27, Status: available, Duration: 00:00:47
+2024-11-05 00:33:54, Table ID: 29, Status: available, Duration: 00:00:54
+2024-11-05 00:33:54, Table ID: 32, Status: available, Duration: 00:00:20
+2024-11-05 00:33:54, Table ID: 33, Status: available, Duration: 00:00:20
+2024-11-05 00:33:54, Table ID: 35, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 36, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 38, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 39, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:33:54, Table ID: 40, Status: need to clean, Duration: 00:00:05
+2024-11-05 00:33:54, Table ID: 43, Status: need to clean, Duration: 00:00:06
+2024-11-05 00:33:55, Table ID: 27, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:33:56, Table ID: 29, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:33:57, Table ID: 27, Status: available, Duration: 00:00:01
+2024-11-05 00:33:59, Table ID: 29, Status: available, Duration: 00:00:03
+2024-11-05 00:34:00, Table ID: 28, Status: available, Duration: 00:00:44
+2024-11-05 00:34:01, Table ID: 31, Status: available, Duration: 00:01:09
+2024-11-05 00:35:55, Table ID: 5, Status: available, Duration: 00:00:05
+2024-11-05 00:36:06, Table ID: 4, Status: available, Duration: 00:00:17
+2024-11-05 00:36:08, Table ID: 4, Status: available, Duration: 00:00:01
+2024-11-05 00:36:09, Table ID: 5, Status: ready to order, Duration: 00:00:13
+2024-11-05 00:36:10, Table ID: 10, Status: available, Duration: 00:00:01
+2024-11-05 00:36:11, Table ID: 9, Status: available, Duration: 00:00:02
+2024-11-05 00:36:13, Table ID: 9, Status: available, Duration: 00:00:01
+2024-11-05 00:54:36, Table ID: 6, Status: available, Duration: 00:00:04
+2024-11-05 00:54:37, Table ID: 5, Status: available, Duration: 00:00:05
+2024-11-05 00:54:37, Table ID: 6, Status: ready to order, Duration: 00:00:01
+2024-11-05 00:55:04, Table ID: 6, Status: ready to order, Duration: 00:00:26
+2024-11-05 00:55:09, Table ID: 9, Status: eating, Duration: 00:00:04
+2024-11-05 00:55:09, Table ID: 10, Status: need to clean, Duration: 00:00:04
+2024-11-05 00:55:13, Table ID: 9, Status: ready to order, Duration: 00:00:04
+2024-11-05 00:55:13, Table ID: 12, Status: eating, Duration: 00:00:04
+2024-11-05 00:55:15, Table ID: 9, Status: need to clean, Duration: 00:00:01
+2024-11-05 00:55:15, Table ID: 12, Status: available, Duration: 00:00:01
+2024-11-05 00:55:20, Table ID: 9, Status: eating, Duration: 00:00:04
+2024-11-05 00:55:20, Table ID: 10, Status: available, Duration: 00:00:10
+2024-11-05 00:55:20, Table ID: 11, Status: eating, Duration: 00:00:10
+2024-11-05 00:55:20, Table ID: 14, Status: need to clean, Duration: 00:00:04
