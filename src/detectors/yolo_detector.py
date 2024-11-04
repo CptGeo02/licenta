@@ -8,7 +8,7 @@ from src.managers.table_manager import TableManager
 from src.utils.time_utils import format_time
 
 class YoloDetector:
-    def __init__(self, model_path="models/yolov9e.pt"):  # Path to the YOLOv8 model
+    def __init__(self, model_path="models/yolov8n.pt"):  # Path to the YOLOv8 model
         self.model = YOLO(model_path).to(device)
         print(self.model.names)
         self.table_manager = TableManager()  # Instanțiază managerul de mese

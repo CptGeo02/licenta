@@ -1,10 +1,9 @@
-# src/web/main_web.py
-
 from flask import Flask, render_template, Response
 from src.detectors.yolo_detector import YoloDetector
 import threading
 import cv2
 import os
+import time
 
 app = Flask(
     __name__,
@@ -13,12 +12,13 @@ app = Flask(
 )
 detector = YoloDetector()
 
-# Variabile globale pentru flux video
+# Global variables for video capture
 video_capture = None
 current_frame = None
+frame_lock = threading.Lock()
 
 def resize_frame_for_yolo(frame):
-    """Redimensionează imaginea/cadrul la o dimensiune divizibilă cu 32."""
+    """Resize the image/frame to a size divisible by 32."""
     h, w = frame.shape[:2]
     new_w = (w // 32) * 32
     new_h = (h // 32) * 32
@@ -27,23 +27,37 @@ def resize_frame_for_yolo(frame):
 def generate_frame():
     global current_frame
     while True:
-        if current_frame is not None:
-            # Redimensionează cadrul pentru a fi compatibil cu YOLO
-            frame = resize_frame_for_yolo(current_frame)
+        with frame_lock:
+            if current_frame is not None:
+                # Resize the frame for YOLO compatibility
+                frame = resize_frame_for_yolo(current_frame)
+                
+                # Run YOLO detection and check for issues
+                try:
+                    detections = detector.detect(frame)
+                    if detections is None:
+                        print("Warning: No detections returned by YOLO")
+                except Exception as e:
+                    print(f"Error in detection: {e}")
+                    detections = []
 
-            # Rulează detecția YOLO și desenează detecțiile pe cadru
-            detections = detector.detect(frame)
-            frame = detector.draw_detections(frame, detections)
-
-            # Codifică cadrul pentru a fi transmis
-            ret, buffer = cv2.imencode('.jpg', frame)
-            if ret:
-                frame_bytes = buffer.tobytes()
+                # Draw detections on the frame (comment this temporarily if needed)
+                try:
+                    frame = detector.draw_detections(frame, detections)
+                except Exception as e:
+                    print(f"Error in drawing detections: {e}")
+                
+                # Encode the frame with detections to be transmitted
+                ret, buffer = cv2.imencode('.jpg', frame)
+                if ret:
+                    frame_bytes = buffer.tobytes()
+                    yield (b'--frame\r\n'
+                           b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
+            else:
                 yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
-        else:
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + b'\r\n\r\n')
+                       b'Content-Type: image/jpeg\r\n\r\n' + b'\r\n\r\n')
+        
+        time.sleep(0.01) 
 
 @app.route('/')
 def index():
@@ -56,7 +70,10 @@ def video_feed():
 @app.route('/start_camera')
 def start_camera():
     global video_capture, current_frame
-    video_capture = cv2.VideoCapture(0)  # Folosește camera implicită
+    video_capture = cv2.VideoCapture(0)  # Use the default camera
+
+    if not video_capture.isOpened():
+        return "Camera not available", 500  # Error if camera is not accessible
 
     def update_video_stream():
         global current_frame
@@ -64,7 +81,8 @@ def start_camera():
             ret, frame = video_capture.read()
             if not ret:
                 break
-            current_frame = frame  # Salvează cadrul pentru a fi utilizat în generate_frame
+            with frame_lock:
+                current_frame = frame  # Save the frame for use in generate_frame
         video_capture.release()
 
     threading.Thread(target=update_video_stream, daemon=True).start()
