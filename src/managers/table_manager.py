@@ -10,6 +10,11 @@ class TableManager:
         self.table_counter = 0  # Contor pentru ID-urile meselor
         self.tables = {}  # Aici stocăm obiectele TableStatus
 
+    def reset_tables(self):
+        self.table_ids = {}
+        self.table_counter = 0
+        self.tables = {}
+        
     def assign_table_id(self, table_id, box):
         if table_id is None:
             self.table_counter += 1

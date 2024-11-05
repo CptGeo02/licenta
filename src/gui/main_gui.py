@@ -99,18 +99,20 @@ class MainApp:
             self.current_frame = cv2.imread(img_path)
             if self.current_frame is not None:
                 display_frame(self, self.current_frame)
-                
+
     def detect_tables(self):
         """
         Activează detectarea doar a meselor fără ID.
         """
         self.detector.detecting_tables_only = True
+        display_frame(self, self.current_frame)
 
     def set_tables(self):
         """
         Alocă ID-uri meselor detectate și inițializează detectarea completă.
         """
-        self.current_frame = self.detector.set_table_ids(self.current_frame)
+        self.detector.done_setting_tables = True
+        self.current_frame = self.detector.set_table_ids()
         display_frame(self, self.current_frame)  # Actualizează GUI cu frame-ul procesat
 
     def update_status_label(self):
