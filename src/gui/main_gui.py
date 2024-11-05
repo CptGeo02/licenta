@@ -41,6 +41,13 @@ class MainApp:
         self.auto_detect_switch = Checkbutton(self.button_frame, text="Auto-Detect", variable=self.auto_detect_enabled, onvalue=True, offvalue=False)
         self.auto_detect_switch.pack(side=tk.LEFT, padx=5, pady=5)
 
+        # Adaugă butoanele pentru detectarea și setarea meselor
+        self.detect_tables_btn = Button(self.button_frame, text="Detect Tables", command=self.detect_tables)
+        self.detect_tables_btn.pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.set_tables_btn = Button(self.button_frame, text="Set Tables", command=self.set_tables)
+        self.set_tables_btn.pack(side=tk.LEFT, padx=5, pady=5)
+
         self.canvas = Canvas(master, width=640, height=480)
         self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
@@ -92,6 +99,19 @@ class MainApp:
             self.current_frame = cv2.imread(img_path)
             if self.current_frame is not None:
                 display_frame(self, self.current_frame)
+                
+    def detect_tables(self):
+        """
+        Activează detectarea doar a meselor fără ID.
+        """
+        self.detector.detecting_tables_only = True
+
+    def set_tables(self):
+        """
+        Alocă ID-uri meselor detectate și inițializează detectarea completă.
+        """
+        self.current_frame = self.detector.set_table_ids(self.current_frame)
+        display_frame(self, self.current_frame)  # Actualizează GUI cu frame-ul procesat
 
     def update_status_label(self):
         """

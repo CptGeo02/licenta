@@ -2,6 +2,8 @@
 
 import os
 import pandas as pd
+import torch
+import cv2
 from src.libs import *
 from src.utils.detection_utils import filter_detections
 from src.managers.table_manager import TableManager
@@ -12,7 +14,9 @@ class YoloDetector:
         self.model = YOLO(model_path).to(device)
         print(self.model.names)
         self.table_manager = TableManager()  # Instanțiază managerul de mese
-        
+        self.detecting_tables_only = False
+        self.tables_detected = []
+
         # Aici definim clasele obiectelor speciale
         self.special_object_classes = {
             39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife',
@@ -35,9 +39,60 @@ class YoloDetector:
         df = pd.DataFrame(columns=["ID", "Status", "Duration"])
         df.to_excel(self.output_path, index=False)
 
+    def detect_tables_only(self, frame):
+        frame_normalized = (frame / 255.0).astype("float32")  # Convertește la float32 pentru Torch
+        frame_tensor = torch.from_numpy(frame_normalized).to(device).permute(2, 0, 1).unsqueeze(0)
+
+        results = self.model(frame_tensor)
+
+        if len(results) == 0 or len(results[0].boxes) == 0:
+            return frame  # Returnează cadrul original dacă nu sunt detectări
+
+        detections = []
+        for box in results[0].boxes:
+            x1, y1, x2, y2 = box.xyxy[0]
+            cls = int(box.cls[0])
+            conf = box.conf[0]
+
+            detections.append({
+                'box': (x1.item(), y1.item(), x2.item(), y2.item()),
+                'class': cls,
+                'confidence': conf.item()
+            })
+
+        self.tables_detected = [det for det in detections if det['class'] == 60]
+        if self.tables_detected:
+            self.tables_detected = filter_detections(self.tables_detected)
+            for table in self.tables_detected:
+                box = table['box']
+                x1, y1, x2, y2 = box
+                color = (0, 255, 0)
+                label = "table"
+                frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+                frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+        
+        return frame
+    
+    def set_table_ids(self, frame):
+        """
+        Alocă ID-uri meselor deja detectate și memorează-le în `table_manager`.
+        """
+        # Folosește mesele detectate în `detect_tables_only`
+        for table in self.tables_detected:
+            box = table['box']
+            table_id = self.table_manager.assign_table_id(box)
+            self.table_manager.add_table(table_id, box)
+            # Desenează ID-ul mesei
+            cv2.putText(frame, f"Table {table_id}", (int(box[0]), int(box[1]) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
+        
+        # Golim lista după ce am alocat ID-uri și activăm detecția completă
+        self.tables_detected = []
+        self.detecting_tables_only = False
+        return frame
+    
     def detect(self, frame):
-        frame = frame / 255.0
-        frame_tensor = torch.from_numpy(frame).to(device).permute(2, 0, 1).unsqueeze(0).float()
+        frame_normalized = (frame / 255.0).astype("float32")  # Normalizează cadrul doar pentru model
+        frame_tensor = torch.from_numpy(frame_normalized).to(device).permute(2, 0, 1).unsqueeze(0)
 
         results = self.model(frame_tensor)
 
@@ -60,6 +115,9 @@ class YoloDetector:
         return filtered_detections
 
     def draw_detections(self, frame, detections, red_threshold=0.1, blue_threshold=0.1):
+        if self.detecting_tables_only:
+            return self.detect_tables_only(frame)
+        
         if detections:
             for det in detections:
                 box = det['box']
@@ -73,7 +131,7 @@ class YoloDetector:
                     self.table_manager.assign_table_id(table_id, box)
                     if table_id is None:
                         table_id = self.table_manager.table_counter
-                        # Verificăm și actualizăm statusul mesei
+                    # Verificăm și actualizăm statusul mesei
                     self.table_manager.check_and_update_status(detections)
                     status, duration = self.table_manager.get_table_info(table_id)
                     formatted_duration = format_time(duration)  # Formatează durata
@@ -92,10 +150,10 @@ class YoloDetector:
         return frame
     
     def get_tables_status_report(self):
-            """
-            Apelează funcția din TableManager pentru a obține statusul tuturor meselor și returnează șirul rezultat.
-            """
-            return self.table_manager.get_all_tables_status()
+        """
+        Apelează funcția din TableManager pentru a obține statusul tuturor meselor și returnează șirul rezultat.
+        """
+        return self.table_manager.get_all_tables_status()
     
     def save_label_to_excel(self, object_id, status, duration):
         # Încarcă fișierul Excel existent
