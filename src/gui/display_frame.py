@@ -17,14 +17,15 @@ def display_frame(app, frame):
         frame = resize_frame_for_yolo(frame)
 
         # Apelează detectarea YOLO doar dacă switch-ul de auto-detect este activat
-        if app.detector.detecting_tables_only:
-            frame = app.detector.draw_only_tables(frame, app.detector.detect(frame))
-        if app.detector.done_setting_tables:
-            frame = app.detector.draw_just_people_and_food(frame, app.detector.detect(frame))
-            app.update_status_label()
         if app.auto_detect_enabled.get():
             frame = app.detector.draw_detections(frame, app.detector.detect(frame))
             app.update_status_label()
+        elif app.detector.detecting_tables_only:
+            frame = app.detector.draw_only_tables(frame, app.detector.detect(frame))
+        elif app.detector.done_setting_tables:
+            frame = app.detector.draw_just_people_and_food(frame, app.detector.detect(frame))
+            app.update_status_label()
+     
         # Convert BGR (OpenCV) to RGB
         frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(frame_rgb)

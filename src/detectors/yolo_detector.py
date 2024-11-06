@@ -78,13 +78,16 @@ class YoloDetector:
         return frame
     
     def set_table_ids(self):
+        self.reset_table_manager()
         if self.tables_detected:
-            self.table_manager.reset_tables()
             for table in self.tables_detected:
                 box = table['box']
                 self.table_manager.assign_table_id(None, box)      
             self.detecting_tables_only = False
- 
+
+    def reset_table_manager(self):
+        self.table_manager.reset_tables()
+        
     def draw_just_people_and_food(self, frame, detections):
             if detections:
                 for det in detections:
