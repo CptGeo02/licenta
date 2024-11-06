@@ -12,12 +12,13 @@ from src.utils.time_utils import format_time
 class YoloDetector:
     def __init__(self, model_path="models/yolov9e.pt"):  # Path to the YOLOv8 model
         self.model = YOLO(model_path).to(device)
-        print(self.model.names)
         self.table_manager = TableManager()  # Instanțiază managerul de mese
         self.detecting_tables_only = False
         self.done_setting_tables = False
         self.tables_detected = []
-
+        print("Yolo running on", device)
+        #print(self.model.names)
+        
         # Aici definim clasele obiectelor speciale
         self.special_object_classes = {
             39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife',

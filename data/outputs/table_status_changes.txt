@@ -1378,3 +1378,13 @@
 2024-11-06 21:23:01, Table ID: 1, Status: availabe, Duration: 00:00:04
 2024-11-06 21:27:17, Table ID: 1, Status: availabe, Duration: 00:00:01
 2024-11-06 21:27:17, Table ID: 2, Status: availabe, Duration: 00:00:01
+2024-11-06 21:57:11, Table ID: 5, Status: available, Duration: 00:00:01
+2024-11-06 21:57:27, Table ID: 6, Status: ready to order, Duration: 00:00:02
+2024-11-06 21:57:29, Table ID: 6, Status: available, Duration: 00:00:01
+2024-11-06 21:57:33, Table ID: 6, Status: ready to order, Duration: 00:00:03
+2024-11-06 21:57:52, Table ID: 1, Status: availabe, Duration: 00:00:03
+2024-11-06 21:57:52, Table ID: 2, Status: availabe, Duration: 00:00:03
+2024-11-06 21:57:54, Table ID: 1, Status: ready to order, Duration: 00:00:02
+2024-11-06 21:57:56, Table ID: 1, Status: need to clean, Duration: 00:00:01
+2024-11-06 21:57:57, Table ID: 1, Status: eating, Duration: 00:00:01
+2024-11-06 21:57:57, Table ID: 2, Status: available, Duration: 00:00:05
