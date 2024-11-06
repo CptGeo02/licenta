@@ -1,7 +1,7 @@
 from src.libs import *
 from src.gui.run_camera import run_camera
 from src.gui.run_video import run_video
-from src.gui.display_frame import display_frame  # Modificat
+from src.gui.display_frame import display_frame
 from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
 
@@ -9,7 +9,7 @@ class MainApp:
     def __init__(self, master):
         self.master = master
         self.master.title("AI Restaurant Monitoring System")
-        self.master.geometry("800x600")
+        self.master.geometry("1200x1000")
 
         # Inițializează YOLO Detector
         self.detector = YoloDetector()
@@ -34,6 +34,9 @@ class MainApp:
 
         self.next_btn = Button(self.button_frame, text="Next", command=self.next_image, state="disabled")
         self.next_btn.pack(side=tk.LEFT, padx=5, pady=5)
+        
+        self.detect_all_btn = Button(self.button_frame, text="Detect all", command=self.detect_all, state="disabled")
+        self.detect_all_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.auto_detect_enabled = BooleanVar(value=False)
         self.auto_detect_switch = Checkbutton(self.button_frame, text="Auto-Detect", variable=self.auto_detect_enabled, onvalue=True, offvalue=False, state="disabled")
@@ -76,12 +79,21 @@ class MainApp:
         if mode_selected:
             self.auto_detect_switch.config(state="normal")
             self.detect_tables_btn.config(state="normal")
+            self.detect_all_btn.config(state="normal")
 
         # Activați/dezactivați "Detect Tables" pe baza modului și opțiunii "Auto-Detect"
         if mode_selected and self.auto_detect_enabled.get():
             self.detect_tables_btn.config(state="disabled")
             self.set_tables_btn.config(state="disabled")
             self.reset_tables_btn.config(state="disabled")
+            self.detect_all_btn.config(state="disabled")
+
+        if self.selected_mode == "show_images":
+            self.auto_detect_switch.config(state="disabled")
+            self.detect_tables_btn.config(state="disabled")
+            self.set_tables_btn.config(state="disabled")
+            self.reset_tables_btn.config(state="disabled")
+
 
         # Activați butoanele pentru "Previous" și "Next" doar în modul 'show_images'
         self.previous_btn.config(state="normal" if self.selected_mode == 'show_images' else "disabled")
@@ -126,12 +138,23 @@ class MainApp:
             if self.current_frame is not None:
                 display_frame(self, self.current_frame)
 
+    def detect_all(self):
+        """
+        Activează detectarea doar a meselor fără ID.
+        """
+        self.detector.detecting_tables_only = False
+        self.detector.done_setting_tables = False
+        self.detector.detecting_all = True
+        self.set_tables_btn.config(state="disabled")
+        self.reset_tables_btn.config(state="disabled")
+
     def detect_tables(self):
         """
         Activează detectarea doar a meselor fără ID.
         """
         self.detector.detecting_tables_only = True
         self.detector.done_setting_tables = False
+        self.detector.detecting_all = False
         self.set_tables_btn.config(state="normal")
         self.reset_tables_btn.config(state="disabled")
 
@@ -141,6 +164,7 @@ class MainApp:
         """
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = True
+        self.detector.detecting_all = False
         self.current_frame = self.detector.set_table_ids()
         self.set_tables_btn.config(state="disabled")
         self.reset_tables_btn.config(state="normal")
@@ -148,6 +172,7 @@ class MainApp:
     def reset_tables(self):
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = False
+        self.detector.detecting_all = False
         self.detector.reset_table_manager()
         self.set_tables_btn.config(state="disabled")
         self.reset_tables_btn.config(state="disabled")

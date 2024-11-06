@@ -15,10 +15,11 @@ class YoloDetector:
         self.table_manager = TableManager()  # Instanțiază managerul de mese
         self.detecting_tables_only = False
         self.done_setting_tables = False
+        self.detecting_all = False
         self.tables_detected = []
         print("Yolo running on", device)
         #print(self.model.names)
-        
+
         # Aici definim clasele obiectelor speciale
         self.special_object_classes = {
             39: 'bottle', 40: 'wine glass', 41: 'cup', 42: 'fork', 43: 'knife',
@@ -74,7 +75,7 @@ class YoloDetector:
                 color = (0, 255, 0)
                 label = "table"
                 frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
-                frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
         
         return frame
     
@@ -89,7 +90,7 @@ class YoloDetector:
     def reset_table_manager(self):
         self.table_manager.reset_tables()
         
-    def draw_just_people_and_food(self, frame, detections):
+    def draw_detection_with_table_id(self, frame, detections):
             if detections:
                 for det in detections:
                     box = det['box']
@@ -105,7 +106,7 @@ class YoloDetector:
                         continue
                     
                     frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
-                    frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                    frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
             
             if self.tables_detected:
                 for table in self.tables_detected:
@@ -123,10 +124,10 @@ class YoloDetector:
                     label = f"TABLE{table_id} {status} for {formatted_duration}"
                     color = (0, 255, 0)
                     frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
-                    frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                    frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
             return frame
     
-    def draw_detections(self, frame, detections):
+    def draw_auto_detections(self, frame, detections):
         if detections:
             for det in detections:
                 box = det['box']
@@ -154,10 +155,59 @@ class YoloDetector:
                     continue
                 
                 frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
-                frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
 
         return frame
     
+    def draw_detections(self, frame, detections):
+        if detections:
+            for det in detections:
+                box = det['box']
+                class_id = det['class']
+                x1, y1, x2, y2 = box
+                if class_id == 0:  # Persoană
+                    label = f"people: {det['confidence']*100:.2f}%"
+                    color = (33, 150, 243)   # Albastru modern
+                elif class_id == 60:  # Masă
+                    label = f"table: {det['confidence']*100:.2f}%"
+                    color = (76, 175, 80) # Verde modern
+                elif class_id in self.special_object_classes:
+                    label = f"{self.special_object_classes[class_id]}: {det['confidence']*100:.2f}%"
+                    color = (255, 76, 76)   # Roșu modern
+                else:
+                    continue
+
+                frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+                #frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
+                frame = self.draw_advanced_label(frame, y1, x1, label, color)
+
+        return frame
+    
+    def draw_advanced_label(self, frame, y1, x1, label, color):
+        # Calculăm dimensiunile label-ului
+        font = cv2.FONT_HERSHEY_PLAIN
+        font_scale = 1
+        font_thickness = 1
+        text_size = cv2.getTextSize(label, font, font_scale, font_thickness)[0]
+        
+        # Calculăm poziția label-ului
+        text_x = int(x1)  # Plasăm textul de la colțul dreapta al dreptunghiului
+        text_y = int(y1) - 5  # Ajustăm poziția pentru text mai sus
+
+        # Desenăm fundalul label-ului cu culoare solidă, începând de la colțul drept al dreptunghiului
+        label_padding = 5  # Spațiu mic între text și marginea fundalului
+        cv2.rectangle(frame, 
+                    (text_x, text_y - text_size[1] - label_padding),  # Colțul stâng al fundalului
+                    (text_x + text_size[0] + label_padding, text_y + label_padding),  # Colțul drept al fundalului
+                    color, -1)  # Fundal colorat
+
+        # Desenăm textul alb pe fundalul colorat
+        frame = cv2.putText(frame, label, (text_x, text_y), font, font_scale, (255, 255, 255), font_thickness, cv2.LINE_AA)
+
+        return frame
+
+
+
     def get_tables_status_report(self):
         """
         Apelează funcția din TableManager pentru a obține statusul tuturor meselor și returnează șirul rezultat.

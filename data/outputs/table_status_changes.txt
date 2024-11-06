@@ -1388,3 +1388,6 @@
 2024-11-06 21:57:56, Table ID: 1, Status: need to clean, Duration: 00:00:01
 2024-11-06 21:57:57, Table ID: 1, Status: eating, Duration: 00:00:01
 2024-11-06 21:57:57, Table ID: 2, Status: available, Duration: 00:00:05
+2024-11-06 23:55:37, Table ID: 3, Status: available, Duration: 00:00:01
+2024-11-06 23:55:40, Table ID: 3, Status: available, Duration: 00:00:02
+2024-11-06 23:58:42, Table ID: 5, Status: available, Duration: 00:00:14
