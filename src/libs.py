@@ -17,6 +17,7 @@ import pandas as pd
 from datetime import timedelta
 from openpyxl import Workbook
 from tkinter import Checkbutton, BooleanVar  # Adăugare import pentru switch
-
+import psutil
+import platform
 # Check if CUDA is available and set the device to GPU if so
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

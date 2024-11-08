@@ -4,19 +4,32 @@ from src.gui.run_video import run_video
 from src.gui.display_frame import display_frame
 from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
-
+import os
+import subprocess
 class MainApp:
     def __init__(self, master):
         self.master = master
         self.master.title("AI Restaurant Monitoring System")
         self.master.geometry("1200x1000")
 
-        # Inițializează YOLO Detector
+        self.prev_time = time.time()
+        self.last_time = time.time()  # Momentul în care a fost actualizat ultima dată
+        # Inițializează YOLO Detector cu un model implicit
+        self.current_model = "Select model"
         self.detector = YoloDetector()
 
         # Creează un frame pentru butoane
         self.button_frame = Frame(master)
         self.button_frame.pack(side=tk.TOP, fill=tk.X)
+
+        # Selector de model YOLO
+        self.model_var = StringVar(value=self.current_model)
+        self.model_selector = OptionMenu(
+            self.button_frame, 
+            self.model_var, 
+            *self.get_model_files(), 
+            command=self.change_model
+        )
 
         # Butoane principale de moduri
         self.start_camera_btn = Button(self.button_frame, text="Start Live Camera", command=self.start_camera)
@@ -27,6 +40,9 @@ class MainApp:
 
         self.images_btn = Button(self.button_frame, text="Show Images", command=self.show_images)
         self.images_btn.pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.model_selector.config(width=15)
+        self.model_selector.pack(side=tk.LEFT, padx=5, pady=5)
 
         # Butoane de navigare, detectare și resetare mese
         self.previous_btn = Button(self.button_frame, text="Previous", command=self.previous_image, state="disabled")
@@ -50,7 +66,30 @@ class MainApp:
 
         self.reset_tables_btn = Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
         self.reset_tables_btn.pack(side=tk.LEFT, padx=5, pady=5)
+        
+        # Frame pentru afișarea informațiilor de performanță
+        self.performance_frame = tk.Frame(master)
+        self.performance_frame.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Etichete pentru afișarea performanței
+        self.fps_label = tk.Label(self.performance_frame, text="FPS: Calculating...", font=("Arial", 12))
+        self.fps_label.pack(pady=5)
 
+        self.cpu_label = tk.Label(self.performance_frame, text="CPU Usage: Calculating...", font=("Arial", 12))
+        self.cpu_label.pack(pady=5)
+
+        self.gpu_label = tk.Label(self.performance_frame, text="GPU Usage: Not Available", font=("Arial", 12))
+        self.gpu_label.pack(pady=5)
+
+        self.ram_label = tk.Label(self.performance_frame, text="RAM Usage: Calculating...", font=("Arial", 12))
+        self.ram_label.pack(pady=5)
+
+        # Atribute pentru calculul FPS
+        self.prev_time = time.time()
+        self.fps = 0
+
+        # Actualizare periodică a informațiilor de performanță
+        self.update_performance()
         # Alți parametri de inițializare
         self.canvas = Canvas(master, width=640, height=480)
         self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -73,15 +112,63 @@ class MainApp:
         self.selected_mode = None  # Stochează modurile 'camera', 'video' sau 'show_images'
         self.update_button_states()
 
+    def update_performance(self):
+        # Exemplu de calcul FPS
+        # Afișare FPS
+        self.fps_label.config(text=f"FPS: {self.fps:.2f}")
+
+        # Utilizare CPU și RAM folosind psutil
+        cpu_usage = psutil.cpu_percent()
+        ram_usage = psutil.virtual_memory().percent
+        self.cpu_label.config(text=f"CPU Usage: {cpu_usage}%")
+        self.ram_label.config(text=f"RAM Usage: {ram_usage}%")
+
+        # Verificare și afișare utilizare GPU dacă este disponibil
+        if torch.cuda.is_available():
+            gpu_usage, gpu_memory_used, gpu_memory_free = self.get_gpu_usage()
+            if gpu_usage is not None:
+                self.gpu_label.config(
+                    text=f"GPU Usage: {gpu_usage}% (Used: {gpu_memory_used}/{gpu_memory_free} MB)"
+                )
+
+        # Programare actualizare periodică a informațiilor (la fiecare 1 secundă)
+        self.master.after(1000, self.update_performance)
+
+    def get_gpu_usage(self):
+        try:
+            # Apelăm nvidia-smi pentru a obține date despre GPU
+            result = subprocess.run(
+                ['nvidia-smi', '--query-gpu=memory.used,memory.free,utilization.gpu', '--format=csv,noheader,nounits'],
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+            )
+            # Extragem valorile din rezultatul comenzii
+            output = result.stdout.strip().split('\n')[0].split(', ')
+            memory_used = int(output[0])  # MB
+            memory_free = int(output[1])  # MB
+            gpu_usage = int(output[2])  # procentaj utilizare GPU
+            return gpu_usage, memory_used, memory_free
+        except Exception as e:
+            print(f"Error getting GPU usage: {e}")
+            return None, None, None
+
+    def get_model_files(self):
+        """Returnează o listă de fișiere YOLO disponibile în folderul models."""
+        model_files = [f for f in os.listdir("models") if f.endswith(".pt")]
+        return model_files
+
+    def change_model(self, model_name):
+        """Schimbă modelul YOLO utilizat."""
+        self.current_model = model_name
+        self.detector.load_model(os.path.join("models", self.current_model))
+        self.status_label.config(text=f"Modelul a fost schimbat la {model_name}")
+
     def update_button_states(self):
-        # Blochează toate butoanele dacă niciun mod nu este selectat
         mode_selected = self.selected_mode is not None
         if mode_selected:
             self.auto_detect_switch.config(state="normal")
             self.detect_tables_btn.config(state="normal")
             self.detect_all_btn.config(state="normal")
 
-        # Activați/dezactivați "Detect Tables" pe baza modului și opțiunii "Auto-Detect"
         if mode_selected and self.auto_detect_enabled.get():
             self.detect_tables_btn.config(state="disabled")
             self.set_tables_btn.config(state="disabled")
@@ -94,12 +181,9 @@ class MainApp:
             self.set_tables_btn.config(state="disabled")
             self.reset_tables_btn.config(state="disabled")
 
-
-        # Activați butoanele pentru "Previous" și "Next" doar în modul 'show_images'
         self.previous_btn.config(state="normal" if self.selected_mode == 'show_images' else "disabled")
         self.next_btn.config(state="normal" if self.selected_mode == 'show_images' else "disabled")
 
-        # Apelează din nou funcția după un interval de 200ms
         self.master.after(200, self.update_button_states)
 
     def start_camera(self):
@@ -139,9 +223,6 @@ class MainApp:
                 display_frame(self, self.current_frame)
 
     def detect_all(self):
-        """
-        Activează detectarea doar a meselor fără ID.
-        """
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = False
         self.detector.detecting_all = True
@@ -149,9 +230,6 @@ class MainApp:
         self.reset_tables_btn.config(state="disabled")
 
     def detect_tables(self):
-        """
-        Activează detectarea doar a meselor fără ID.
-        """
         self.detector.detecting_tables_only = True
         self.detector.done_setting_tables = False
         self.detector.detecting_all = False
@@ -159,9 +237,6 @@ class MainApp:
         self.reset_tables_btn.config(state="disabled")
 
     def set_tables(self):
-        """
-        Alocă ID-uri meselor detectate și inițializează detectarea completă.
-        """
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = True
         self.detector.detecting_all = False
@@ -178,22 +253,29 @@ class MainApp:
         self.reset_tables_btn.config(state="disabled")
             
     def update_status_label(self):
-        """
-        Obține statusul tuturor meselor și actualizează label-ul de status.
-        """
         status_report = self.detector.get_tables_status_report()
         self.status_label.config(text=status_report)
 
     def update_frame(self):
-        if self.current_frame is not None:
-            display_frame(self, self.current_frame)
-        self.master.after(200, self.update_frame)
+            # Obține timpul curent
+            current_time = time.time()
+            
+            # Calculează timpul necesar pentru a ajunge la 16.67 ms (1/60 FPS)
+            elapsed_time = current_time - self.last_time
+            if elapsed_time >= 0.01667:  # Dacă au trecut cel puțin 16.67 ms
+                if self.current_frame is not None:
+                    display_frame(self, self.current_frame)  # Afișează cadrul
+                
+                # Actualizează timpul ultimei actualizări
+                self.last_time = current_time
+            
+            # Reapelează funcția după 1 ms, pentru a verifica timpul
+            self.master.after(1, self.update_frame)
 
     def stop_running_thread(self):
-        """Oprește thread-ul curent de afișare a imaginilor în mod sigur."""
         if self.frame_thread and self.frame_thread.is_alive():
-            self.stop_event.set()  # Trimite semnalul de oprire
-            self.frame_thread.join()  # Așteaptă ca thread-ul să se termine
+            self.stop_event.set()
+            self.frame_thread.join()
         self.running = False
 
     def next_image(self):
@@ -212,7 +294,6 @@ class MainApp:
             if self.current_frame is not None:
                 display_frame(self, self.current_frame)
 
-# Lansare aplicație
 if __name__ == "__main__":
     root = tk.Tk()
     app = MainApp(root)

@@ -10,15 +10,17 @@ from src.managers.table_manager import TableManager
 from src.utils.time_utils import format_time
 
 class YoloDetector:
-    def __init__(self, model_path="models/yolov9e.pt"):  # Path to the YOLOv8 model
-        self.model = YOLO(model_path).to(device)
+    def __init__(self, model_path="models/yolov8n.pt"):  # Path to the YOLO model
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Folosește modelul default 'yolov8n.pt' dacă nu este specificat un model_path
+        self.model_path = model_path
+        self.model = self.load_model(self.model_path)
         self.table_manager = TableManager()  # Instanțiază managerul de mese
         self.detecting_tables_only = False
         self.done_setting_tables = False
         self.detecting_all = False
         self.tables_detected = []
-        print("Yolo running on", device)
-        #print(self.model.names)
+        print("Yolo running on", self.device)
 
         # Aici definim clasele obiectelor speciale
         self.special_object_classes = {
@@ -38,6 +40,13 @@ class YoloDetector:
         # Creează un DataFrame nou cu coloanele corecte
         self.initialize_excel_file()
 
+    def load_model(self, model_path):
+        """Încarcă modelul YOLO de la calea specificată pe dispozitivul adecvat."""
+        self.model_path = model_path
+        self.model = YOLO(model_path).to(self.device)
+        print(f"Modelul {model_path} a fost încărcat pe {self.device}")
+
+            
     def initialize_excel_file(self):
         df = pd.DataFrame(columns=["ID", "Status", "Duration"])
         df.to_excel(self.output_path, index=False)

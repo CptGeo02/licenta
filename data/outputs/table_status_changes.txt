@@ -1391,3 +1391,36 @@
 2024-11-06 23:55:37, Table ID: 3, Status: available, Duration: 00:00:01
 2024-11-06 23:55:40, Table ID: 3, Status: available, Duration: 00:00:02
 2024-11-06 23:58:42, Table ID: 5, Status: available, Duration: 00:00:14
+2024-11-07 09:09:49, Table ID: 5, Status: available, Duration: 00:00:05
+2024-11-07 09:09:53, Table ID: 1, Status: available, Duration: 00:00:01
+2024-11-07 09:09:57, Table ID: 8, Status: available, Duration: 00:00:01
+2024-11-08 17:37:55, Table ID: 5, Status: available, Duration: 00:00:01
+2024-11-08 17:44:32, Table ID: 2, Status: ready to order, Duration: 00:00:03
+2024-11-08 17:55:26, Table ID: 6, Status: available, Duration: 00:00:01
+2024-11-08 18:21:02, Table ID: 1, Status: available, Duration: 00:00:03
+2024-11-08 18:21:09, Table ID: 1, Status: ready to order, Duration: 00:00:06
+2024-11-08 18:21:09, Table ID: 7, Status: ready to order, Duration: 00:00:05
+2024-11-08 18:21:09, Table ID: 2, Status: available, Duration: 00:00:10
+2024-11-08 18:21:14, Table ID: 7, Status: available, Duration: 00:00:05
+2024-11-08 19:08:26, Table ID: 4, Status: available, Duration: 00:00:02
+2024-11-08 19:08:26, Table ID: 2, Status: available, Duration: 00:00:02
+2024-11-08 19:08:28, Table ID: 2, Status: ready to order, Duration: 00:00:01
+2024-11-08 19:08:33, Table ID: 4, Status: ready to order, Duration: 00:00:01
+2024-11-08 20:50:33, Table ID: 5, Status: available, Duration: 00:00:02
+2024-11-08 20:50:49, Table ID: 4, Status: available, Duration: 00:00:18
+2024-11-08 20:50:50, Table ID: 4, Status: ready to order, Duration: 00:00:01
+2024-11-08 20:50:55, Table ID: 4, Status: available, Duration: 00:00:04
+2024-11-08 20:51:00, Table ID: 4, Status: ready to order, Duration: 00:00:05
+2024-11-08 20:51:14, Table ID: 8, Status: available, Duration: 00:00:42
+2024-11-08 20:51:26, Table ID: 8, Status: available, Duration: 00:00:08
+2024-11-08 20:51:34, Table ID: 2, Status: available, Duration: 00:01:02
+2024-11-08 20:51:41, Table ID: 5, Status: ready to order, Duration: 00:01:08
+2024-11-08 20:51:42, Table ID: 5, Status: available, Duration: 00:00:01
+2024-11-08 20:51:46, Table ID: 7, Status: available, Duration: 00:01:15
+2024-11-08 20:51:47, Table ID: 5, Status: ready to order, Duration: 00:00:04
+2024-11-08 20:51:50, Table ID: 5, Status: available, Duration: 00:00:02
+2024-11-08 20:52:17, Table ID: 5, Status: ready to order, Duration: 00:00:27
+2024-11-08 20:52:19, Table ID: 5, Status: available, Duration: 00:00:01
+2024-11-08 20:52:20, Table ID: 5, Status: ready to order, Duration: 00:00:01
+2024-11-08 20:52:23, Table ID: 5, Status: available, Duration: 00:00:02
+2024-11-08 20:52:25, Table ID: 5, Status: ready to order, Duration: 00:00:01
