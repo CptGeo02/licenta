@@ -4,8 +4,8 @@ from src.gui.run_video import run_video
 from src.gui.display_frame import display_frame
 from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
-import os
-import subprocess
+from src.utils.json_analyzer import JsonAnalyzer
+
 class MainApp:
     def __init__(self, master):
         self.master = master
@@ -17,7 +17,7 @@ class MainApp:
         # Inițializează YOLO Detector cu un model implicit
         self.current_model = "Select model"
         self.detector = YoloDetector()
-
+        self.json_analyzer = JsonAnalyzer()
         # Creează un frame pentru butoane
         self.button_frame = Frame(master)
         self.button_frame.pack(side=tk.TOP, fill=tk.X)
@@ -66,7 +66,11 @@ class MainApp:
 
         self.reset_tables_btn = Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
         self.reset_tables_btn.pack(side=tk.LEFT, padx=5, pady=5)
-        
+
+         # Buton pentru analiza fișierului JSON
+        self.analyze_json_btn = Button(self.button_frame, text="Analyze JSON", command=self.analyze_json)
+        self.analyze_json_btn.pack(side=tk.LEFT, padx=5, pady=5)
+
         # Frame pentru afișarea informațiilor de performanță
         self.performance_frame = tk.Frame(master)
         self.performance_frame.pack(side=tk.RIGHT, fill=tk.Y)
@@ -112,6 +116,14 @@ class MainApp:
         self.selected_mode = None  # Stochează modurile 'camera', 'video' sau 'show_images'
         self.update_button_states()
 
+    def analyze_json(self):
+            """Permite utilizatorului să selecteze un fișier JSON și să analizeze datele."""
+            file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
+            
+            if file_path:
+                if self.json_analyzer.load_json(file_path):
+                    self.json_analyzer.plot_data()
+                    
     def update_performance(self):
         # Exemplu de calcul FPS
         # Afișare FPS

@@ -1,9 +1,4 @@
 # src/detectors/yolo_detector.py
-
-import os
-import pandas as pd
-import torch
-import cv2
 from src.libs import *
 from src.utils.detection_utils import filter_detections
 from src.managers.table_manager import TableManager
@@ -30,26 +25,12 @@ class YoloDetector:
             53: 'pizza', 54: 'donut', 55: 'cake'
         }
 
-        # Inițializează fișierul Excel
-        self.output_path = "data/outputs/table_status_report.xlsx"
-        
-        # Șterge fișierul existent dacă există
-        if os.path.exists(self.output_path):
-            os.remove(self.output_path)
-        
-        # Creează un DataFrame nou cu coloanele corecte
-        self.initialize_excel_file()
 
     def load_model(self, model_path):
         """Încarcă modelul YOLO de la calea specificată pe dispozitivul adecvat."""
         self.model_path = model_path
         self.model = YOLO(model_path).to(self.device)
         print(f"Modelul {model_path} a fost încărcat pe {self.device}")
-
-            
-    def initialize_excel_file(self):
-        df = pd.DataFrame(columns=["ID", "Status", "Duration"])
-        df.to_excel(self.output_path, index=False)
 
     def detect(self, frame):
         frame_normalized = (frame / 255.0).astype("float32")  # Normalizează cadrul doar pentru model
@@ -155,7 +136,6 @@ class YoloDetector:
                     status, duration = self.table_manager.get_table_info(table_id)
                     formatted_duration = format_time(duration)  # Formatează durata
                     label = f"Table {table_id} {status} for {formatted_duration}"
-                    self.save_label_to_excel(table_id, status, formatted_duration)  # Salvează label-ul live
                     color = (0, 255, 0)
                 elif class_id in self.special_object_classes:
                     label = f"{self.special_object_classes[class_id]}"
@@ -215,30 +195,8 @@ class YoloDetector:
 
         return frame
 
-
-
     def get_tables_status_report(self):
         """
         Apelează funcția din TableManager pentru a obține statusul tuturor meselor și returnează șirul rezultat.
         """
         return self.table_manager.get_all_tables_status()
-    
-    def save_label_to_excel(self, object_id, status, duration):
-        # Încarcă fișierul Excel existent
-        df_existing = pd.read_excel(self.output_path)
-
-        # Verifică dacă DataFrame-ul are coloanele corecte
-        if 'ID' not in df_existing.columns or 'Status' not in df_existing.columns or 'Duration' not in df_existing.columns:
-            df_existing = pd.DataFrame(columns=["ID", "Status", "Duration"])  # Creează un DataFrame nou
-
-        # Verifică dacă ID-ul există deja în DataFrame
-        if object_id in df_existing["ID"].values:
-            # Actualizează statusul și durata pentru ID-ul existent
-            df_existing.loc[df_existing["ID"] == object_id, ["Status", "Duration"]] = [status, duration]
-        else:
-            # Adaugă o nouă linie pentru ID-ul nou
-            new_row = pd.DataFrame([[object_id, status, duration]], columns=["ID", "Status", "Duration"])
-            df_existing = pd.concat([df_existing, new_row], ignore_index=True)
-
-        # Salvează DataFrame-ul actualizat înapoi în fișierul Excel
-        df_existing.to_excel(self.output_path, index=False)

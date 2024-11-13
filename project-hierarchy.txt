@@ -3,14 +3,23 @@ AI_restaurant
 ├─ data
 │  ├─ images
 │  ├─ outputs
-│  │  ├─ table_status_changes.txt
-│  │  └─ table_status_report.xlsx
+│  │  └─ table_status_report_2024-11-12_17-26-43.json
 │  └─ videos
 ├─ main.py
 ├─ models
+│  ├─ yolov10b.pt
+│  ├─ yolov10l.pt
+│  ├─ yolov10m.pt
+│  ├─ yolov10n.pt
+│  ├─ yolov10s.pt
+│  ├─ yolov10x.pt
 │  ├─ yolov8l.pt
 │  ├─ yolov8n.pt
-│  └─ yolov9e.pt
+│  ├─ yolov9c.pt
+│  ├─ yolov9e.pt
+│  ├─ yolov9m.pt
+│  ├─ yolov9s.pt
+│  └─ yolov9t.pt
 ├─ project-hierarchy.txt
 ├─ README.md
 ├─ src
@@ -20,6 +29,7 @@ AI_restaurant
 │  │  ├─ display_frame.py
 │  │  ├─ main_gui.py
 │  │  ├─ run_camera.py
+│  │  ├─ run_images.py
 │  │  └─ run_video.py
 │  ├─ libs.py
 │  ├─ managers

@@ -9,6 +9,6 @@ def run_video(app):
 
         # Salvăm cadrul curent pentru a fi afișat ulterior în funcția update_frame
         app.current_frame = frame  # Cadrul brut, fără prelucrare
-        time.sleep(1 / 60) 
+        time.sleep(1 / 10) 
     cap.release()  # Eliberăm resursele video
     app.running = False

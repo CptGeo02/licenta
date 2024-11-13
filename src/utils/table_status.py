@@ -1,9 +1,10 @@
+import os
 from datetime import datetime
+from openpyxl import Workbook, load_workbook
+from openpyxl.utils import get_column_letter
+from src.utils.time_utils import format_time
 from src.utils.detection_utils import calculate_area
 from src.utils.detection_utils import calculate_iou
-from src.utils.time_utils import format_time
-
-import os
 
 class TableStatus:
     """
@@ -12,14 +13,13 @@ class TableStatus:
     def __init__(self, table_id, table_box=None, red_threshold=0.1, blue_threshold=0.1):
         self.table_id = table_id
         self.table_box = table_box  # Coordonatele box-ului mesei
-        self.current_status = "availabe"
+        self.current_status = "unknown"
+        self.previous_status = None
         self.start_time = datetime.now()
         self.status_durations = []  # Lista de statusuri și durate (status, durata)
         self.red_threshold = red_threshold
         self.blue_threshold = blue_threshold
-        # Calea către fișierul TXT pentru statusuri
-        self.txt_output_path = "data/outputs/table_status_changes.txt"
- 
+
     def check_and_update_status(self, detections):
         """
         Verifică și actualizează statusul mesei în funcție de obiectele detectate.
@@ -34,14 +34,12 @@ class TableStatus:
         duration = (current_time - self.start_time).total_seconds()
 
         # Ignoră duratele prea scurte
-        if self.current_status and duration >= 1.0:
+        if duration >= 1.0:
             self.status_durations.append((self.current_status, duration))
-            self.log_status_change(self.table_id, self.current_status, duration)
-
-        # Actualizează statusul curent și resetează timer-ul
-        self.previous_status = self.current_status
-        self.current_status = new_status
-        self.start_time = current_time
+            # Actualizează statusul curent și resetează timer-ul
+            self.previous_status = self.current_status
+            self.current_status = new_status
+            self.start_time = current_time
 
     def update_table_box(self, new_box):
         """
@@ -96,9 +94,3 @@ class TableStatus:
             return "eating"
 
         return "unknown"
-
-    def log_status_change(self, object_id, status, duration):
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        formatted_duration = format_time(duration)  # Transformă durata în hh:mm:ss
-        with open(self.txt_output_path, "a") as f:
-            f.write(f"{timestamp}, Table ID: {object_id}, Status: {status}, Duration: {formatted_duration}\n")
