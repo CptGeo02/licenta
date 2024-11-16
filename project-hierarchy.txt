@@ -3,7 +3,8 @@ AI_restaurant
 ├─ data
 │  ├─ images
 │  ├─ outputs
-│  │  └─ table_status_report_2024-11-12_17-26-43.json
+│  │  ├─ table_status_report_2024-11-16_01-23-12.json
+│  │  └─ table_status_report_2024-11-16_01-35-59.json
 │  └─ videos
 ├─ main.py
 ├─ models
@@ -14,6 +15,7 @@ AI_restaurant
 │  ├─ yolov10s.pt
 │  ├─ yolov10x.pt
 │  ├─ yolov8l.pt
+│  ├─ yolov8n - Copy.pt
 │  ├─ yolov8n.pt
 │  ├─ yolov9c.pt
 │  ├─ yolov9e.pt
@@ -24,25 +26,46 @@ AI_restaurant
 ├─ README.md
 ├─ src
 │  ├─ detectors
-│  │  └─ yolo_detector.py
+│  │  ├─ yolo_detector.py
+│  │  └─ __pycache__
+│  │     └─ yolo_detector.cpython-312.pyc
 │  ├─ gui
 │  │  ├─ display_frame.py
 │  │  ├─ main_gui.py
 │  │  ├─ run_camera.py
 │  │  ├─ run_images.py
-│  │  └─ run_video.py
+│  │  ├─ run_video.py
+│  │  └─ __pycache__
+│  │     ├─ display_frame.cpython-312.pyc
+│  │     ├─ main_gui.cpython-312.pyc
+│  │     ├─ run_camera.cpython-312.pyc
+│  │     ├─ run_images.cpython-312.pyc
+│  │     └─ run_video.cpython-312.pyc
 │  ├─ libs.py
 │  ├─ managers
-│  │  └─ table_manager.py
+│  │  ├─ table_manager.py
+│  │  └─ __pycache__
+│  │     └─ table_manager.cpython-312.pyc
 │  ├─ utils
 │  │  ├─ detection_utils.py
 │  │  ├─ extract_yt_video.py
 │  │  ├─ images_to_video.py
 │  │  ├─ image_utils.py
+│  │  ├─ json_analyzer.py
 │  │  ├─ table_status.py
-│  │  └─ time_utils.py
-│  └─ web
-│     └─ main_web.py
+│  │  ├─ time_utils.py
+│  │  └─ __pycache__
+│  │     ├─ detection_utils.cpython-312.pyc
+│  │     ├─ image_utils.cpython-312.pyc
+│  │     ├─ json_analyzer.cpython-312.pyc
+│  │     ├─ table_status.cpython-312.pyc
+│  │     └─ time_utils.cpython-312.pyc
+│  ├─ web
+│  │  ├─ main_web.py
+│  │  └─ __pycache__
+│  │     └─ main_web.cpython-312.pyc
+│  └─ __pycache__
+│     └─ libs.cpython-312.pyc
 ├─ static
 │  ├─ css
 │  │  └─ style.css

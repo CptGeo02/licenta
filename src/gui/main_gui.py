@@ -5,6 +5,7 @@ from src.gui.display_frame import display_frame
 from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
 from src.utils.json_analyzer import JsonAnalyzer
+from src.utils.json_to_excel import JsonToExcel
 
 class MainApp:
     def __init__(self, master):
@@ -117,12 +118,21 @@ class MainApp:
         self.update_button_states()
 
     def analyze_json(self):
-            """Permite utilizatorului să selecteze un fișier JSON și să analizeze datele."""
-            file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
-            
-            if file_path:
-                if self.json_analyzer.load_json(file_path):
-                    self.json_analyzer.plot_data()
+                """Permite utilizatorului să selecteze un fișier JSON și să analizeze datele."""
+                file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
+                
+                if file_path:
+                    if self.json_analyzer.load_json(file_path):
+                        self.json_analyzer.plot_data()
+                        # Exemplu de utilizare
+                        json_file = file_path  
+                        excel_file = 'data/outputs/table_status_analysis.xlsx'
+
+                        analyzer = JsonToExcel(json_file, excel_file)
+                        data = analyzer.load_json()
+                        analyzer.save_to_excel(data)
+
+                        print(f"Fișierul Excel a fost generat: {excel_file}")
                     
     def update_performance(self):
         # Exemplu de calcul FPS

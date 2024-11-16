@@ -67,8 +67,9 @@ class JsonAnalyzer:
         """Convertește durata în secunde pentru a putea fi folosită în grafic."""
         hours, minutes, seconds = map(int, duration_str.split(':'))
         return hours * 3600 + minutes * 60 + seconds
-
+"""
 # Exemplu de utilizare
 plotter = JsonAnalyzer()
 if plotter.load_json('path_to_your_file.json'):  # Înlocuiește cu calea fișierului JSON
     plotter.plot_data()
+"""
