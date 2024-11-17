@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 import json
 from openpyxl import Workbook
 from datetime import datetime
+import numpy as np
 
 class JsonToExcel:
     def __init__(self, json_file, excel_file):
@@ -50,12 +51,12 @@ class JsonToExcel:
             total_duration = table_data['duration'].apply(self.convert_duration).sum()
             sheet.append([table_id, 'Inefficient', self.format_duration(total_duration)])
 
-        # Calcularea duratei medii a ciclului meselor
-        table_cycle_durations = self.calculate_table_cycle_duration(df)
-        sheet = workbook.create_sheet('Table Cycle Duration')
-        sheet.append(['Table ID', 'Cycle Duration'])
-        for table_id, duration in table_cycle_durations.items():
-            sheet.append([table_id, self.format_duration(duration)])
+        # # Calcularea duratei medii a ciclului meselor
+        # table_cycle_durations = self.calculate_table_cycle_duration(df)
+        # sheet = workbook.create_sheet('Table Cycle Duration')
+        # sheet.append(['Table ID', 'Cycle Duration'])
+        # for table_id, duration in table_cycle_durations.items():
+        #     sheet.append([table_id, self.format_duration(duration)])
 
         # Calcularea mediilor și generarea histogramelor pentru medii
         avg_durations = self.calculate_avg_durations(df)
@@ -67,6 +68,8 @@ class JsonToExcel:
         # Adăugare Status Analysis
         self.generate_status_analysis(df, workbook)
 
+         # Adăugare Cycle Analysis
+        self.generate_cycle_histograms(df, workbook)
         # Salvarea fișierului Excel
         workbook.save(self.excel_file)
 
@@ -93,12 +96,18 @@ class JsonToExcel:
         for i, status in enumerate(status_names):
             durations = [table_durations[table_id][status] for table_id in table_ids]
             ax.bar([x + i * bar_width for x in index], durations, bar_width, color=statuses[status], label=status)
+        # Configurarea axei y
+        max_duration = max(durations)
+        yticks = np.linspace(0, max_duration, num=10)  # Creează 5 tick-uri distribuite uniform
+        formatted_yticks = [self.format_duration(int(tick)) for tick in yticks]
 
         ax.set_xlabel('Table ID')
         ax.set_ylabel('Duration (seconds)')
         ax.set_title('Table Status Duration Histogram')
         ax.set_xticks([x + bar_width * 1.5 for x in index])
         ax.set_xticklabels([f"Table {table_id}" for table_id in table_ids], rotation=45)
+        ax.set_yticks(yticks)
+        ax.set_yticklabels(formatted_yticks)
         ax.legend()
         plt.tight_layout()
 
@@ -250,22 +259,93 @@ class JsonToExcel:
         df['time_slot'] = df.apply(get_time_slot, axis=1)
         return df
     
+    def generate_cycle_histograms(self, df, workbook):
+        """Generează histogramele pentru durata ciclurilor fiecărei mese și durata medie a ciclurilor."""
+        import matplotlib.pyplot as plt
+        from matplotlib.colors import TABLEAU_COLORS
+        import tempfile
+        from openpyxl.drawing.image import Image
+        
+        # 1. Calcularea duratelor ciclurilor
+        total_durations, individual_durations = self.calculate_table_cycle_duration(df)
+        
+        # Pregătirea unei palete de culori pentru prima histogramă
+        colors = list(TABLEAU_COLORS.values())
+        
+        # Generăm histograma pentru fiecare masă cu duratele ciclurilor individuale
+        fig, ax = plt.subplots(figsize=(12, 8))
+        
+        for i, (table_id, durations) in enumerate(individual_durations.items()):
+            color_index = 0
+            for j, duration in enumerate(durations):
+                ax.bar(f"{table_id} - Cycle {j+1}", duration, color=colors[color_index % len(colors)])
+                color_index += 1
+        
+        ax.set_xlabel('Tables and Cycles')
+        ax.set_ylabel('Cycle Duration (seconds)')
+        ax.set_title('Cycle Duration for Each Table and Cycle')
+        plt.xticks(rotation=45, ha='right')
+        
+        # Salvarea primei histograme
+        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmpfile_cycle:
+            plt.savefig(tmpfile_cycle.name, format='png')
+            plt.close()
+            
+            if 'cycle_duration_histograms' not in workbook.sheetnames:
+                ws = workbook.create_sheet('cycle_duration_histograms')
+            else:
+                ws = workbook['cycle_duration_histograms']
+            
+            img_cycle = Image(tmpfile_cycle.name)
+            ws.add_image(img_cycle, 'A1')
+        
+        # Calcularea mediei ciclurilor pentru fiecare masă
+        avg_durations = {table_id: sum(durations) / len(durations) if durations else 0
+                        for table_id, durations in individual_durations.items()}
+        
+        # Generăm histograma cu duratele medii
+        fig, ax = plt.subplots(figsize=(12, 8))
+        ax.bar(avg_durations.keys(), avg_durations.values(), color='green')
+        ax.set_xlabel('Table ID')
+        ax.set_ylabel('Average Cycle Duration (seconds)')
+        ax.set_title('Average Cycle Duration for Each Table')
+        plt.xticks(rotation=45, ha='right')
+        
+        # Salvarea celei de-a doua histograme
+        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmpfile_avg:
+            plt.savefig(tmpfile_avg.name, format='png')
+            plt.close()
+            
+            img_avg = Image(tmpfile_avg.name)
+            ws.add_image(img_avg, 'A20')  # Păstrăm o distanță între imagini
+
     def calculate_table_cycle_duration(self, df):
-        """Calculază durata medie totală a ciclului unei mese."""
-        table_cycle_durations = {}
+        """Calculază durata totală a ciclurilor fiecărei mese și returnează și lista duratelor individuale ale ciclurilor."""
+        table_cycle_durations = {}  # Durata totală a ciclurilor pentru fiecare masă
+        all_cycle_durations = {}  # Duratele individuale ale ciclurilor pentru fiecare masă
+        
         for table_id in df['table_id'].unique():
             table_data = df[df['table_id'] == table_id]
             available_to_clean_duration = 0
+            cycle_durations = []  # Lista pentru duratele ciclurilor pentru fiecare masă
             is_in_cycle = False
+            
             for _, row in table_data.iterrows():
                 if row['status'] == 'available':
                     is_in_cycle = True
+                    available_to_clean_duration = 0  # Resetează durata ciclului pentru un nou ciclu
                 if is_in_cycle:
                     available_to_clean_duration += self.convert_duration(row['duration'])
                 if row['status'] == 'need to clean' and is_in_cycle:
-                    break
-            table_cycle_durations[table_id] = available_to_clean_duration
-        return table_cycle_durations
+                    cycle_durations.append(available_to_clean_duration)
+                    is_in_cycle = False
+            
+            table_cycle_durations[table_id] = sum(cycle_durations)  # Suma tuturor ciclurilor pentru masă
+            all_cycle_durations[table_id] = cycle_durations  # Duratele individuale
+            
+        return table_cycle_durations, all_cycle_durations
+
+
 
     @staticmethod
     def convert_duration(duration_str):
