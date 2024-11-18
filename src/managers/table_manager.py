@@ -12,11 +12,9 @@ class TableManager:
         self.table_ids = {}  # Aici stocăm ID-urile meselor
         self.table_counter = 0  # Contor pentru ID-urile meselor
         self.tables = {}  # Aici stocăm obiectele TableStatus
-        self.create_new_files()
-        self.start_auto_save()
         # Lista statusurilor ciclice
         self.status_cycle = ['available', 'ready to order', 'eating', 'need to clean']
-    
+
     def create_new_files(self):
         """
         Creează fișierul JSON cu data și ora curentă la începutul fiecărei runde.

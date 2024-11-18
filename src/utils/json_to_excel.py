@@ -42,22 +42,6 @@ class JsonToExcel:
         for r, row in df.iterrows():
             sheet.append(row.values.tolist())
 
-        # Identificarea meselor ineficiente
-        inefficient_tables = self.identify_inefficient_tables(df)
-        sheet = workbook.create_sheet('Inefficient Tables')
-        sheet.append(['Table ID', 'Status', 'Total Duration'])
-        for table_id in inefficient_tables:
-            table_data = df[df['table_id'] == table_id]
-            total_duration = table_data['duration'].apply(self.convert_duration).sum()
-            sheet.append([table_id, 'Inefficient', self.format_duration(total_duration)])
-
-        # # Calcularea duratei medii a ciclului meselor
-        # table_cycle_durations = self.calculate_table_cycle_duration(df)
-        # sheet = workbook.create_sheet('Table Cycle Duration')
-        # sheet.append(['Table ID', 'Cycle Duration'])
-        # for table_id, duration in table_cycle_durations.items():
-        #     sheet.append([table_id, self.format_duration(duration)])
-
         # Calcularea mediilor și generarea histogramelor pentru medii
         avg_durations = self.calculate_avg_durations(df)
         self.generate_average_histogram(avg_durations, workbook)
@@ -70,6 +54,8 @@ class JsonToExcel:
 
          # Adăugare Cycle Analysis
         self.generate_cycle_histograms(df, workbook)
+
+        self.generate_table_performance_report(df, workbook)
         # Salvarea fișierului Excel
         workbook.save(self.excel_file)
 
@@ -294,7 +280,7 @@ class JsonToExcel:
             if 'cycle_duration_histograms' not in workbook.sheetnames:
                 ws = workbook.create_sheet('cycle_duration_histograms')
             else:
-                ws = workbook['cycle_duration_histograms']
+                ws = workbook['Cycle Duration Histograms']
             
             img_cycle = Image(tmpfile_cycle.name)
             ws.add_image(img_cycle, 'A1')
@@ -345,6 +331,138 @@ class JsonToExcel:
             
         return table_cycle_durations, all_cycle_durations
 
+    def compute_total_time(table_data):
+        return sum(table_data['durations'])
+
+    def compute_total_cycles(table_data):
+        return len(table_data['cycles'])
+
+    def compute_time_eating(table_data):
+        return sum([d for s, d in zip(table_data['statuses'], table_data['durations']) if s == 'eating'])
+
+    def compute_time_ready_to_order(table_data):
+        return sum([d for s, d in zip(table_data['statuses'], table_data['durations']) if s == 'ready to order'])
+
+    def compute_time_need_to_clean(table_data):
+        return sum([d for s, d in zip(table_data['statuses'], table_data['durations']) if s == 'need to clean'])
+
+    def compute_time_available(table_data):
+        return sum([d for s, d in zip(table_data['statuses'], table_data['durations']) if s == 'available'])
+
+    def compute_idle_time_ratio(self, table_data, total_time):
+        time_available = self.compute_time_available(table_data)
+        return time_available / total_time if total_time else 0
+
+    def compute_cleaning_ratio(self, table_data, total_time):
+        time_to_clean = self.compute_time_need_to_clean(table_data)
+        return time_to_clean / total_time if total_time else 0
+
+    def compute_cycles_per_hour(self, table_data, total_time):
+        total_cycles = self.compute_total_cycles(table_data)
+        return total_cycles / (total_time / 3600) if total_time else 0
+
+    def compute_utilization_rate(self, table_data, total_time):
+        time_eating = self.compute_time_eating(table_data)
+        time_ready_to_order = self.compute_time_ready_to_order(table_data)
+        return (time_eating + time_ready_to_order) / total_time if total_time else 0
+
+    def compute_performance_score(self, table_data, total_time, weights):
+        total_cycles = self.compute_total_cycles(table_data)
+        time_eating = self.compute_time_eating(table_data)
+        time_to_clean = self.compute_time_need_to_clean(table_data)
+        idle_ratio = self.compute_idle_time_ratio(table_data, total_time)
+        
+        w1, w2, w3, w4 = weights
+        return (
+            (w1 * (total_cycles / total_time if total_time else 0)) +
+            (w2 * (time_eating / total_time if total_time else 0)) -
+            (w3 * (time_to_clean / total_time if total_time else 0)) -
+            (w4 * idle_ratio)
+        )
+
+    def generate_table_performance_report(self, df, workbook):
+        """Generează raportul de performanță al meselor și îl salvează într-un sheet Excel."""
+        import pandas as pd
+        from openpyxl import Workbook
+        
+        # Ponderi pentru calculul scorului de performanță
+        weights = [0.4, 0.3, 0.2, 0.1]
+
+        # Pregătim tabelul rezultat
+        rows = []
+        unique_table_ids = df['table_id'].unique()
+
+        for table_id in unique_table_ids:
+            table_data = df[df['table_id'] == table_id]
+            
+            # Calculăm statistici pentru fiecare masă
+            total_time = table_data['duration'].apply(self.convert_duration).sum()
+            total_cycles = len(table_data[table_data['status'] == 'need to clean'])
+            time_eating = table_data[table_data['status'] == 'eating']['duration'].apply(self.convert_duration).sum()
+            time_ready_to_order = table_data[table_data['status'] == 'ready to order']['duration'].apply(self.convert_duration).sum()
+            time_need_to_clean = table_data[table_data['status'] == 'need to clean']['duration'].apply(self.convert_duration).sum()
+            time_available = table_data[table_data['status'] == 'available']['duration'].apply(self.convert_duration).sum()
+        
+
+            idle_time_ratio = time_available / total_time if total_time else 0
+            cleaning_ratio = time_need_to_clean / total_time if total_time else 0
+            cycles_per_hour = total_cycles / (total_time / 3600) if total_time else 0
+            utilization_rate = (time_eating + time_ready_to_order) / total_time if total_time else 0
+            
+            # Calculăm scorul de performanță
+            performance_score = (
+                (weights[0] * (total_cycles / total_time if total_time else 0)) +
+                (weights[1] * (time_eating / total_time if total_time else 0)) -
+                (weights[2] * (time_need_to_clean / total_time if total_time else 0)) -
+                (weights[3] * idle_time_ratio)
+            )
+            total_time = self.format_duration(total_time)
+            total_cycles = self.format_duration(total_cycles)
+            time_eating = self.format_duration(time_eating)
+            time_ready_to_order = self.format_duration(time_ready_to_order)
+            time_need_to_clean = self.format_duration(time_need_to_clean)
+            time_available = self.format_duration(time_available)
+            # Adăugăm datele în rânduri
+            rows.append({
+                'Table ID': table_id,
+                'Total Time': total_time,
+                'Total Cycles': total_cycles,
+                'Time Eating': time_eating,
+                'Time Ready to Order': time_ready_to_order,
+                'Time Need to Clean': time_need_to_clean,
+                'Time Available': time_available,
+                'Idle Time Ratio': idle_time_ratio,
+                'Cleaning Ratio': cleaning_ratio,
+                'Cycles per Hour': cycles_per_hour,
+                'Utilization Rate': utilization_rate,
+                'Performance Score': performance_score
+            })
+
+        # Creăm un DataFrame pentru rezultatul final
+        result_df = pd.DataFrame(rows)
+
+        # Scriem rezultatul într-un nou sheet al workbook-ului
+        sheet_name = 'Table Performance'
+        if sheet_name in workbook.sheetnames:
+            del workbook[sheet_name]
+
+        worksheet = workbook.create_sheet(sheet_name)
+
+        # Scrierea header-ului
+        for col_index, col_name in enumerate(result_df.columns, start=1):
+            worksheet.cell(row=1, column=col_index, value=col_name)
+
+        # Scrierea datelor
+        for row_index, row in enumerate(result_df.itertuples(index=False), start=2):
+            for col_index, value in enumerate(row, start=1):
+                worksheet.cell(row=row_index, column=col_index, value=value)
+
+        # Adăugăm filtre pentru coloane
+        start_column = 2  # Coloanele de la 2 încolo vor avea filtre
+        end_column = len(result_df.columns)  # Ultima coloană a tabelului
+        worksheet.auto_filter.ref = worksheet.dimensions  # Adaugă filtre pentru întregul tabel
+
+
 
 
     @staticmethod
@@ -356,8 +474,14 @@ class JsonToExcel:
     @staticmethod
     def format_duration(seconds):
         """Formatează durata în hh:mm:ss."""
+        try:
+            seconds = int(seconds)  # Conversie în număr întreg
+        except ValueError:
+            raise ValueError(f"Durata trebuie să fie un număr întreg, dar s-a primit: {seconds}")
+        
         hours = seconds // 3600
         minutes = (seconds % 3600) // 60
         seconds = seconds % 60
         return f"{int(hours):02}:{int(minutes):02}:{int(seconds):02}"
-    
+
+        

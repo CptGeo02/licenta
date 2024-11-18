@@ -69,7 +69,7 @@ class MainApp:
         self.reset_tables_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
          # Buton pentru analiza fișierului JSON
-        self.analyze_json_btn = Button(self.button_frame, text="Analyze JSON", command=self.analyze_json)
+        self.analyze_json_btn = Button(self.button_frame, text="Generate Statistics", command=self.analyze_json)
         self.analyze_json_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
         # Frame pentru afișarea informațiilor de performanță
@@ -118,22 +118,22 @@ class MainApp:
         self.update_button_states()
 
     def analyze_json(self):
-                """Permite utilizatorului să selecteze un fișier JSON și să analizeze datele."""
-                file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
-                
-                if file_path:
-                    if self.json_analyzer.load_json(file_path):
-                        self.json_analyzer.plot_data()
-                        # Exemplu de utilizare
-                        json_file = file_path  
-                        excel_file = 'data/outputs/table_status_analysis.xlsx'
+        """Permite utilizatorului să selecteze un fișier JSON și să analizeze datele."""
+        file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
+        
+        if file_path:
+            if self.json_analyzer.load_json(file_path):
+                #self.json_analyzer.plot_data()
+                # Exemplu de utilizare
+                json_file = file_path  
+                excel_file = 'data/outputs/table_status_analysis.xlsx'
 
-                        analyzer = JsonToExcel(json_file, excel_file)
-                        data = analyzer.load_json()
-                        analyzer.save_to_excel(data)
+                analyzer = JsonToExcel(json_file, excel_file)
+                data = analyzer.load_json()
+                analyzer.save_to_excel(data)
 
-                        print(f"Fișierul Excel a fost generat: {excel_file}")
-                    
+                print(f"Fișierul Excel a fost generat: {excel_file}")
+           
     def update_performance(self):
         # Exemplu de calcul FPS
         # Afișare FPS
@@ -265,9 +265,11 @@ class MainApp:
         self.current_frame = self.detector.set_table_ids()
         self.set_tables_btn.config(state="disabled")
         self.reset_tables_btn.config(state="normal")
+        self.detector.table_manager.create_new_files()
+        self.detector.table_manager.start_auto_save()
 
     def reset_tables(self):
-        self.detector.detecting_tables_only = False
+        self.detector.detecting_tables_only = True
         self.detector.done_setting_tables = False
         self.detector.detecting_all = False
         self.detector.reset_table_manager()
