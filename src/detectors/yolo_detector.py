@@ -2,7 +2,10 @@
 from src.libs import *
 from src.utils.detection_utils import filter_detections
 from src.managers.table_manager import TableManager
-from src.utils.time_utils import format_time
+from src.managers.people_manager import PeopleManager
+from src.managers.alarm_manager import AlarmManager
+
+from src.utils.time_utils import format_time, convert_duration
 
 class YoloDetector:
     def __init__(self, model_path="models/yolov8n.pt"):  # Path to the YOLO model
@@ -11,10 +14,14 @@ class YoloDetector:
         self.model_path = model_path
         self.model = self.load_model(self.model_path)
         self.table_manager = TableManager()  # Instanțiază managerul de mese
+        self.people_manager = PeopleManager()  # Instanțiem PeopleManager
+        self.alarm_manager = AlarmManager()  # Instanțiază AlarmManager
         self.detecting_tables_only = False
         self.done_setting_tables = False
         self.detecting_all = False
         self.tables_detected = []
+        self.tables_number = 0
+        self.people_number = 0
         print("Yolo running on", self.device)
 
         # Aici definim clasele obiectelor speciale
@@ -54,6 +61,12 @@ class YoloDetector:
             })
 
         filtered_detections = filter_detections(detections)
+        self.tables_number = sum(1 for d in filtered_detections if d['class'] == 60)  # Exemplu: clasă pentru mese
+        self.people_number = sum(1 for d in filtered_detections if d['class'] == 0)  # Exemplu: clasă pentru persoane
+        # Numărăm persoanele detectate
+        
+        self.people_manager.set_people_number(self.people_number)
+
         return filtered_detections
     
     def draw_only_tables(self, frame, detections):
@@ -68,18 +81,7 @@ class YoloDetector:
                 frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
         
         return frame
-    
-    def set_table_ids(self):
-        self.reset_table_manager()
-        if self.tables_detected:
-            for table in self.tables_detected:
-                box = table['box']
-                self.table_manager.assign_table_id(None, box)      
-            self.detecting_tables_only = False
 
-    def reset_table_manager(self):
-        self.table_manager.reset_tables()
-        
     def draw_detection_with_table_id(self, frame, detections):
             if detections:
                 for det in detections:
@@ -88,13 +90,17 @@ class YoloDetector:
                     x1, y1, x2, y2 = box
                     if class_id == 0:  # Persoană
                         label = "people"
-                        color = (255, 0, 0)
+                        if self.people_manager.people_count >= self.people_manager.get_max_people_number():
+                            color = (0, 0, 255)
+                            self.trigger_alarm()
+                        else:
+                            color = (255, 0, 0)
                     elif class_id in self.special_object_classes:
                         label = f"{self.special_object_classes[class_id]}"
                         color = (0, 0, 255)
                     else:
                         continue
-                    
+
                     frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
                     frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
             
@@ -110,9 +116,16 @@ class YoloDetector:
                     # Verificăm și actualizăm statusul mesei
                     self.table_manager.check_and_update_status(detections)
                     status, duration = self.table_manager.get_table_info(table_id)
+                    
                     formatted_duration = format_time(duration)  # Formatează durata
                     label = f"TABLE{table_id} {status} for {formatted_duration}"
-                    color = (0, 255, 0)
+                    max_time = self.table_manager.get_max_time(status)
+                
+                    if max_time is not None and duration >= convert_duration(max_time):
+                        color = (0, 0, 255)
+                        self.trigger_alarm()
+                    else:
+                        color = (0, 255, 0)
                     frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
                     frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
             return frame
@@ -200,3 +213,19 @@ class YoloDetector:
         Apelează funcția din TableManager pentru a obține statusul tuturor meselor și returnează șirul rezultat.
         """
         return self.table_manager.get_all_tables_status()
+    
+    def set_table_ids(self):
+        self.reset_table_manager()
+        if self.tables_detected:
+            for table in self.tables_detected:
+                box = table['box']
+                self.table_manager.assign_table_id(None, box)      
+            self.detecting_tables_only = False
+
+    def reset_table_manager(self):
+        self.table_manager.reset_tables()
+
+    def trigger_alarm(self):
+        """Apelăm funcția de alarmă din AlarmManager"""
+        self.alarm_manager.play_alarm_sound()  # Redă alarmă
+        

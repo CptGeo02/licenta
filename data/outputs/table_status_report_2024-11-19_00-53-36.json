@@ -1,0 +1,54 @@
+{
+    "table_statuses": [
+      {"table_id": 1, "status": "available", "duration": "00:15:30", "start_time": "2024-11-15 08:30:00"},
+      {"table_id": 1, "status": "ready to order", "duration": "00:30:00", "start_time": "2024-11-15 08:45:30"},
+      {"table_id": 1, "status": "eating", "duration": "01:00:00", "start_time": "2024-11-15 09:15:30"},
+      {"table_id": 1, "status": "need to clean", "duration": "00:20:00", "start_time": "2024-11-15 10:15:30"},
+      
+      {"table_id": 2, "status": "available", "duration": "00:10:00", "start_time": "2024-11-15 08:40:00"},
+      {"table_id": 2, "status": "ready to order", "duration": "00:25:00", "start_time": "2024-11-15 08:50:00"},
+      {"table_id": 2, "status": "eating", "duration": "00:50:00", "start_time": "2024-11-15 09:15:00"},
+      {"table_id": 2, "status": "need to clean", "duration": "00:15:00", "start_time": "2024-11-15 10:05:00"},
+      
+      {"table_id": 3, "status": "available", "duration": "00:12:00", "start_time": "2024-11-15 09:00:00"},
+      {"table_id": 3, "status": "ready to order", "duration": "00:20:00", "start_time": "2024-11-15 09:12:00"},
+      {"table_id": 3, "status": "eating", "duration": "01:10:00", "start_time": "2024-11-15 09:32:00"},
+      {"table_id": 3, "status": "need to clean", "duration": "00:25:00", "start_time": "2024-11-15 10:42:00"},
+      
+      {"table_id": 4, "status": "available", "duration": "00:08:00", "start_time": "2024-11-15 10:00:00"},
+      {"table_id": 4, "status": "ready to order", "duration": "00:35:00", "start_time": "2024-11-15 10:08:00"},
+      {"table_id": 4, "status": "eating", "duration": "00:55:00", "start_time": "2024-11-15 10:43:00"},
+      {"table_id": 4, "status": "need to clean", "duration": "00:30:00", "start_time": "2024-11-15 11:38:00"},
+      
+      {"table_id": 5, "status": "available", "duration": "00:20:00", "start_time": "2024-11-15 10:30:00"},
+      {"table_id": 5, "status": "ready to order", "duration": "00:30:00", "start_time": "2024-11-15 10:50:00"},
+      {"table_id": 5, "status": "eating", "duration": "01:20:00", "start_time": "2024-11-15 11:20:00"},
+      {"table_id": 5, "status": "need to clean", "duration": "00:40:00", "start_time": "2024-11-15 12:40:00"},
+      
+      {"table_id": 6, "status": "available", "duration": "00:15:00", "start_time": "2024-11-15 09:30:00"},
+      {"table_id": 6, "status": "ready to order", "duration": "00:25:00", "start_time": "2024-11-15 09:45:00"},
+      {"table_id": 6, "status": "eating", "duration": "00:45:00", "start_time": "2024-11-15 10:10:00"},
+      {"table_id": 6, "status": "need to clean", "duration": "00:35:00", "start_time": "2024-11-15 10:55:00"},
+      
+      {"table_id": 7, "status": "available", "duration": "00:05:00", "start_time": "2024-11-15 08:00:00"},
+      {"table_id": 7, "status": "ready to order", "duration": "00:20:00", "start_time": "2024-11-15 08:05:00"},
+      {"table_id": 7, "status": "eating", "duration": "00:40:00", "start_time": "2024-11-15 08:25:00"},
+      {"table_id": 7, "status": "need to clean", "duration": "00:10:00", "start_time": "2024-11-15 09:05:00"},
+      
+      {"table_id": 8, "status": "available", "duration": "00:07:00", "start_time": "2024-11-15 11:00:00"},
+      {"table_id": 8, "status": "ready to order", "duration": "00:15:00", "start_time": "2024-11-15 11:07:00"},
+      {"table_id": 8, "status": "eating", "duration": "00:35:00", "start_time": "2024-11-15 11:22:00"},
+      {"table_id": 8, "status": "need to clean", "duration": "00:20:00", "start_time": "2024-11-15 11:57:00"},
+      
+      {"table_id": 9, "status": "available", "duration": "00:20:00", "start_time": "2024-11-15 07:30:00"},
+      {"table_id": 9, "status": "ready to order", "duration": "00:50:00", "start_time": "2024-11-15 07:50:00"},
+      {"table_id": 9, "status": "eating", "duration": "01:10:00", "start_time": "2024-11-15 08:40:00"},
+      {"table_id": 9, "status": "need to clean", "duration": "00:25:00", "start_time": "2024-11-15 09:50:00"},
+      
+      {"table_id": 10, "status": "available", "duration": "00:12:00", "start_time": "2024-11-15 09:15:00"},
+      {"table_id": 10, "status": "ready to order", "duration": "00:20:00", "start_time": "2024-11-15 09:27:00"},
+      {"table_id": 10, "status": "eating", "duration": "01:30:00", "start_time": "2024-11-15 09:47:00"},
+      {"table_id": 10, "status": "need to clean", "duration": "00:45:00", "start_time": "2024-11-15 11:17:00"}
+    ]
+  }
+  

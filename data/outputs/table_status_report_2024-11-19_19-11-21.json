@@ -1,0 +1,70 @@
+{
+    "table_statuses": [
+        {
+            "table_id": 1,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:01:01"
+        },
+        {
+            "table_id": 2,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:01:01"
+        },
+        {
+            "table_id": 3,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:01:01"
+        },
+        {
+            "table_id": 4,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:01:01"
+        },
+        {
+            "table_id": 5,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:01:01"
+        },
+        {
+            "table_id": 6,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:01:01"
+        },
+        {
+            "table_id": 7,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:01:01"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:01:01"
+        },
+        {
+            "table_id": 9,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:22",
+            "duration": "00:00:01"
+        },
+        {
+            "table_id": 9,
+            "status": "ready to order",
+            "start_time": "2024-11-19 19:11:24",
+            "duration": "00:00:00"
+        },
+        {
+            "table_id": 9,
+            "status": "available",
+            "start_time": "2024-11-19 19:11:25",
+            "duration": "00:00:58"
+        }
+    ]
+}

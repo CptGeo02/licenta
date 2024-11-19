@@ -14,7 +14,38 @@ class TableManager:
         self.tables = {}  # Aici stocăm obiectele TableStatus
         # Lista statusurilor ciclice
         self.status_cycle = ['available', 'ready to order', 'eating', 'need to clean']
+        self.max_time_available = "99:99:99"
+        self.max_time_ready_to_order = "99:99:99"
+        self.max_time_eating = "99:99:99"
+        self.max_time_need_to_clean = "99:99:99"
 
+    def set_max_time(self, status_type, time_value):
+        """
+        Setează timpul maxim pentru un anumit status.
+        """
+        if status_type == "available":
+            self.max_time_available = time_value
+        elif status_type == "ready to order":
+            self.max_time_ready_to_order = time_value
+        elif status_type == "eating":
+            self.max_time_eating = time_value
+        elif status_type == "need to clean":
+            self.max_time_clean = time_value
+
+    def get_max_time(self, status_type):
+        """
+        Returnează timpul maxim pentru un anumit status.
+        """
+        if status_type == "available":
+            return self.max_time_available
+        elif status_type == "ready to order":
+            return self.max_time_ready_to_order
+        elif status_type == "eating":
+            return self.max_time_eating
+        elif status_type == "need to clean":
+            return self.max_time_clean
+        return None
+    
     def create_new_files(self):
         """
         Creează fișierul JSON cu data și ora curentă la începutul fiecărei runde.
@@ -43,10 +74,14 @@ class TableManager:
 
             # Procesare statusuri mese
             for table_id, table_status in self.tables.items():
+                # Verificăm dacă statusul este 'unknown' și, dacă da, îl ignorăm
+                if table_status.current_status == "unknown":
+                    continue
+
                 start_time_str = table_status.start_time.strftime("%Y-%m-%d %H:%M:%S")
                 duration = table_status.get_current_status_duration()
                 duration_str = f"{int(duration // 3600):02}:{int((duration % 3600) // 60):02}:{int(duration % 60):02}"
-
+                
                 # Găsim intrările curente pentru acest table_id în fișier
                 current_entries = [entry for entry in data["table_statuses"] if entry["table_id"] == table_id]
 
@@ -87,6 +122,7 @@ class TableManager:
             # Dacă fișierul nu există, creează un fișier nou cu structura dorită
             with open(self.json_file_name, 'w') as f:
                 json.dump({"table_statuses": []}, f)
+
                 
     def reset_tables(self):
         self.table_ids = {}

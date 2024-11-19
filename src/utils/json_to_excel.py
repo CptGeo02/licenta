@@ -15,49 +15,93 @@ from datetime import datetime
 import numpy as np
 
 class JsonToExcel:
-    def __init__(self, json_file, excel_file):
-        self.json_file = json_file
+    def __init__(self, tables_json_file, people_json_file, excel_file):
+        self.tables_json_file = tables_json_file
+        self.people_json_file = people_json_file
         self.excel_file = excel_file
 
-    def load_json(self):
-        """Încarcă datele din JSON."""
-        with open(self.json_file, 'r') as file:
+    def load_json(self, json_file):
+        """Încarcă datele din fișierul JSON."""
+        with open(json_file, 'r') as file:
             return json.load(file)
 
-    def save_to_excel(self, data):
+    def save_to_excel(self):
         """Salvează datele și graficele în Excel."""
-        # Crearea DataFrame-ului
-        table_statuses = data['table_statuses']
-        df = pd.DataFrame(table_statuses)
+         # Încărcarea datelor din JSON
+        tables_data = self.load_json(self.tables_json_file)
+        people_data = self.load_json(self.people_json_file)
+
+        # Crearea DataFrame-urilor pentru datele meselor și oamenilor
+        df_tables = pd.DataFrame(tables_data['table_statuses'])
+        df_people = pd.DataFrame(people_data['detections'])
 
         # Adăugăm intervalele de timp
-        df = self.add_time_slot(df)
-
+        df_tables = self.add_time_slot(df_tables)
         # Crearea unui workbook nou cu openpyxl
         workbook = Workbook()
 
         # Scrierea datelor brute în sheet-ul 'Raw Data'
         sheet = workbook.active
         sheet.title = 'Raw Data'
-        for r, row in df.iterrows():
+        for r, row in df_tables.iterrows():
             sheet.append(row.values.tolist())
 
         # Calcularea mediilor și generarea histogramelor pentru medii
-        avg_durations = self.calculate_avg_durations(df)
+        avg_durations = self.calculate_avg_durations(df_tables)
         self.generate_average_histogram(avg_durations, workbook)
 
         # Generarea histogramei și adăugarea ei pe un sheet nou
-        self.generate_histogram(df, workbook)
+        self.generate_histogram(df_tables, workbook)
 
         # Adăugare Status Analysis
-        self.generate_status_analysis(df, workbook)
+        self.generate_status_analysis(df_tables, workbook)
 
          # Adăugare Cycle Analysis
-        self.generate_cycle_histograms(df, workbook)
+        self.generate_cycle_histograms(df_tables, workbook)
 
-        self.generate_table_performance_report(df, workbook)
+        self.generate_table_performance_report(df_tables, workbook)
+
+        # Generarea histogramei pentru oameni
+        self.generate_people_histogram(df_people, workbook)
         # Salvarea fișierului Excel
         workbook.save(self.excel_file)
+
+    def generate_people_histogram(self, df_people, workbook):
+        """Generează histograma pentru numărul de oameni și o adaugă în Excel."""
+        # Gruparea numărului de oameni pe intervale orare
+        df_people['time_slot'] = pd.to_datetime(df_people['time']).dt.floor('h')  # Folosește 'h' în loc de 'H'
+        
+        # Calcularea numărului maxim de oameni pe intervale orare
+        people_max_count = df_people.groupby('time_slot')['people_count'].max().reset_index()
+
+        # Crearea histogramei
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax.bar(people_max_count['time_slot'].astype(str), people_max_count['people_count'], color='skyblue')
+        ax.set_xlabel('Time (Hourly intervals)')
+        ax.set_ylabel('Max Number of People')
+        ax.set_title('Max Number of People per Hour')
+
+        # Salvăm graficul temporar
+        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmpfile:
+            plt.savefig(tmpfile.name, format='png')
+            plt.close()
+
+            # Adăugăm graficul în sheet-ul People Statistics
+            ws = workbook.create_sheet('People Statistics')
+            img = Image(tmpfile.name)
+            ws.add_image(img, 'A1')
+
+        # Scrierea numărului maxim de oameni în intervalele orare în Excel
+        sheet = workbook.create_sheet('Max People per Hour')
+        sheet.append(['Time', 'Max People Count'])  # Adăugăm antetul
+
+        # Adăugăm fiecare interval orar și numărul maxim de oameni
+        for index, row in people_max_count.iterrows():
+            sheet.append([row['time_slot'].strftime('%H:%M'), row['people_count']])
+
+        print("Max number of people per hour added to Excel.")
+
+
 
     def generate_histogram(self, df, workbook):
         """Generează histograma și o adaugă în Excel."""
@@ -229,9 +273,9 @@ class JsonToExcel:
 
         def get_time_slot(row):
             """Extrage intervalul orar pe baza orei de început."""
-            # Convertește start_time în datetime, ținând cont că formatul este 'yyyy-mm-dd hh:mm:ss'
-            start_time = datetime.strptime(row['start_time'], '%Y-%m-%d %H:%M:%S')  # Folosește formatul complet
-            hour = start_time.hour  # Extrage ora
+            # Convertește start_time în datetime
+            start_time = datetime.strptime(row['start_time'], '%Y-%m-%d %H:%M:%S')
+            hour = start_time.hour
             if hour < 6:
                 return 'Night'
             elif hour < 12:
@@ -240,7 +284,6 @@ class JsonToExcel:
                 return 'Afternoon'
             else:
                 return 'Evening'
-
 
         df['time_slot'] = df.apply(get_time_slot, axis=1)
         return df
@@ -330,55 +373,6 @@ class JsonToExcel:
             all_cycle_durations[table_id] = cycle_durations  # Duratele individuale
             
         return table_cycle_durations, all_cycle_durations
-
-    def compute_total_time(table_data):
-        return sum(table_data['durations'])
-
-    def compute_total_cycles(table_data):
-        return len(table_data['cycles'])
-
-    def compute_time_eating(table_data):
-        return sum([d for s, d in zip(table_data['statuses'], table_data['durations']) if s == 'eating'])
-
-    def compute_time_ready_to_order(table_data):
-        return sum([d for s, d in zip(table_data['statuses'], table_data['durations']) if s == 'ready to order'])
-
-    def compute_time_need_to_clean(table_data):
-        return sum([d for s, d in zip(table_data['statuses'], table_data['durations']) if s == 'need to clean'])
-
-    def compute_time_available(table_data):
-        return sum([d for s, d in zip(table_data['statuses'], table_data['durations']) if s == 'available'])
-
-    def compute_idle_time_ratio(self, table_data, total_time):
-        time_available = self.compute_time_available(table_data)
-        return time_available / total_time if total_time else 0
-
-    def compute_cleaning_ratio(self, table_data, total_time):
-        time_to_clean = self.compute_time_need_to_clean(table_data)
-        return time_to_clean / total_time if total_time else 0
-
-    def compute_cycles_per_hour(self, table_data, total_time):
-        total_cycles = self.compute_total_cycles(table_data)
-        return total_cycles / (total_time / 3600) if total_time else 0
-
-    def compute_utilization_rate(self, table_data, total_time):
-        time_eating = self.compute_time_eating(table_data)
-        time_ready_to_order = self.compute_time_ready_to_order(table_data)
-        return (time_eating + time_ready_to_order) / total_time if total_time else 0
-
-    def compute_performance_score(self, table_data, total_time, weights):
-        total_cycles = self.compute_total_cycles(table_data)
-        time_eating = self.compute_time_eating(table_data)
-        time_to_clean = self.compute_time_need_to_clean(table_data)
-        idle_ratio = self.compute_idle_time_ratio(table_data, total_time)
-        
-        w1, w2, w3, w4 = weights
-        return (
-            (w1 * (total_cycles / total_time if total_time else 0)) +
-            (w2 * (time_eating / total_time if total_time else 0)) -
-            (w3 * (time_to_clean / total_time if total_time else 0)) -
-            (w4 * idle_ratio)
-        )
 
     def generate_table_performance_report(self, df, workbook):
         """Generează raportul de performanță al meselor și îl salvează într-un sheet Excel."""

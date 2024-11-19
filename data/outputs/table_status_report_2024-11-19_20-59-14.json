@@ -1,0 +1,58 @@
+{
+    "table_statuses": [
+        {
+            "table_id": 1,
+            "status": "available",
+            "start_time": "2024-11-19 20:59:15",
+            "duration": "00:00:04"
+        },
+        {
+            "table_id": 2,
+            "status": "available",
+            "start_time": "2024-11-19 20:59:15",
+            "duration": "00:00:04"
+        },
+        {
+            "table_id": 3,
+            "status": "available",
+            "start_time": "2024-11-19 20:59:15",
+            "duration": "00:00:04"
+        },
+        {
+            "table_id": 4,
+            "status": "available",
+            "start_time": "2024-11-19 20:59:15",
+            "duration": "00:00:04"
+        },
+        {
+            "table_id": 5,
+            "status": "available",
+            "start_time": "2024-11-19 20:59:15",
+            "duration": "00:00:04"
+        },
+        {
+            "table_id": 6,
+            "status": "ready to order",
+            "start_time": "2024-11-19 20:59:15",
+            "duration": "00:00:03"
+        },
+        {
+            "table_id": 7,
+            "status": "ready to order",
+            "start_time": "2024-11-19 20:59:15",
+            "duration": "00:00:04"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-19 20:59:15",
+            "duration": "00:00:04"
+        },
+        {
+            "table_id": 6,
+            "status": "available",
+            "start_time": "2024-11-19 20:59:19",
+            "duration": "00:00:00"
+        }
+    ]
+}

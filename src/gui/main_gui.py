@@ -7,11 +7,12 @@ from src.detectors.yolo_detector import YoloDetector
 from src.utils.json_analyzer import JsonAnalyzer
 from src.utils.json_to_excel import JsonToExcel
 
+
 class MainApp:
     def __init__(self, master):
         self.master = master
         self.master.title("AI Restaurant Monitoring System")
-        self.master.geometry("1200x1000")
+        self.master.geometry("1920x1080")
 
         self.prev_time = time.time()
         self.last_time = time.time()  # Momentul în care a fost actualizat ultima dată
@@ -23,6 +24,16 @@ class MainApp:
         self.button_frame = Frame(master)
         self.button_frame.pack(side=tk.TOP, fill=tk.X)
 
+        self.info_label = Label(
+            self.master,
+            text="Tables: 0 | People: 0",
+            font=("Helvetica", 16, "bold"),
+            bg="lightblue",
+            fg="black"
+        )
+        self.info_label.pack(side=tk.TOP, fill=tk.X)
+        
+
         # Selector de model YOLO
         self.model_var = StringVar(value=self.current_model)
         self.model_selector = OptionMenu(
@@ -31,7 +42,20 @@ class MainApp:
             *self.get_model_files(), 
             command=self.change_model
         )
+        # Variabile pentru timpii selectați pentru fiecare status
+        self.time_available = tk.StringVar(value='Select Max Time Available')
+        self.time_ready = tk.StringVar(value='Select Max Time Waiting')
+        self.time_eating = tk.StringVar(value='Select Max Time Eating')
+        self.time_clean = tk.StringVar(value='Select Max Time Clean')
 
+        # Crearea selectoarelor
+        self.create_time_selectors()
+        # Variabilă pentru numărul maxim de oameni
+
+        self.max_people_var = tk.StringVar(value='')
+        # Crearea input-ului pentru numărul maxim de oameni
+        self.create_people_number_input()
+        self.start_info_update()
         # Butoane principale de moduri
         self.start_camera_btn = Button(self.button_frame, text="Start Live Camera", command=self.start_camera)
         self.start_camera_btn.pack(side=tk.LEFT, padx=5, pady=5)
@@ -117,23 +141,59 @@ class MainApp:
         self.selected_mode = None  # Stochează modurile 'camera', 'video' sau 'show_images'
         self.update_button_states()
 
-    def analyze_json(self):
-        """Permite utilizatorului să selecteze un fișier JSON și să analizeze datele."""
-        file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
+    # def analyze_json(self):
+    #     """Permite utilizatorului să selecteze un fișier JSON și să analizeze datele."""
+    #     file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
         
-        if file_path:
-            if self.json_analyzer.load_json(file_path):
-                #self.json_analyzer.plot_data()
-                # Exemplu de utilizare
-                json_file = file_path  
-                excel_file = 'data/outputs/table_status_analysis.xlsx'
+    #     if file_path:
+    #         if self.json_analyzer.load_json(file_path):
+    #             #self.json_analyzer.plot_data()
+    #             # Exemplu de utilizare
+    #             json_file = file_path  
+    #             excel_file = 'data/outputs/table_status_analysis.xlsx'
 
-                analyzer = JsonToExcel(json_file, excel_file)
-                data = analyzer.load_json()
-                analyzer.save_to_excel(data)
+    #             analyzer = JsonToExcel(json_file, excel_file)
+    #             data = analyzer.load_json()
+    #             analyzer.save_to_excel(data)
 
-                print(f"Fișierul Excel a fost generat: {excel_file}")
-           
+    #             print(f"Fișierul Excel a fost generat: {excel_file}")
+
+    def analyze_json(self):
+        """Permite utilizatorului să selecteze fișierele JSON create recent și să le analizeze."""
+        # Directorul cu fișierele JSON
+        json_dir = 'data/outputs'  # Directorul cu fișierele people_json și table_json
+
+        # Obținem lista fișierelor JSON din director
+        json_files = [f for f in os.listdir(json_dir) if f.endswith('.json')]
+
+        # Filtrăm fișierele pentru a obține doar cele care corespund prefixului pentru people_json și table_json
+        people_json_files = [f for f in json_files if f.startswith('people_detected_')]
+        table_json_files = [f for f in json_files if f.startswith('table_status_report_')]
+
+        # Sortăm fișierele după data ultimei modificări (în ordine descrescătoare)
+        people_json_files.sort(key=lambda f: os.path.getmtime(os.path.join(json_dir, f)), reverse=True)
+        table_json_files.sort(key=lambda f: os.path.getmtime(os.path.join(json_dir, f)), reverse=True)
+
+        # Obținem cele mai recente fișiere
+        latest_people_json = people_json_files[0] if people_json_files else None
+        latest_table_json = table_json_files[0] if table_json_files else None
+
+        if latest_people_json and latest_table_json:
+            # Construim calea completă pentru fișierele selectate
+            people_json_file = os.path.join(json_dir, latest_people_json)
+            table_json_file = os.path.join(json_dir, latest_table_json)
+            
+            # În loc de a deschide manual fișierele, le folosim direct
+            excel_file = 'data/outputs/table_status_analysis.xlsx'
+            
+            # Utilizăm JsonToExcel pentru analiza fișierelor JSON
+            analyzer = JsonToExcel(table_json_file, people_json_file, excel_file)  # Folosim fișierul table_json pentru analiza
+            analyzer.save_to_excel()
+
+            print(f"Fișierul Excel a fost generat: {excel_file}")
+        else:
+            print("Nu există fișiere JSON disponibile pentru analiză.")
+                
     def update_performance(self):
         # Exemplu de calcul FPS
         # Afișare FPS
@@ -267,7 +327,10 @@ class MainApp:
         self.reset_tables_btn.config(state="normal")
         self.detector.table_manager.create_new_files()
         self.detector.table_manager.start_auto_save()
-
+        self.detector.people_manager.create_new_files()
+        self.detector.people_manager.start_auto_save()
+        
+        
     def reset_tables(self):
         self.detector.detecting_tables_only = True
         self.detector.done_setting_tables = False
@@ -318,6 +381,131 @@ class MainApp:
             if self.current_frame is not None:
                 display_frame(self, self.current_frame)
 
+    def generate_time_options(self, start_time, end_time, step_minutes):
+        """
+        Generăm intervalele de timp între start_time și end_time cu pasul step_minutes.
+        """
+        start = datetime.strptime(start_time, "%H:%M:%S")
+        end = datetime.strptime(end_time, "%H:%M:%S")
+        step = timedelta(minutes=step_minutes)
+
+        times = []
+        current_time = start
+        while current_time <= end:
+            times.append(current_time.strftime("%H:%M:%S"))
+            current_time += step
+
+        return times
+
+    def get_time_options(self, status_type):
+        """
+        Funcție care returnează timpii disponibili pentru un anumit tip de status.
+        """
+        if status_type == 'available':
+            return self.generate_time_options('00:30:00', '10:00:00', 30)
+        elif status_type == 'ready to order':
+            return self.generate_time_options('00:05:00', '01:00:00', 5)
+        elif status_type == 'eating':
+            return self.generate_time_options('00:30:00', '06:00:00', 30)
+        elif status_type == 'need to clean':
+            return self.generate_time_options('00:05:00', '02:00:00', 5)
+        else:
+            return []
+        
+    def create_time_selectors(self):
+        """
+        Crează selectoarele de timp pentru fiecare status al mesei.
+        """
+        # Selector pentru "available"
+        self.available_selector = self.create_time_selector('available', self.time_available)
+        
+        # Selector pentru "ready to order"
+        self.ready_selector = self.create_time_selector('ready to order', self.time_ready)
+        
+        # Selector pentru "eating"
+        self.eating_selector = self.create_time_selector('eating', self.time_eating)
+        
+        # Selector pentru "need to clean"
+        self.clean_selector = self.create_time_selector('need to clean', self.time_clean)
+
+    def create_time_selector(self, status_type, time_var):
+        """
+        Creează un selector de timp pentru un anumit tip de status.
+        """
+        time_options = self.get_time_options(status_type)
+        selector = tk.OptionMenu(
+            self.button_frame, 
+            time_var, 
+            *time_options, 
+            command=lambda _: self.update_time_status(status_type, time_var)
+        )
+        # Configurarea selectoarelor cu lățime și plasare
+        selector.config(width=25)
+        selector.pack(side=tk.RIGHT, padx=5, pady=5)
+        return selector
+
+    def update_time_status(self, status_type, time_var):
+        """
+        Funcție de comandă care salvează timpul ales pentru un anumit status.
+        """
+        time = time_var.get()
+        print(f"Selected time for {status_type}: {time}")
+        self.detector.table_manager.set_max_time(status_type, time)
+        # Aici poți salva valorile în variabilele corespunzătoare sau le poți folosi în aplicație.
+
+    def create_people_number_input(self):
+        """
+        Creează un câmp de input pentru numărul maxim de persoane.
+        """
+
+
+        # Setează valoarea inițială a câmpului de input din PeopleManager
+        self.max_people_var = tk.StringVar(value=str(self.detector.people_manager.get_max_people_number()))
+        people_entry = tk.Entry(self.button_frame, textvariable=self.max_people_var, width=10, justify='center')
+
+        # Validare: doar cifre
+        validate_command = (self.master.register(self.validate_unsigned_int), '%P')
+        people_entry.config(validate='key', validatecommand=validate_command)
+
+        # Event pentru a actualiza valoarea când utilizatorul apasă Enter
+        people_entry.bind('<Return>', self.update_max_people)
+        people_entry.pack(side=tk.RIGHT, padx=5)
+
+        label = tk.Label(self.button_frame, text="Max People:")
+        label.pack(side=tk.RIGHT, padx=5)
+
+    def validate_unsigned_int(self, value):
+        """
+        Permite doar valori unsigned int în câmpul de input.
+        """
+        if value == "":
+            return True  # Permite câmp gol temporar
+        return value.isdigit()
+
+    def update_max_people(self, event=None):
+        """
+        Actualizează valoarea maximă de persoane în PeopleManager.
+        """
+        try:
+            max_people = int(self.max_people_var.get())
+            self.detector.people_manager.set_max_people_number(max_people)
+            print(f"Max people number updated to: {max_people}")
+        except ValueError as e:
+            messagebox.showerror("Invalid Input", "Please enter a positive integer.")
+            # Resetează la valoarea actuală
+            self.max_people_var.set(str(self.detector.people_manager.get_max_people_number()))
+
+    def start_info_update(self):
+        """Inițiază actualizarea periodică a informațiilor."""
+        self.update_info()  # Actualizează imediat
+        self.master.after(1000, self.start_info_update)  # Reapelează peste 1 secundă
+
+    def update_info(self):
+        """Actualizează textul pentru numărul de mese și persoane detectate."""
+        self.info_label.config(
+            text=f"Tables: {self.detector.tables_number} | "
+                 f"People: {self.detector.people_number}"
+        )
 if __name__ == "__main__":
     root = tk.Tk()
     app = MainApp(root)
