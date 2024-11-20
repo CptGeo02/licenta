@@ -20,6 +20,7 @@ import subprocess
 import json
 from tkinter import messagebox
 from tkinter import ttk
+import customtkinter
 
 # Check if CUDA is available and set the device to GPU if so
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

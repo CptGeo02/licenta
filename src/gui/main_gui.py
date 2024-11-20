@@ -12,7 +12,8 @@ class MainApp:
     def __init__(self, master):
         self.master = master
         self.master.title("AI Restaurant Monitoring System")
-        self.master.geometry("1920x1080")
+        self.master.geometry(f"{self.master.winfo_screenwidth()}x{self.master.winfo_screenheight()}")
+        #self.apply_modern_style()
 
         self.prev_time = time.time()
         self.last_time = time.time()  # Momentul în care a fost actualizat ultima dată
@@ -21,24 +22,18 @@ class MainApp:
         self.detector = YoloDetector()
         self.json_analyzer = JsonAnalyzer()
         # Creează un frame pentru butoane
-        self.button_frame = Frame(master)
+        self.button_frame = ttk.Frame(master)
         self.button_frame.pack(side=tk.TOP, fill=tk.X)
-
-        self.info_label = Label(
-            self.master,
-            text="Tables: 0 | People: 0",
-            font=("Helvetica", 16, "bold"),
-            bg="lightblue",
-            fg="black"
-        )
-        self.info_label.pack(side=tk.TOP, fill=tk.X)
-        
+        # Creează un frame pentru butoane
+        self.max_frame = ttk.Frame(master)
+        self.max_frame.pack(side=tk.TOP, fill=tk.X,)
 
         # Selector de model YOLO
         self.model_var = StringVar(value=self.current_model)
-        self.model_selector = OptionMenu(
+        self.model_selector =  ttk.OptionMenu(
             self.button_frame, 
             self.model_var, 
+            "Select mode",  # Valoarea implicită afișată
             *self.get_model_files(), 
             command=self.change_model
         )
@@ -55,63 +50,66 @@ class MainApp:
         self.max_people_var = tk.StringVar(value='')
         # Crearea input-ului pentru numărul maxim de oameni
         self.create_people_number_input()
-        self.start_info_update()
         # Butoane principale de moduri
-        self.start_camera_btn = Button(self.button_frame, text="Start Live Camera", command=self.start_camera)
-        self.start_camera_btn.pack(side=tk.LEFT, padx=5, pady=5)
+        self.start_camera_btn = ttk.Button(self.button_frame, text="Start Live Camera", command=self.start_camera)
+        self.start_camera_btn.pack(side=tk.LEFT, fill=tk.X, padx=5, pady=5)
 
-        self.select_video_btn = Button(self.button_frame, text="Select Video", command=self.select_video)
+        self.select_video_btn = ttk.Button(self.button_frame, text="Select Video", command=self.select_video)
         self.select_video_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.images_btn = Button(self.button_frame, text="Show Images", command=self.show_images)
+        self.images_btn = ttk.Button(self.button_frame, text="Show Images", command=self.show_images)
         self.images_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.model_selector.config(width=15)
         self.model_selector.pack(side=tk.LEFT, padx=5, pady=5)
 
         # Butoane de navigare, detectare și resetare mese
-        self.previous_btn = Button(self.button_frame, text="Previous", command=self.previous_image, state="disabled")
+        self.previous_btn = ttk.Button(self.button_frame, text="Previous", command=self.previous_image, state="disabled")
         self.previous_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.next_btn = Button(self.button_frame, text="Next", command=self.next_image, state="disabled")
+        self.next_btn = ttk.Button(self.button_frame, text="Next", command=self.next_image, state="disabled")
         self.next_btn.pack(side=tk.LEFT, padx=5, pady=5)
         
-        self.detect_all_btn = Button(self.button_frame, text="Detect all", command=self.detect_all, state="disabled")
+        self.detect_all_btn = ttk.Button(self.button_frame, text="Detect all", command=self.detect_all, state="disabled")
         self.detect_all_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
         self.auto_detect_enabled = BooleanVar(value=False)
         self.auto_detect_switch = Checkbutton(self.button_frame, text="Auto-Detect", variable=self.auto_detect_enabled, onvalue=True, offvalue=False, state="disabled")
         self.auto_detect_switch.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.detect_tables_btn = Button(self.button_frame, text="Detect Tables", command=self.detect_tables, state="disabled")
+        self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables, state="disabled")
         self.detect_tables_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.set_tables_btn = Button(self.button_frame, text="Set Tables", command=self.set_tables, state="disabled")
+        self.set_tables_btn = ttk.Button(self.button_frame, text="Set Tables", command=self.set_tables, state="disabled")
         self.set_tables_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.reset_tables_btn = Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
+        self.reset_tables_btn = ttk.Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
         self.reset_tables_btn.pack(side=tk.LEFT, padx=5, pady=5)
 
          # Buton pentru analiza fișierului JSON
-        self.analyze_json_btn = Button(self.button_frame, text="Generate Statistics", command=self.analyze_json)
+        self.analyze_json_btn = ttk.Button(self.button_frame, text="Generate Statistics", command=self.analyze_json)
         self.analyze_json_btn.pack(side=tk.LEFT, padx=5, pady=5)
-
+        
         # Frame pentru afișarea informațiilor de performanță
-        self.performance_frame = tk.Frame(master)
-        self.performance_frame.pack(side=tk.RIGHT, fill=tk.Y)
+        self.performance_frame = ttk.Frame(master)
+        self.performance_frame.pack(side=tk.TOP, fill=tk.X)
         
         # Etichete pentru afișarea performanței
-        self.fps_label = tk.Label(self.performance_frame, text="FPS: Calculating...", font=("Arial", 12))
-        self.fps_label.pack(pady=5)
+        self.fps_label = ttk.Label(self.performance_frame, text="FPS: Calculating...")
+        self.fps_label.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.cpu_label = tk.Label(self.performance_frame, text="CPU Usage: Calculating...", font=("Arial", 12))
-        self.cpu_label.pack(pady=5)
+        self.cpu_label = ttk.Label(self.performance_frame, text="CPU Usage: Calculating...")
+        self.cpu_label.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.gpu_label = tk.Label(self.performance_frame, text="GPU Usage: Not Available", font=("Arial", 12))
-        self.gpu_label.pack(pady=5)
+        self.gpu_label = ttk.Label(self.performance_frame, text="GPU Usage: Not Available")
+        self.gpu_label.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.ram_label = tk.Label(self.performance_frame, text="RAM Usage: Calculating...", font=("Arial", 12))
-        self.ram_label.pack(pady=5)
+        self.ram_label = ttk.Label(self.performance_frame, text="RAM Usage: Calculating...")
+        self.ram_label.pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.info_label = tk.Label(self.master, text="Tables: 0 | People: 0")
+        self.info_label.pack(side=tk.TOP, fill=tk.X)
+        self.start_info_update()
 
         # Atribute pentru calculul FPS
         self.prev_time = time.time()
@@ -123,10 +121,10 @@ class MainApp:
         self.canvas = Canvas(master, width=640, height=480)
         self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        self.label = Label(self.canvas)
+        self.label = ttk.Label(self.canvas)
         self.label.pack()
 
-        self.status_label = Label(master, text="", wraplength=780)
+        self.status_label = ttk.Label(master, text="", wraplength=780)
         self.status_label.pack(side=tk.BOTTOM, pady=10)
 
         self.video_source = None
@@ -433,15 +431,16 @@ class MainApp:
         Creează un selector de timp pentru un anumit tip de status.
         """
         time_options = self.get_time_options(status_type)
-        selector = tk.OptionMenu(
-            self.button_frame, 
-            time_var, 
+        selector = ttk.OptionMenu(
+            self.max_frame, 
+            time_var,
+            f"Select max {status_type} time",
             *time_options, 
             command=lambda _: self.update_time_status(status_type, time_var)
         )
         # Configurarea selectoarelor cu lățime și plasare
-        selector.config(width=25)
-        selector.pack(side=tk.RIGHT, padx=5, pady=5)
+        selector.config(width=35)
+        selector.pack(side=tk.LEFT, padx=5, pady=5)
         return selector
 
     def update_time_status(self, status_type, time_var):
@@ -454,25 +453,20 @@ class MainApp:
         # Aici poți salva valorile în variabilele corespunzătoare sau le poți folosi în aplicație.
 
     def create_people_number_input(self):
-        """
-        Creează un câmp de input pentru numărul maxim de persoane.
-        """
-
-
         # Setează valoarea inițială a câmpului de input din PeopleManager
         self.max_people_var = tk.StringVar(value=str(self.detector.people_manager.get_max_people_number()))
-        people_entry = tk.Entry(self.button_frame, textvariable=self.max_people_var, width=10, justify='center')
+        people_entry = ttk.Entry(self.max_frame, textvariable=self.max_people_var, width=10, justify='center')
 
         # Validare: doar cifre
         validate_command = (self.master.register(self.validate_unsigned_int), '%P')
         people_entry.config(validate='key', validatecommand=validate_command)
 
         # Event pentru a actualiza valoarea când utilizatorul apasă Enter
-        people_entry.bind('<Return>', self.update_max_people)
-        people_entry.pack(side=tk.RIGHT, padx=5)
+        label = ttk.Label(self.max_frame, text="Max People:")
+        label.pack(side=tk.LEFT, padx=5)
 
-        label = tk.Label(self.button_frame, text="Max People:")
-        label.pack(side=tk.RIGHT, padx=5)
+        people_entry.bind('<Return>', self.update_max_people)
+        people_entry.pack(side=tk.LEFT, padx=5)
 
     def validate_unsigned_int(self, value):
         """
@@ -506,6 +500,72 @@ class MainApp:
             text=f"Tables: {self.detector.tables_number} | "
                  f"People: {self.detector.people_number}"
         )
+        
+    def apply_modern_style(self):
+        # Creează un obiect Style pentru widget-urile ttk
+        style = ttk.Style()
+
+        # Setează tema generală
+        style.theme_use("clam")  # Permite personalizări ușoare
+
+        # Culori generale
+        background_color = "#ffffff"  # Alb pentru fundal
+        border_color = "#ffffff"  # Gri deschis pentru borduri
+        shadow_color = "#e0e0e0"  # Umbra discretă
+        font_family = "Segoe UI"  # Font simplu și modern
+
+        # Fundal general al ferestrei principale
+        self.master.configure(bg=background_color)
+
+        # Stil pentru butoane
+        style.configure("TButton",
+                        font=(font_family, 10),
+                        background=background_color,
+                        foreground="black",
+                        borderwidth=1,
+                        relief="flat",
+                        padding=5)
+        style.map("TButton",
+                bordercolor=[("focus", border_color)],
+                background=[("active", shadow_color)],
+                foreground=[("disabled", "#a1a1a1")])
+
+        # Stil pentru Entry
+        style.configure("TEntry",
+                        font=(font_family, 10),
+                        fieldbackground=background_color,
+                        foreground="black",
+                        borderwidth=1,
+                        relief="flat",
+                        insertcolor="black")
+        style.map("TEntry",
+                bordercolor=[("focus", border_color)],
+                fieldbackground=[("disabled", shadow_color)],
+                foreground=[("disabled", "#a1a1a1")])
+
+        # Stil pentru OptionMenu
+        style.configure("TMenubutton",
+                        font=(font_family, 10),
+                        background=background_color,
+                        foreground="black",
+                        borderwidth=1,
+                        relief="flat",
+                        padding=5)
+        style.map("TMenubutton",
+                bordercolor=[("focus", border_color)],
+                background=[("active", shadow_color)],
+                foreground=[("disabled", "#a1a1a1")])
+
+        # Adaugă o umbră subtilă pentru fiecare widget
+        def add_shadow(widget):
+            widget.configure(highlightthickness=1, highlightbackground=border_color, highlightcolor=border_color)
+
+        # Adaugă funcția pentru a aplica umbra fiecărui widget
+        for widget in self.master.winfo_children():
+            if isinstance(widget, (ttk.Entry, ttk.Button, ttk.OptionMenu)):
+                add_shadow(widget)
+
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = MainApp(root)
