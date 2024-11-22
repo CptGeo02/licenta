@@ -22,6 +22,8 @@ class YoloDetector:
         self.tables_detected = []
         self.tables_number = 0
         self.people_number = 0
+        self.overlap_threshold = 0.2
+
         print("Yolo running on", self.device)
 
         # Aici definim clasele obiectelor speciale
@@ -60,9 +62,9 @@ class YoloDetector:
                 'confidence': conf.item()
             })
 
-        filtered_detections = filter_detections(detections)
-        self.tables_number = sum(1 for d in filtered_detections if d['class'] == 60)  # Exemplu: clasă pentru mese
-        self.people_number = sum(1 for d in filtered_detections if d['class'] == 0)  # Exemplu: clasă pentru persoane
+        filtered_detections = filter_detections(detections, self.overlap_threshold)
+        self.tables_number = sum(1 for d in filtered_detections if d['class'] == 60) 
+        self.people_number = sum(1 for d in filtered_detections if d['class'] == 0) 
         # Numărăm persoanele detectate
         
         self.people_manager.set_people_number(self.people_number)

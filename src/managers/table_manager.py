@@ -129,6 +129,14 @@ class TableManager:
         self.table_counter = 0
         self.tables = {}
 
+    def set_red_threshold_for_all_tables(self, red_threshold):
+        for table_status in self.tables.values():
+            table_status.set_red_threshold(red_threshold)
+
+    def set_blue_threshold_for_all_tables(self, blue_threshold):
+        for table_status in self.tables.values():
+            table_status.set_blue_threshold(blue_threshold)
+
     def assign_table_id(self, table_id, box):
         if table_id is None:
             self.table_counter += 1
