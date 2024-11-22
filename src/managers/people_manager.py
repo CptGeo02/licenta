@@ -34,7 +34,7 @@ class PeopleManager:
         """
         # Obține data și ora curentă pentru denumirea fișierelor
         now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        self.json_file_name = f"data/outputs/people_detected_{now}.json" 
+        self.json_file_name = f"data/outputs/people_records/people_detected_{now}.json" 
         
         # Creează fișierul JSON gol la începutul fiecărei runde
         with open(self.json_file_name, 'w') as f:

@@ -6,9 +6,10 @@ from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
 from src.utils.json_analyzer import JsonAnalyzer
 from src.utils.json_to_excel import JsonToExcel
+from src.gui.schedule_frame import ScheduleFrame
+from src.gui.generate_statistics_frame import StatisticsCalendar
 
-
-class MainApp:
+class MainApp():
     def __init__(self, master):
         self.master = master
         self.master.title("AI Restaurant Monitoring System")
@@ -81,10 +82,15 @@ class MainApp:
         self.stop_detection_btn.grid(row=0, column=11, padx=5, pady=5)
 
         # Buton pentru analiza fișierului JSON
-        self.analyze_json_btn = ttk.Button(self.button_frame, text="Generate Statistics", command=self.analyze_json)
+        self.analyze_json_btn = ttk.Button(self.button_frame, text="Analyze Records", command=self.analyze_json)
         self.analyze_json_btn.grid(row=0, column=12, padx=5, pady=5)
 
-        
+        # Add a button to open the schedule window
+        self.open_schedule_button = ttk.Button(self.button_frame, text="Set Weekly Schedule", command=self.open_schedule_window)
+        self.open_schedule_button.grid(row=0, column=13, padx=5, pady=5)
+                # Add Generate Statistics Button
+        self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
+        self.btn_generate_statistics.grid(row=0, column=14, padx=5, pady=5)
         # Creează un frame pentru butoane
         self.max_frame = ttk.Frame(master)
         self.max_frame.pack(pady=10)
@@ -190,59 +196,50 @@ class MainApp:
         # Inițializează starea modurilor și a apelului pentru actualizarea stării butoanelor
         self.selected_mode = None  # Stochează modurile 'camera', 'video' sau 'show_images'
         self.update_button_states()
-
-    # def analyze_json(self):
-    #     """Permite utilizatorului să selecteze un fișier JSON și să analizeze datele."""
-    #     file_path = filedialog.askopenfilename(filetypes=[("JSON Files", "*.json")])
-        
-    #     if file_path:
-    #         if self.json_analyzer.load_json(file_path):
-    #             #self.json_analyzer.plot_data()
-    #             # Exemplu de utilizare
-    #             json_file = file_path  
-    #             excel_file = 'data/outputs/table_status_analysis.xlsx'
-
-    #             analyzer = JsonToExcel(json_file, excel_file)
-    #             data = analyzer.load_json()
-    #             analyzer.save_to_excel(data)
-
-    #             print(f"Fișierul Excel a fost generat: {excel_file}")
+        self.apply_modern_design()
 
     def analyze_json(self):
-        """Permite utilizatorului să selecteze fișierele JSON create recent și să le analizeze."""
-        # Directorul cu fișierele JSON
-        json_dir = 'data/outputs'  # Directorul cu fișierele people_json și table_json
+        """Permite utilizatorului să selecteze fișierele JSON pentru analiză și salvează rezultatul într-un fișier Excel."""
+        # Directorul pentru salvarea raportului Excel
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        # Creează calea completă a folderului
+        excel_output_dir = os.path.join("data", "outputs", "daily_report", current_date)
+        os.makedirs(excel_output_dir, exist_ok=True)  # Creează folderul dacă nu există
 
-        # Obținem lista fișierelor JSON din director
-        json_files = [f for f in os.listdir(json_dir) if f.endswith('.json')]
 
-        # Filtrăm fișierele pentru a obține doar cele care corespund prefixului pentru people_json și table_json
-        people_json_files = [f for f in json_files if f.startswith('people_detected_')]
-        table_json_files = [f for f in json_files if f.startswith('table_status_report_')]
+        # Selecția fișierului pentru people_records
+        print("Selectați fișierul JSON pentru people_records.")
+        people_json_file = filedialog.askopenfilename(
+            title="Selectați fișierul JSON pentru People",
+            initialdir='data/outputs/people_records',
+            filetypes=(("JSON Files", "*.json"), ("All Files", "*.*"))
+        )
 
-        # Sortăm fișierele după data ultimei modificări (în ordine descrescătoare)
-        people_json_files.sort(key=lambda f: os.path.getmtime(os.path.join(json_dir, f)), reverse=True)
-        table_json_files.sort(key=lambda f: os.path.getmtime(os.path.join(json_dir, f)), reverse=True)
+        # Selecția fișierului pentru table_records
+        print("Selectați fișierul JSON pentru table_records.")
+        table_json_file = filedialog.askopenfilename(
+            title="Selectați fișierul JSON pentru Tables",
+            initialdir='data/outputs/table_records',
+            filetypes=(("JSON Files", "*.json"), ("All Files", "*.*"))
+        )
 
-        # Obținem cele mai recente fișiere
-        latest_people_json = people_json_files[0] if people_json_files else None
-        latest_table_json = table_json_files[0] if table_json_files else None
+        # Verificăm dacă ambele fișiere au fost selectate
+        if not people_json_file or not table_json_file:
+            print("Selecția fișierelor a fost anulată.")
+            return
 
-        if latest_people_json and latest_table_json:
-            # Construim calea completă pentru fișierele selectate
-            people_json_file = os.path.join(json_dir, latest_people_json)
-            table_json_file = os.path.join(json_dir, latest_table_json)
-            
-            # În loc de a deschide manual fișierele, le folosim direct
-            excel_file = 'data/outputs/table_status_analysis.xlsx'
-            
-            # Utilizăm JsonToExcel pentru analiza fișierelor JSON
-            analyzer = JsonToExcel(table_json_file, people_json_file, excel_file)  # Folosim fișierul table_json pentru analiza
+        # Salvarea fișierului Excel
+        excel_file = os.path.join(excel_output_dir, 'table_status_analysis.xlsx')
+
+        # Utilizăm JsonToExcel pentru analiza fișierelor JSON
+        try:
+            analyzer = JsonToExcel(table_json_file, people_json_file, excel_file)
             analyzer.save_to_excel()
-
-            print(f"Fișierul Excel a fost generat: {excel_file}")
-        else:
-            print("Nu există fișiere JSON disponibile pentru analiză.")
+            print(f"Fișierul Excel a fost generat cu succes: {excel_file}")
+            analyzer.save_average_statistics()
+            print(f"Fișierul JSON a fost generat cu succes")
+        except Exception as e:
+            print(f"Eroare la generarea fișierului Excel: {e}")
                 
     def update_performance(self):
         # Exemplu de calcul FPS
@@ -615,6 +612,126 @@ class MainApp:
         new_threshold = self.blue_threshold_var.get()
         self.detector.table_manager.set_blue_threshold_for_all_tables(new_threshold)
         self.blue_threshold_var.value_label.config(text=f"{new_threshold:.2f}")
+
+    def draw_objects(canvas, objects):
+        """
+        Desenează obiectele pe canvas cu bordere subțiri și non-conectate.
+        :param canvas: tkinter.Canvas
+        :param objects: Listă de coordonate și dimensiuni (ex: [(x1, y1, x2, y2), ...])
+        """
+        for obj in objects:
+            x1, y1, x2, y2 = obj
+            canvas.create_rectangle(
+                x1, y1, x2, y2,
+                outline="#007BFF",  # Albastru modern
+                width=1  # Border subțire
+            )
+    def apply_modern_design(self):
+        """
+        Configurează stilul modern pentru aplicația GUI.
+        Include butoane albastre, fonturi curate și bordere subtile.
+        """
+        style = ttk.Style()
+        style.theme_use("clam")  # Temă modernă de bază
+
+        # Culoare pentru butoane
+        modern_blue = "#007BFF"
+        hover_blue = "#0056b3"  # Hover mai închis
+        pressed_blue = "#004085"  # Apăsat
+        text_white = "#FFFFFF"  # Text alb pentru contrast
+
+        # Stil pentru TButton (butoane)
+        style.configure(
+            "TButton",
+            font=("Helvetica", 12),  # Font modern, 12pt
+            padding=10,  # Spațiu interior
+            background=modern_blue,  # Culoarea de bază a butonului
+            foreground=text_white,  # Text alb
+            borderwidth=1,  # Border subțire
+            relief="flat"  # Aspect plat
+        )
+        style.map(
+            "TButton",
+            background=[
+                ("active", hover_blue),  # Culoare hover
+                ("pressed", pressed_blue)  # Culoare la apăsare
+            ],
+            foreground=[
+                ("disabled", "#A0A0A0")  # Text gri când e dezactivat
+            ]
+        )
+
+        # Stil pentru TFrame (rame)
+        style.configure(
+            "TFrame",
+            background="#F5F5F5"  # Alb modern pentru fundal
+        )
+
+        # Stil pentru TLabel (etichete)
+        style.configure(
+            "TLabel",
+            font=("Helvetica", 11),  # Font modern, 11pt
+            background="#F5F5F5",  # Alb modern
+            foreground="#333333"  # Gri închis pentru text
+        )
+
+        # Stil pentru TEntry (casete de input)
+        style.configure(
+            "TEntry",
+            font=("Helvetica", 11),
+            padding=5,
+            fieldbackground="#FFFFFF",  # Fundal alb curat
+            foreground="#000000",  # Text negru
+            borderwidth=1,
+            relief="solid"
+        )
+
+        # Stil pentru TCombobox (combobox-uri)
+        style.configure(
+            "TCombobox",
+            font=("Helvetica", 11),
+            padding=5,
+            fieldbackground="#FFFFFF",
+            foreground="#000000",
+            background="#FFFFFF",
+            borderwidth=1
+        )
+
+        # Stil pentru TCheckbutton (checkbox-uri)
+        style.configure(
+            "TCheckbutton",
+            font=("Helvetica", 11),
+            background="#F5F5F5",
+            foreground="#333333",
+            padding=5
+        )
+
+        # Stil pentru TProgressbar (bare de progres)
+        style.configure(
+            "TProgressbar",
+            thickness=10,
+            background=modern_blue,
+            troughcolor="#E0E0E0"  # Fundal gri deschis pentru trough
+        )
+        self.master.configure(background="#F5F5F5")
+
+    def open_schedule_window(self):
+        """Function to open the schedule frame in a new window."""
+        schedule_window = tk.Toplevel()
+        schedule_window.title("Set Weekly Schedule")
+        schedule_window.geometry("600x400")  # Adjust size as needed
+        frame = ScheduleFrame(schedule_window)
+        frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+    def open_statistics_calendar(self):
+        """Function to open the statistics calendar window in a new window."""
+        statistics_window = tk.Toplevel()  # Creează o fereastră de tip Toplevel
+        statistics_window.title("Select Date Range for Statistics")  # Titlul ferestrei
+        statistics_window.geometry("600x400")  # Setează dimensiunile ferestrei
+
+        # Creează frame-ul pentru calendar și alte componente
+        statistics_frame = StatisticsCalendar(statistics_window)  # Pass the Toplevel window to StatisticsCalendar
+        statistics_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Adaugă frame-ul în fereastră
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -1,0 +1,26 @@
+{
+    "2024-11-22": {
+        "tables_performance": 0.3639,
+        "people_number": 7,
+        "idle_time_ratio": 0.0974,
+        "cleaning_ratio": 0.2082,
+        "cycles_per_hour": 0.5174,
+        "utilization_rate": 0.6945
+    },
+    "2024-11-23": {
+        "tables_performance": 0.8437,
+        "people_number": 23,
+        "idle_time_ratio": 0.1738,
+        "cleaning_ratio": 0.2149,
+        "cycles_per_hour": 0.6294,
+        "utilization_rate": 0.7852
+    },
+    "2024-11-24": {
+        "tables_performance": 0.9213,
+        "people_number": 30,
+        "idle_time_ratio": 0.1428,
+        "cleaning_ratio": 0.1873,
+        "cycles_per_hour": 0.4827,
+        "utilization_rate": 0.8124
+    }
+}

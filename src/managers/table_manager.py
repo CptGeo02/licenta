@@ -52,7 +52,7 @@ class TableManager:
         """
         # Obține data și ora curentă pentru denumirea fișierelor
         now = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        self.json_file_name = f"data/outputs/table_status_report_{now}.json"
+        self.json_file_name = f"data/outputs/table_records/table_status_report_{now}.json"
         
         # Creează fișierul JSON gol la începutul fiecărei runde
         with open(self.json_file_name, 'w') as f:

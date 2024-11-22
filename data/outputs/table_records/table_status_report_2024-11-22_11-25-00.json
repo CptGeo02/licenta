@@ -1,0 +1,100 @@
+{
+    "table_statuses": [
+        {
+            "table_id": 1,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:01",
+            "duration": "00:00:39"
+        },
+        {
+            "table_id": 2,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:01",
+            "duration": "00:00:39"
+        },
+        {
+            "table_id": 3,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:01",
+            "duration": "00:00:39"
+        },
+        {
+            "table_id": 4,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:01",
+            "duration": "00:00:39"
+        },
+        {
+            "table_id": 5,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:01",
+            "duration": "00:00:39"
+        },
+        {
+            "table_id": 6,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:01",
+            "duration": "00:00:39"
+        },
+        {
+            "table_id": 7,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:01",
+            "duration": "00:00:39"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:01",
+            "duration": "00:00:00"
+        },
+        {
+            "table_id": 8,
+            "status": "ready to order",
+            "start_time": "2024-11-22 11:25:03",
+            "duration": "00:00:02"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:05",
+            "duration": "00:00:01"
+        },
+        {
+            "table_id": 8,
+            "status": "ready to order",
+            "start_time": "2024-11-22 11:25:06",
+            "duration": "00:00:01"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:08",
+            "duration": "00:00:00"
+        },
+        {
+            "table_id": 8,
+            "status": "ready to order",
+            "start_time": "2024-11-22 11:25:09",
+            "duration": "00:00:08"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:18",
+            "duration": "00:00:00"
+        },
+        {
+            "table_id": 8,
+            "status": "ready to order",
+            "start_time": "2024-11-22 11:25:19",
+            "duration": "00:00:00"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-22 11:25:20",
+            "duration": "00:00:20"
+        }
+    ]
+}

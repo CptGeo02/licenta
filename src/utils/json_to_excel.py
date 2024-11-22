@@ -13,12 +13,27 @@ import json
 from openpyxl import Workbook
 from datetime import datetime
 import numpy as np
+import os
 
 class JsonToExcel:
     def __init__(self, tables_json_file, people_json_file, excel_file):
         self.tables_json_file = tables_json_file
         self.people_json_file = people_json_file
         self.excel_file = excel_file
+        self.tables_performance_list = []
+        self.people_number_list = []
+        self.idle_time_ratio_list = []
+        self.cleaning_ratio_list = []
+        self.cycles_per_hour_list = []
+        self.utilization_rate_list = []
+
+        self.people_number_avg = 0
+        self.tables_performance_avg = 0
+        self.people_number_avg = 0
+        self.idle_time_ratio_avg = 0
+        self.cleaning_ratio_avg = 0
+        self.cycles_per_hour_avg = 0
+        self.utilization_rate_avg = 0
 
     def load_json(self, json_file):
         """Încarcă datele din fișierul JSON."""
@@ -98,6 +113,7 @@ class JsonToExcel:
         # Adăugăm fiecare interval orar și numărul maxim de oameni
         for index, row in people_max_count.iterrows():
             sheet.append([row['time_slot'].strftime('%H:%M'), row['people_count']])
+            self.people_number_list.append(row['people_count'])
 
         print("Max number of people per hour added to Excel.")
 
@@ -254,18 +270,6 @@ class JsonToExcel:
                 avg_durations[status] = 0  # Dacă nu sunt date pentru acest status, media este 0
 
         return avg_durations
-    
-    def identify_inefficient_tables(self, df, threshold=1800):
-        """Identifică mesele ineficiente pe baza duratei în statusurile 'need to clean' sau 'available'."""
-        inefficient_tables = []
-        for table_id in df['table_id'].unique():
-            table_data = df[df['table_id'] == table_id]
-            need_to_clean_duration = table_data[table_data['status'] == 'need to clean']['duration'].apply(self.convert_duration).sum()
-            available_duration = table_data[table_data['status'] == 'available']['duration'].apply(self.convert_duration).sum()
-
-            if need_to_clean_duration > threshold or available_duration > threshold:
-                inefficient_tables.append(table_id)
-        return inefficient_tables
         
     def add_time_slot(self, df):
         """Adaugă intervalul orar pentru fiecare intrare pe baza duratei."""
@@ -405,11 +409,18 @@ class JsonToExcel:
             
             # Calculăm scorul de performanță
             performance_score = (
-                (weights[0] * (total_cycles / total_time if total_time else 0)) +
-                (weights[1] * (time_eating / total_time if total_time else 0)) -
-                (weights[2] * (time_need_to_clean / total_time if total_time else 0)) -
+                (weights[0] * cycles_per_hour) +
+                (weights[1] * utilization_rate) -
+                (weights[2] * cleaning_ratio) -
                 (weights[3] * idle_time_ratio)
             )
+
+            self.tables_performance_list.append(performance_score)      
+            self.idle_time_ratio_list.append(idle_time_ratio)
+            self.cleaning_ratio_list.append(cleaning_ratio)
+            self.cycles_per_hour_list.append(cycles_per_hour)
+            self.utilization_rate_list.append(utilization_rate)
+
             total_time = self.format_duration(total_time)
             total_cycles = self.format_duration(total_cycles)
             time_eating = self.format_duration(time_eating)
@@ -456,8 +467,65 @@ class JsonToExcel:
         end_column = len(result_df.columns)  # Ultima coloană a tabelului
         worksheet.auto_filter.ref = worksheet.dimensions  # Adaugă filtre pentru întregul tabel
 
+    def calculate_averages(self):
+        """
+        Calculează media pentru fiecare din listele de performanță.
+        Media pentru people_number este un număr întreg, iar celelalte sunt floaturi cu maxim 4 zecimale.
+        Returnează un dicționar cu mediile pentru fiecare listă.
+        """
+        # Dicționar pentru a stoca rezultatele mediilor
+        averages = {}
 
+        # Lista de tuple (numele listei, lista corespunzătoare)
+        lists = [
+            ("tables_performance", self.tables_performance_list),
+            ("people_number", self.people_number_list),
+            ("idle_time_ratio", self.idle_time_ratio_list),
+            ("cleaning_ratio", self.cleaning_ratio_list),
+            ("cycles_per_hour", self.cycles_per_hour_list),
+            ("utilization_rate", self.utilization_rate_list)
+        ]
 
+        for list_name, data_list in lists:
+            if data_list:  # Verificăm dacă lista nu este goală
+                average = sum(data_list) / len(data_list)
+                if list_name == "people_number":
+                    averages[list_name] = int(round(average))  # Convertim media în întreg
+                else:
+                    averages[list_name] = round(average, 4)  # Rotunjim la 4 zecimale
+            else:
+                averages[list_name] = None  # Dacă lista este goală, returnăm None
+
+        return averages
+    
+    def save_average_statistics(self):
+        """
+        Generează un fișier JSON cu mediile calculate pentru listele de statistici,
+        utilizând data curentă ca cheie unică în dicționar.
+        Creează folderul `data/outputs/daily_report/<%Y-%m-%d>` dacă nu există și
+        salvează fișierul `average_statistics.json` în acest folder.
+        """
+        # Calculăm mediile folosind funcția calculate_averages
+        averages = self.calculate_averages()
+
+        # Obține data curentă în formatul YYYY-MM-DD
+        current_date = datetime.now().strftime("%Y-%m-%d")
+
+        # Creează un dicționar cu data curentă ca cheie unică
+        data_to_save = {current_date: averages}
+
+        # Creează calea completă a folderului
+        output_dir = os.path.join("data", "outputs", "daily_report", current_date)
+        os.makedirs(output_dir, exist_ok=True)  # Creează folderul dacă nu există
+
+        # Creează calea completă pentru fișierul JSON
+        json_file_path = os.path.join(output_dir, "average_statistics.json")
+
+        # Salvează dicționarul în fișierul JSON
+        with open(json_file_path, "w") as json_file:
+            json.dump(data_to_save, json_file, indent=4)
+
+        print(f"Fișierul JSON {json_file_path} a fost generat cu succes.")
 
     @staticmethod
     def convert_duration(duration_str):
