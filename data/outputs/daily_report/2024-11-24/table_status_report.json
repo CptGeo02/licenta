@@ -1,0 +1,178 @@
+{
+    "table_statuses": [
+        {
+            "table_id": 1,
+            "status": "available",
+            "start_time": "2024-11-24 18:58:23",
+            "duration": "00:00:32"
+        },
+        {
+            "table_id": 2,
+            "status": "available",
+            "start_time": "2024-11-24 18:58:23",
+            "duration": "00:00:32"
+        },
+        {
+            "table_id": 3,
+            "status": "available",
+            "start_time": "2024-11-24 18:58:23",
+            "duration": "00:00:32"
+        },
+        {
+            "table_id": 4,
+            "status": "available",
+            "start_time": "2024-11-24 18:58:23",
+            "duration": "00:00:32"
+        },
+        {
+            "table_id": 5,
+            "status": "available",
+            "start_time": "2024-11-24 18:58:23",
+            "duration": "00:00:32"
+        },
+        {
+            "table_id": 6,
+            "status": "available",
+            "start_time": "2024-11-24 18:58:23",
+            "duration": "00:00:32"
+        },
+        {
+            "table_id": 7,
+            "status": "available",
+            "start_time": "2024-11-24 18:58:23",
+            "duration": "00:00:32"
+        },
+        {
+            "table_id": 1,
+            "status": "available",
+            "start_time": "2024-11-24 19:53:53",
+            "duration": "00:00:48"
+        },
+        {
+            "table_id": 2,
+            "status": "available",
+            "start_time": "2024-11-24 19:53:53",
+            "duration": "00:00:48"
+        },
+        {
+            "table_id": 3,
+            "status": "available",
+            "start_time": "2024-11-24 19:53:53",
+            "duration": "00:00:48"
+        },
+        {
+            "table_id": 4,
+            "status": "available",
+            "start_time": "2024-11-24 19:53:53",
+            "duration": "00:00:48"
+        },
+        {
+            "table_id": 5,
+            "status": "available",
+            "start_time": "2024-11-24 19:53:53",
+            "duration": "00:00:48"
+        },
+        {
+            "table_id": 6,
+            "status": "available",
+            "start_time": "2024-11-24 19:53:53",
+            "duration": "00:00:48"
+        },
+        {
+            "table_id": 7,
+            "status": "available",
+            "start_time": "2024-11-24 19:53:53",
+            "duration": "00:00:48"
+        },
+        {
+            "table_id": 1,
+            "status": "available",
+            "start_time": "2024-11-24 23:40:18",
+            "duration": "00:00:53"
+        },
+        {
+            "table_id": 2,
+            "status": "available",
+            "start_time": "2024-11-24 23:40:18",
+            "duration": "00:00:53"
+        },
+        {
+            "table_id": 3,
+            "status": "available",
+            "start_time": "2024-11-24 23:40:18",
+            "duration": "00:00:53"
+        },
+        {
+            "table_id": 4,
+            "status": "available",
+            "start_time": "2024-11-24 23:40:18",
+            "duration": "00:00:53"
+        },
+        {
+            "table_id": 5,
+            "status": "available",
+            "start_time": "2024-11-24 23:40:18",
+            "duration": "00:00:53"
+        },
+        {
+            "table_id": 6,
+            "status": "available",
+            "start_time": "2024-11-24 23:40:18",
+            "duration": "00:00:53"
+        },
+        {
+            "table_id": 7,
+            "status": "available",
+            "start_time": "2024-11-24 23:40:18",
+            "duration": "00:00:53"
+        },
+        {
+            "table_id": 1,
+            "status": "available",
+            "start_time": "2024-11-24 23:45:16",
+            "duration": "00:00:59"
+        },
+        {
+            "table_id": 2,
+            "status": "available",
+            "start_time": "2024-11-24 23:45:16",
+            "duration": "00:00:59"
+        },
+        {
+            "table_id": 3,
+            "status": "available",
+            "start_time": "2024-11-24 23:45:16",
+            "duration": "00:00:59"
+        },
+        {
+            "table_id": 4,
+            "status": "available",
+            "start_time": "2024-11-24 23:45:16",
+            "duration": "00:00:59"
+        },
+        {
+            "table_id": 5,
+            "status": "available",
+            "start_time": "2024-11-24 23:45:16",
+            "duration": "00:00:59"
+        },
+        {
+            "table_id": 6,
+            "status": "available",
+            "start_time": "2024-11-24 23:45:16",
+            "duration": "00:00:59"
+        },
+        {
+            "table_id": 7,
+            "status": "available",
+            "start_time": "2024-11-24 23:45:16",
+            "duration": "00:00:59"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-24 23:45:16",
+            "duration": "00:00:59"
+        }
+    ]
+}

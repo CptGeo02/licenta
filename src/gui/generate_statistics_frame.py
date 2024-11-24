@@ -76,9 +76,9 @@ class StatisticsCalendar(tk.Frame):
                 if start_date_obj <= folder_date <= end_date_obj:
                     folder_path = os.path.join(self.report_dir, folder_name)
                     for file_name in os.listdir(folder_path):
-                        if file_name.endswith(".json"):
+                        # Verificăm dacă numele fișierului este "average_statistics.json"
+                        if file_name == "average_statistics.json":
                             relevant_files.append(os.path.join(folder_path, file_name))
-
             if not relevant_files:
                 messagebox.showinfo("No Data", "No JSON files found for the selected date range.")
                 return

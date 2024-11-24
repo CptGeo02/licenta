@@ -1,7 +1,11 @@
 import tkinter as tk
 from tkinter import ttk
 from datetime import datetime, timedelta
-
+import os
+import json
+from datetime import datetime
+from src.libs import *
+from src.utils.json_to_excel import JsonToExcel
 
 class ScheduleFrame(tk.Frame):
     def __init__(self, parent):
@@ -12,6 +16,7 @@ class ScheduleFrame(tk.Frame):
 
     def create_widgets(self):
         # Header Row
+
         tk.Label(self, text="Day of Week", width=15, anchor="w").grid(row=0, column=0, padx=5, pady=5)
         tk.Label(self, text="Workday Length", width=15, anchor="w").grid(row=0, column=1, padx=5, pady=5)
         tk.Label(self, text="Start Time", width=10, anchor="w").grid(row=0, column=2, padx=5, pady=5)
@@ -107,6 +112,160 @@ class ScheduleFrame(tk.Frame):
                       f"Start Time: {data['start_time'].get()}, End Time: {data['end_time'].get()}")
             else:
                 print(f"{day}: Closed")
+        self.start_checking_schedule()
+
+    def check_time_and_generate_reports(self):
+        """
+        Verifică dacă timpul curent a depășit end_time pentru ziua curentă și generează rapoartele JSON.
+        
+        Args:
+            schedule_frame (ScheduleFrame): Instanță din care se iau datele end_time și is_open pentru ziua curentă.
+        """
+        # Obține ziua curentă
+        current_day = datetime.now().strftime("%A")
+        current_time = datetime.now().strftime("%H:%M")
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        
+        # Verifică dacă ziua curentă este deschisă în program
+        if not self.schedule_data[current_day]["is_open"].get():
+            print(f"{current_day} este închisă.")
+            return
+        
+        # Obține end_time pentru ziua curentă
+        start_time = self.schedule_data[current_day]["start_time"].get()
+        end_time = self.schedule_data[current_day]["end_time"].get()
+        
+        # Compară timpul curent cu end_time
+        if current_time < end_time:
+            print(f"Timpul curent ({current_time}) nu a depășit end_time ({end_time}) pentru {current_day}.")
+            return
+        
+        print(f"Timpul curent a depășit end_time ({end_time}) pentru {current_day}. Generăm rapoarte...")
+        
+        # Calea de ieșire pentru rapoartele zilnice
+        daily_report_path = os.path.join("data", "outputs", "daily_report", current_date)
+        os.makedirs(daily_report_path, exist_ok=True)
+
+        # Concatenare fișiere table_records    
+        table_records_path = os.path.join("data", "outputs", "table_records")
+        self.generate_concatenated_json(
+            source_folder=table_records_path,
+            target_file=os.path.join(daily_report_path, "table_status_report.json"),
+            start_time = start_time,
+            end_time = end_time,
+        )
+        
+        # Concatenare fișiere people_records
+        people_records_path = os.path.join("data", "outputs", "people_records")
+        self.generate_concatenated_json(
+            source_folder=people_records_path,
+            target_file=os.path.join(daily_report_path, "people_detected.json"),
+            start_time = start_time,
+            end_time = end_time,
+        )
+
+
+        table_records_path = os.path.join("data", "outputs", "daily_report", current_date, "table_status_report.json")
+        people_records_path = os.path.join("data", "outputs", "daily_report", current_date, "people_detected.json")
+        excel_file = os.path.join("data", "outputs", "daily_report", current_date, "table_status_analysis.xlsx")
+        try:
+            analyzer = JsonToExcel(table_records_path, people_records_path, excel_file)
+            analyzer.save_to_excel()
+            print(f"Fișierul Excel a fost generat cu succes: {excel_file}")
+            analyzer.save_average_statistics()
+            print(f"Fișierul JSON a fost generat cu succes")
+        except Exception as e:
+            print(f"Eroare la generarea fișierului Excel: {e}")
+
+    def generate_concatenated_json(self, source_folder, target_file, start_time, end_time):
+        """
+        Concatenează toate fișierele JSON dintr-un folder care conțin data curentă în numele fișierului
+        și le filtrează în funcție de un interval orar specificat.
+
+        Args:
+            source_folder (str): Calea către folderul sursă.
+            target_file (str): Calea către fișierul JSON rezultat.
+            start_time (str): Ora de început a intervalului (format: HH:MM).
+            end_time (str): Ora de sfârșit a intervalului (format: HH:MM).
+        """
+        all_data = {}
+        start_time_dt = datetime.strptime(start_time, "%H:%M").time()
+        end_time_dt = datetime.strptime(end_time, "%H:%M").time()
+
+        # Obține data curentă în formatul YYYY-MM-DD
+        today = datetime.today().strftime('%Y-%m-%d')
+
+        for filename in os.listdir(source_folder):
+            if filename.endswith(".json") and today in filename:
+                filepath = os.path.join(source_folder, filename)
+                try:
+                    with open(filepath, "r") as file:
+                        data = json.load(file)
+
+                        if "people_detected" in filename:
+                            # Filtrare pe baza câmpului "time" (format complet: YYYY-MM-DD HH:MM:SS)
+                            for key, value in data.items():
+                                if isinstance(value, list):
+                                    filtered_list = [
+                                        item for item in value
+                                        if "time" in item
+                                        # Convertim "time" din formatul complet la un obiect de tip datetime
+                                        and start_time_dt <= datetime.strptime(item["time"], "%Y-%m-%d %H:%M:%S").time() <= end_time_dt
+                                    ]
+                                    if filtered_list:
+                                        if key in all_data:
+                                            all_data[key].extend(filtered_list)
+                                        else:
+                                            all_data[key] = filtered_list
+
+                        elif "table_status_report" in filename:
+                            # Filtrare pe baza câmpului "start_time" (format complet: YYYY-MM-DD HH:MM:SS)
+                            for key, value in data.items():
+                                if isinstance(value, list):
+                                    filtered_list = [
+                                        item for item in value
+                                        if "start_time" in item
+                                        # Convertim "start_time" din formatul complet la un obiect de tip datetime
+                                        and start_time_dt <= datetime.strptime(item["start_time"], "%Y-%m-%d %H:%M:%S").time() <= end_time_dt
+                                    ]
+                                    if filtered_list:
+                                        if key in all_data:
+                                            all_data[key].extend(filtered_list)
+                                        else:
+                                            all_data[key] = filtered_list
+
+                        else:
+                            # Pentru alte fișiere, adaugă datele așa cum sunt
+                            for key, value in data.items():
+                                if key in all_data:
+                                    if isinstance(value, list) and isinstance(all_data[key], list):
+                                        all_data[key].extend(value)
+                                    else:
+                                        print(f"Avertisment: Structura pentru cheia '{key}' nu este o listă. Se omite.")
+                                else:
+                                    all_data[key] = value
+
+                except Exception as e:
+                    print(f"Eroare la citirea fișierului {filepath}: {e}")
+
+        # Scrie datele filtrate într-un singur fișier JSON
+        try:
+            with open(target_file, "w") as outfile:
+                json.dump(all_data, outfile, indent=4)
+            print(f"Fișierul rezultat a fost salvat: {target_file}")
+        except Exception as e:
+            print(f"Eroare la scrierea fișierului {target_file}: {e}")
+
+
+    def start_checking_schedule(self):
+        def check_schedule():
+            while True:
+                self.check_time_and_generate_reports()
+                time.sleep(1)  # Așteaptă o secundă înainte de a relua salvarea
+
+        # Lansează auto_save_loop pe un thread separat
+        save_thread = threading.Thread(target=check_schedule, daemon=True)
+        save_thread.start()
 
 # Main Application
 if __name__ == "__main__":

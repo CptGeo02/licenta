@@ -16,11 +16,11 @@
         "utilization_rate": 0.7852
     },
     "2024-11-24": {
-        "tables_performance": 0.9213,
-        "people_number": 30,
-        "idle_time_ratio": 0.1428,
-        "cleaning_ratio": 0.1873,
-        "cycles_per_hour": 0.4827,
-        "utilization_rate": 0.8124
+        "tables_performance": -0.1,
+        "people_number": 8,
+        "idle_time_ratio": 1.0,
+        "cleaning_ratio": 0.0,
+        "cycles_per_hour": 0.0,
+        "utilization_rate": 0.0
     }
 }

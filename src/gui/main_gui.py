@@ -4,7 +4,6 @@ from src.gui.run_video import run_video
 from src.gui.display_frame import display_frame
 from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
-from src.utils.json_analyzer import JsonAnalyzer
 from src.utils.json_to_excel import JsonToExcel
 from src.gui.schedule_frame import ScheduleFrame
 from src.gui.generate_statistics_frame import StatisticsCalendar
@@ -20,7 +19,6 @@ class MainApp():
         # Inițializează YOLO Detector cu un model implicit
         self.current_model = "Select model"
         self.detector = YoloDetector()
-        self.json_analyzer = JsonAnalyzer()
 
         # Creează un frame pentru butoane
         self.button_frame = ttk.Frame(master)
@@ -70,27 +68,27 @@ class MainApp():
         self.auto_detect_switch.grid(row=0, column=7, padx=5, pady=5)
 
         self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables, state="disabled")
-        self.detect_tables_btn.grid(row=0, column=8, padx=5, pady=5)
+        self.detect_tables_btn.grid(row=1, column=0, padx=5, pady=5)
 
         self.set_tables_btn = ttk.Button(self.button_frame, text="Set Tables", command=self.set_tables, state="disabled")
-        self.set_tables_btn.grid(row=0, column=9, padx=5, pady=5)
+        self.set_tables_btn.grid(row=1, column=1, padx=5, pady=5)
 
         self.reset_tables_btn = ttk.Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
-        self.reset_tables_btn.grid(row=0, column=10, padx=5, pady=5)
+        self.reset_tables_btn.grid(row=1, column=2, padx=5, pady=5)
 
         self.stop_detection_btn = ttk.Button(self.button_frame, text="Stop Detection", command=self.stop_detection, state="disabled")
-        self.stop_detection_btn.grid(row=0, column=11, padx=5, pady=5)
+        self.stop_detection_btn.grid(row=1, column=3, padx=5, pady=5)
 
         # Buton pentru analiza fișierului JSON
         self.analyze_json_btn = ttk.Button(self.button_frame, text="Analyze Records", command=self.analyze_json)
-        self.analyze_json_btn.grid(row=0, column=12, padx=5, pady=5)
+        self.analyze_json_btn.grid(row=1, column=4, padx=5, pady=5)
 
         # Add a button to open the schedule window
         self.open_schedule_button = ttk.Button(self.button_frame, text="Set Weekly Schedule", command=self.open_schedule_window)
-        self.open_schedule_button.grid(row=0, column=13, padx=5, pady=5)
+        self.open_schedule_button.grid(row=1, column=5, padx=5, pady=5)
                 # Add Generate Statistics Button
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
-        self.btn_generate_statistics.grid(row=0, column=14, padx=5, pady=5)
+        self.btn_generate_statistics.grid(row=1, column=6, padx=5, pady=5)
         # Creează un frame pentru butoane
         self.max_frame = ttk.Frame(master)
         self.max_frame.pack(pady=10)
