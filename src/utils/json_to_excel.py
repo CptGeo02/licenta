@@ -14,6 +14,7 @@ from openpyxl import Workbook
 from datetime import datetime
 import numpy as np
 import os
+from src.utils.excel_utils import apply_modern_design
 
 class JsonToExcel:
     def __init__(self, tables_json_file, people_json_file, excel_file):

@@ -13,6 +13,8 @@ class ScheduleFrame(tk.Frame):
         self.days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
         self.schedule_data = {}
         self.create_widgets()
+        self.stop_event = threading.Event()  # Eveniment pentru a opri threadul
+        self.thread = None
 
     def create_widgets(self):
         # Header Row
@@ -114,7 +116,7 @@ class ScheduleFrame(tk.Frame):
                 print(f"{day}: Closed")
         self.start_checking_schedule()
 
-    def check_time_and_generate_reports(self):
+    def check_time(self):
         """
         Verifică dacă timpul curent a depășit end_time pentru ziua curentă și generează rapoartele JSON.
         
@@ -139,7 +141,9 @@ class ScheduleFrame(tk.Frame):
         if current_time < end_time:
             print(f"Timpul curent ({current_time}) nu a depășit end_time ({end_time}) pentru {current_day}.")
             return
-        
+        self.generate_reports(start_time, end_time, current_day, current_date)
+
+    def generate_reports(self, start_time, end_time, current_day, current_date):
         print(f"Timpul curent a depășit end_time ({end_time}) pentru {current_day}. Generăm rapoarte...")
         
         # Calea de ieșire pentru rapoartele zilnice
@@ -173,10 +177,10 @@ class ScheduleFrame(tk.Frame):
             analyzer.save_to_excel()
             print(f"Fișierul Excel a fost generat cu succes: {excel_file}")
             analyzer.save_average_statistics()
-            print(f"Fișierul JSON a fost generat cu succes")
         except Exception as e:
-            print(f"Eroare la generarea fișierului Excel: {e}")
-
+            print(f"Eroare la generarea fișierului table_status_analysis.xlsx: {e}")
+        self.stop_checking_schedule()
+        
     def generate_concatenated_json(self, source_folder, target_file, start_time, end_time):
         """
         Concatenează toate fișierele JSON dintr-un folder care conțin data curentă în numele fișierului
@@ -256,16 +260,31 @@ class ScheduleFrame(tk.Frame):
         except Exception as e:
             print(f"Eroare la scrierea fișierului {target_file}: {e}")
 
-
     def start_checking_schedule(self):
-        def check_schedule():
-            while True:
-                self.check_time_and_generate_reports()
-                time.sleep(1)  # Așteaptă o secundă înainte de a relua salvarea
+        """Pornește thread-ul care verifică programul."""
+        if self.thread and self.thread.is_alive():
+            print("Thread-ul este deja pornit.")
+            return
 
-        # Lansează auto_save_loop pe un thread separat
-        save_thread = threading.Thread(target=check_schedule, daemon=True)
-        save_thread.start()
+        self.stop_event.clear()  # Asigură-te că thread-ul poate rula
+        self.thread = threading.Thread(target=self.check_schedule)
+        self.thread.daemon = True
+        self.thread.start()
+
+    def check_schedule(self):
+        """Funcția rulată de thread pentru verificarea programului."""
+        while not self.stop_event.is_set():
+            self.check_time()
+            time.sleep(60)  # Așteaptă o secundă înainte de a relua verificarea
+
+    def stop_checking_schedule(self):
+        """Opresc thread-ul de verificare."""
+        if self.thread and self.thread.is_alive():
+            print("Oprirea thread-ului...")
+            self.stop_event.set()  # Semnalează thread-ului să se oprească
+            print("Thread-ul a fost oprit.")
+        else:
+            print("Thread-ul nu este activ.")
 
 # Main Application
 if __name__ == "__main__":

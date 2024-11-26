@@ -17,7 +17,7 @@ class MainApp():
         self.prev_time = time.time()
         self.last_time = time.time()  # Momentul în care a fost actualizat ultima dată
         # Inițializează YOLO Detector cu un model implicit
-        self.current_model = "Select model"
+        self.current_model = "models/yolov8n.pt"
         self.detector = YoloDetector()
 
         # Creează un frame pentru butoane

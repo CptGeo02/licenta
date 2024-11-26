@@ -1,11 +1,4 @@
 from src.libs import *
-import matplotlib.pyplot as plt
-from openpyxl import Workbook
-from openpyxl.drawing.image import Image as ExcelImage
-from openpyxl.styles import PatternFill
-import json
-import os
-import random
 
 class StatisticsCalendar(tk.Frame):
     def __init__(self, parent):
@@ -89,7 +82,6 @@ class StatisticsCalendar(tk.Frame):
         except Exception as e:
             messagebox.showerror("Error", f"Failed to generate statistics: {e}")
 
-
     def process_json_files(self, json_files, start_date, end_date):
         """Procesează fișierele JSON, le combină într-un fișier generalizat și generează raportul Excel cu histograme pentru toate câmpurile."""
         
@@ -113,7 +105,6 @@ class StatisticsCalendar(tk.Frame):
                                 else:
                                     combined_data[date][field] = value
                     else:
-                        # Dacă stats nu este un dicționar (e.g., float), ignorăm și continuăm
                         print(f"Ignorăm valoarea pentru data {date} deoarece nu este un dicționar valid.")
         
         # Crează fișierul JSON generalizat
@@ -125,12 +116,13 @@ class StatisticsCalendar(tk.Frame):
             json.dump(combined_data, f, indent=4)
 
         # Structură pentru date
-        fields_data = {field: {} for field in next(iter(combined_data.values())).keys()}
+        fields_data = {self.clean_column_name(field): {} for field in next(iter(combined_data.values())).keys()}
 
         # Adună datele pentru statistici
         for date, stats in combined_data.items():
             for field, value in stats.items():
-                fields_data[field][date] = value
+                cleaned_field = self.clean_column_name(field)
+                fields_data[cleaned_field][date] = value
 
         # Sortează datele pe zile
         sorted_dates = sorted(next(iter(fields_data.values())).keys())
@@ -157,14 +149,19 @@ class StatisticsCalendar(tk.Frame):
         # Sheet pentru histograme
         ws_histograms = wb.create_sheet("Histograms")
         
-        # Generează histograme și le adaugă în sheet-ul de histograme
+        # Generează histograme cu linii de tendință și le adaugă în sheet-ul de histograme
+        row_offset = 1
+        max_charts_per_row = 3  # Maximum 3 grafice pe un rând
         for idx, (field, data) in enumerate(fields_data.items()):
             values = [data[date] for date in sorted_dates]
-            
-            # Creează histogramă
+            x = np.arange(len(sorted_dates))  # Indici pentru date
+            trend = np.polyfit(x, values, 1)  # Calculează linia de tendință (gradul 1)
+            trend_line = np.polyval(trend, x)  # Obține valorile liniei de tendință
+
+            # Creează histogramă cu linia de tendință
             plt.figure(figsize=(10, 5))
-            color = [random.choice(["blue", "green", "red", "purple", "orange", "cyan"]) for _ in values]
-            plt.bar(sorted_dates, values, color=color, label=f"{field} (Avg)", alpha=0.7)
+            plt.bar(sorted_dates, values, color='steelblue', alpha=0.7, label=field)
+            plt.plot(sorted_dates, trend_line, color='red', linestyle='--', label="Trend Line")
             plt.xlabel("Date")
             plt.ylabel(field)
             plt.title(f"{field} Histogram")
@@ -179,10 +176,25 @@ class StatisticsCalendar(tk.Frame):
             img = ExcelImage(histogram_path)
             img.width = 600
             img.height = 400
-            col_position = chr(65 + idx * 2)  # Calculează poziția coloanei pentru fiecare histogramă (începe de la 'A')
-            ws_histograms.add_image(img, f"{col_position}1")
+            col_letter = get_column_letter((idx % max_charts_per_row) * 12 + 1)  # Coloana curentă
+            ws_histograms.add_image(img, f"{col_letter}{row_offset}")
 
-        # Salvează fișierul Excel
+            # Reglează rândul după fiecare grup de 3 grafice
+            if (idx + 1) % max_charts_per_row == 0:
+                row_offset += 25  # Spațiere între rânduri
+        # Aplicăm design-ul modern pe foaia cu date
+        
+        ws_data = apply_modern_design(ws_data)
+        ws_histograms = apply_modern_design(ws_histograms)
+
+        # Salvează workbook-ul
         wb.save(report_file)
-
         return report_file
+
+    def clean_column_name(self, name):
+        """Curăță numele coloanelor pentru a elimina caracterele invalide."""
+        import re
+        return re.sub(r'[^A-Za-z0-9_]+', '_', name).strip()
+
+
+

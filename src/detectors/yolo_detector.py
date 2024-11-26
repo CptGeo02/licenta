@@ -8,11 +8,11 @@ from src.managers.alarm_manager import AlarmManager
 from src.utils.time_utils import format_time, convert_duration
 
 class YoloDetector:
-    def __init__(self, model_path="models/yolov8n.pt"):  # Path to the YOLO model
+    def __init__(self, model_path="models/yolov10l.pt"):  # Path to the YOLO model
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Folosește modelul default 'yolov8n.pt' dacă nu este specificat un model_path
         self.model_path = model_path
-        self.model = self.load_model(self.model_path)
+        self.load_model(self.model_path)
         self.table_manager = TableManager()  # Instanțiază managerul de mese
         self.people_manager = PeopleManager()  # Instanțiem PeopleManager
         self.alarm_manager = AlarmManager()  # Instanțiază AlarmManager

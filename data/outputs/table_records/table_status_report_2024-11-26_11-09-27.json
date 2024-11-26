@@ -3,50 +3,50 @@
         {
             "table_id": 1,
             "status": "available",
-            "start_time": "2024-11-24 23:45:16",
-            "duration": "00:00:59"
+            "start_time": "2024-11-26 11:09:28",
+            "duration": "00:00:15"
         },
         {
             "table_id": 2,
             "status": "available",
-            "start_time": "2024-11-24 23:45:16",
-            "duration": "00:00:59"
+            "start_time": "2024-11-26 11:09:28",
+            "duration": "00:00:15"
         },
         {
             "table_id": 3,
             "status": "available",
-            "start_time": "2024-11-24 23:45:16",
-            "duration": "00:00:59"
+            "start_time": "2024-11-26 11:09:28",
+            "duration": "00:00:15"
         },
         {
             "table_id": 4,
             "status": "available",
-            "start_time": "2024-11-24 23:45:16",
-            "duration": "00:00:59"
+            "start_time": "2024-11-26 11:09:28",
+            "duration": "00:00:15"
         },
         {
             "table_id": 5,
             "status": "available",
-            "start_time": "2024-11-24 23:45:16",
-            "duration": "00:00:59"
+            "start_time": "2024-11-26 11:09:28",
+            "duration": "00:00:15"
         },
         {
             "table_id": 6,
             "status": "available",
-            "start_time": "2024-11-24 23:45:16",
-            "duration": "00:00:59"
+            "start_time": "2024-11-26 11:09:28",
+            "duration": "00:00:15"
         },
         {
             "table_id": 7,
             "status": "available",
-            "start_time": "2024-11-24 23:45:16",
-            "duration": "00:00:59"
+            "start_time": "2024-11-26 11:09:28",
+            "duration": "00:00:15"
         },
         {
             "table_id": 8,
             "status": "available",
-            "start_time": "2024-11-24 23:45:16",
-            "duration": "00:00:59"
+            "start_time": "2024-11-26 11:09:28",
+            "duration": "00:00:15"
         }
     ]
 }

@@ -25,5 +25,10 @@ from openpyxl.drawing.image import Image as ExcelImage
 from tkcalendar import Calendar
 import matplotlib.pyplot as plt
 from openpyxl import Workbook
+from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
+from openpyxl.utils import get_column_letter
+from src.utils.excel_utils import apply_modern_design
+import tempfile
+
 # Check if CUDA is available and set the device to GPU if so
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

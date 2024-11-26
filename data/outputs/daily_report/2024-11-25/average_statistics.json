@@ -1,0 +1,10 @@
+{
+    "2024-11-25": {
+        "tables_performance": 0.5993,
+        "people_number": 8,
+        "idle_time_ratio": 0.0562,
+        "cleaning_ratio": 0.3968,
+        "cycles_per_hour": 1.3006,
+        "utilization_rate": 0.5469
+    }
+}
