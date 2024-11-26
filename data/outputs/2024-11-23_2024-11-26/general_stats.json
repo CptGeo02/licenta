@@ -1,12 +1,4 @@
 {
-    "2024-11-22": {
-        "tables_performance": 0.3639,
-        "people_number": 7,
-        "idle_time_ratio": 0.0974,
-        "cleaning_ratio": 0.2082,
-        "cycles_per_hour": 0.5174,
-        "utilization_rate": 0.6945
-    },
     "2024-11-23": {
         "tables_performance": 0.8437,
         "people_number": 23,
@@ -24,11 +16,11 @@
         "utilization_rate": 0.5469
     },
     "2024-11-26": {
-        "tables_performance": -0.0636,
-        "people_number": 7,
-        "idle_time_ratio": 0.9091,
+        "tables_performance": -0.1,
+        "people_number": 9,
+        "idle_time_ratio": 1.0,
         "cleaning_ratio": 0.0,
         "cycles_per_hour": 0.0,
-        "utilization_rate": 0.0909
+        "utilization_rate": 0.0
     }
 }

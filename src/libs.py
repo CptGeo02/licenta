@@ -9,7 +9,6 @@ from tkinter import filedialog
 from ultralytics import YOLO  # Import YOLO to load the model properly
 from PIL import Image, ImageTk
 from tkinter import Canvas, Frame, Button, Label, Tk, StringVar, OptionMenu
-from PIL import Image, ImageTk
 import time
 import pandas as pd
 from datetime import timedelta, datetime

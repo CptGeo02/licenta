@@ -1,12 +1,12 @@
 from src.libs import *
-from src.gui.run_camera import run_camera
-from src.gui.run_video import run_video
-from src.gui.display_frame import display_frame
+from src.gui.modes.run_camera import run_camera
+from src.gui.modes.run_video import run_video
 from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
 from src.utils.json_to_excel import JsonToExcel
-from src.gui.schedule_frame import ScheduleFrame
-from src.gui.generate_statistics_frame import StatisticsCalendar
+from src.gui.frames.display_frame import display_frame
+from src.gui.frames.schedule_frame import ScheduleFrame
+from src.gui.frames.calendar_frame import StatisticsCalendar
 
 class MainApp():
     def __init__(self, master):

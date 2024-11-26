@@ -6,18 +6,25 @@ AI_restaurant
 │  │  └─ alarm.wav
 │  ├─ images
 │  ├─ outputs
-│  │  ├─ 2024-11-22_2024-11-24
-│  │  │  └─ general_statistic.xlsx
+│  │  ├─ 2024-11-22_2024-11-26
+│  │  │  ├─ general_statistic.xlsx
+│  │  │  └─ general_stats.json
 │  │  ├─ daily_report
 │  │  │  ├─ 2024-11-22
-│  │  │  │  └─ rahat.json
-│  │  │  ├─ 2024-11-23
-│  │  │  │  └─ rahat.json
-│  │  │  ├─ 2024-11-24
-│  │  │  │  └─ rahat.json
-│  │  │  ├─ excel
+│  │  │  │  ├─ average_statistics.json
 │  │  │  │  └─ table_status_analysis.xlsx
-│  │  │  └─ json
+│  │  │  ├─ 2024-11-23
+│  │  │  │  └─ average_statistics.json
+│  │  │  ├─ 2024-11-25
+│  │  │  │  ├─ average_statistics.json
+│  │  │  │  ├─ people_detected.json
+│  │  │  │  ├─ table_status_analysis.xlsx
+│  │  │  │  └─ table_status_report.json
+│  │  │  └─ 2024-11-26
+│  │  │     ├─ average_statistics.json
+│  │  │     ├─ people_detected.json
+│  │  │     ├─ table_status_analysis.xlsx
+│  │  │     └─ table_status_report.json
 │  │  ├─ people_records
 │  │  │  ├─ people_detected_2024-11-22_11-24-18.json
 │  │  │  ├─ people_detected_2024-11-22_11-25-00.json
@@ -25,7 +32,14 @@ AI_restaurant
 │  │  │  ├─ people_detected_2024-11-22_14-27-15.json
 │  │  │  ├─ people_detected_2024-11-22_14-45-33.json
 │  │  │  ├─ people_detected_2024-11-22_14-49-23.json
-│  │  │  └─ people_detected_2024-11-22_15-44-50.json
+│  │  │  ├─ people_detected_2024-11-22_15-44-50.json
+│  │  │  ├─ people_detected_2024-11-24_18-58-22.json
+│  │  │  ├─ people_detected_2024-11-24_19-53-52.json
+│  │  │  ├─ people_detected_2024-11-24_23-40-17.json
+│  │  │  ├─ people_detected_2024-11-25_10-25-15.json
+│  │  │  ├─ people_detected_2024-11-26_11-07-28.json
+│  │  │  ├─ people_detected_2024-11-26_11-09-27.json
+│  │  │  └─ people_detected_2024-11-26_11-10-46.json
 │  │  └─ table_records
 │  │     ├─ big_test_json.json
 │  │     ├─ table_status_report_2024-11-22_11-24-18.json
@@ -35,6 +49,13 @@ AI_restaurant
 │  │     ├─ table_status_report_2024-11-22_14-45-33.json
 │  │     ├─ table_status_report_2024-11-22_14-49-23.json
 │  │     ├─ table_status_report_2024-11-22_15-44-50.json
+│  │     ├─ table_status_report_2024-11-24_18-58-22.json
+│  │     ├─ table_status_report_2024-11-24_19-53-52.json
+│  │     ├─ table_status_report_2024-11-24_23-40-17.json
+│  │     ├─ table_status_report_2024-11-25_10-25-15.json
+│  │     ├─ table_status_report_2024-11-26_11-07-28.json
+│  │     ├─ table_status_report_2024-11-26_11-09-27.json
+│  │     ├─ table_status_report_2024-11-26_11-10-46.json
 │  │     └─ test_json.json
 │  └─ videos
 ├─ main.py
@@ -70,22 +91,36 @@ AI_restaurant
 │  ├─ managers
 │  │  ├─ alarm_manager.py
 │  │  ├─ people_manager.py
-│  │  └─ table_manager.py
+│  │  ├─ table_manager.py
+│  │  └─ __pycache__
+│  │     ├─ alarm_manager.cpython-312.pyc
+│  │     ├─ people_manager.cpython-312.pyc
+│  │     └─ table_manager.cpython-312.pyc
 │  ├─ utils
 │  │  ├─ detection_utils.py
+│  │  ├─ excel_utils.py
 │  │  ├─ extract_yt_video.py
 │  │  ├─ images_to_video.py
 │  │  ├─ image_utils.py
-│  │  ├─ json_analyzer.py
 │  │  ├─ json_to_excel.py
 │  │  ├─ table_status.py
-│  │  └─ time_utils.py
+│  │  ├─ time_utils.py
+│  │  └─ __pycache__
+│  │     ├─ detection_utils.cpython-312.pyc
+│  │     ├─ excel_utils.cpython-312.pyc
+│  │     ├─ image_utils.cpython-312.pyc
+│  │     ├─ json_to_excel.cpython-312.pyc
+│  │     ├─ table_status.cpython-312.pyc
+│  │     └─ time_utils.cpython-312.pyc
 │  └─ web
-│     └─ main_web.py
+│     ├─ main_web.py
+│     └─ __pycache__
+│        └─ main_web.cpython-312.pyc
 ├─ static
 │  ├─ css
 │  │  └─ style.css
 │  └─ js
 │     └─ script.js
-└─ templates
-   └─ index.html
+├─ templates
+│  └─ index.html
+└─ test_dir.py

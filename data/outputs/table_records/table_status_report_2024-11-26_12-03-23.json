@@ -1,0 +1,82 @@
+{
+    "table_statuses": [
+        {
+            "table_id": 1,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 2,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 3,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 4,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 5,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 6,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 7,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 8,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 9,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 10,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:05"
+        },
+        {
+            "table_id": 11,
+            "status": "ready to order",
+            "start_time": "2024-11-26 12:03:24",
+            "duration": "00:00:01"
+        },
+        {
+            "table_id": 11,
+            "status": "available",
+            "start_time": "2024-11-26 12:03:25",
+            "duration": "00:00:00"
+        },
+        {
+            "table_id": 11,
+            "status": "ready to order",
+            "start_time": "2024-11-26 12:03:26",
+            "duration": "00:00:02"
+        }
+    ]
+}

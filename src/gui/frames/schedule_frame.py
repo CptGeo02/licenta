@@ -18,7 +18,6 @@ class ScheduleFrame(tk.Frame):
 
     def create_widgets(self):
         # Header Row
-
         tk.Label(self, text="Day of Week", width=15, anchor="w").grid(row=0, column=0, padx=5, pady=5)
         tk.Label(self, text="Workday Length", width=15, anchor="w").grid(row=0, column=1, padx=5, pady=5)
         tk.Label(self, text="Start Time", width=10, anchor="w").grid(row=0, column=2, padx=5, pady=5)
@@ -43,16 +42,16 @@ class ScheduleFrame(tk.Frame):
             # Workday Length Entry
             work_length = ttk.Entry(self, textvariable=self.schedule_data[day]["work_length"], width=10)
             work_length.grid(row=i + 1, column=1, padx=5, pady=5)
-            work_length.bind("<Return>", lambda e, d=day: self.update_end_time(d))  # Update End Time
 
             # Start Time Entry
             start_time = ttk.Entry(self, textvariable=self.schedule_data[day]["start_time"], width=10)
             start_time.grid(row=i + 1, column=2, padx=5, pady=5)
+            start_time.bind("<Return>", lambda e, d=day: self.update_work_length(d))  # Update Work Length
 
             # End Time Entry
             end_time = ttk.Entry(self, textvariable=self.schedule_data[day]["end_time"], width=10)
             end_time.grid(row=i + 1, column=3, padx=5, pady=5)
-            end_time.bind("<Return>", lambda e, d=day: self.update_work_length(d))  # Update Workday Length
+            end_time.bind("<Return>", lambda e, d=day: self.update_work_length(d))  # Update Work Length
 
             # Add to entries list for toggling
             self.entries.append((work_length, start_time, end_time))
@@ -136,6 +135,7 @@ class ScheduleFrame(tk.Frame):
         # Obține end_time pentru ziua curentă
         start_time = self.schedule_data[current_day]["start_time"].get()
         end_time = self.schedule_data[current_day]["end_time"].get()
+        print(f"start_time is {start_time} and end_time is {end_time}")
         
         # Compară timpul curent cu end_time
         if current_time < end_time:
@@ -171,16 +171,16 @@ class ScheduleFrame(tk.Frame):
 
         table_records_path = os.path.join("data", "outputs", "daily_report", current_date, "table_status_report.json")
         people_records_path = os.path.join("data", "outputs", "daily_report", current_date, "people_detected.json")
-        excel_file = os.path.join("data", "outputs", "daily_report", current_date, "table_status_analysis.xlsx")
-        try:
-            analyzer = JsonToExcel(table_records_path, people_records_path, excel_file)
-            analyzer.save_to_excel()
-            print(f"Fișierul Excel a fost generat cu succes: {excel_file}")
-            analyzer.save_average_statistics()
-        except Exception as e:
-            print(f"Eroare la generarea fișierului table_status_analysis.xlsx: {e}")
+        excel_file = os.path.join("data", "outputs", "daily_report", current_date, "daily_statistics.xlsx")
+        #try:
+        analyzer = JsonToExcel(table_records_path, people_records_path, excel_file)
+        analyzer.save_to_excel()
+        print(f"Fișierul Excel a fost generat cu succes: {excel_file}")
+        analyzer.save_average_statistics()
+        # except Exception as e:
+        #     print(f"Eroare la generarea fișierului daily_statistics.xlsx: {e}")
         self.stop_checking_schedule()
-        
+
     def generate_concatenated_json(self, source_folder, target_file, start_time, end_time):
         """
         Concatenează toate fișierele JSON dintr-un folder care conțin data curentă în numele fișierului
@@ -213,7 +213,6 @@ class ScheduleFrame(tk.Frame):
                                     filtered_list = [
                                         item for item in value
                                         if "time" in item
-                                        # Convertim "time" din formatul complet la un obiect de tip datetime
                                         and start_time_dt <= datetime.strptime(item["time"], "%Y-%m-%d %H:%M:%S").time() <= end_time_dt
                                     ]
                                     if filtered_list:
@@ -229,7 +228,6 @@ class ScheduleFrame(tk.Frame):
                                     filtered_list = [
                                         item for item in value
                                         if "start_time" in item
-                                        # Convertim "start_time" din formatul complet la un obiect de tip datetime
                                         and start_time_dt <= datetime.strptime(item["start_time"], "%Y-%m-%d %H:%M:%S").time() <= end_time_dt
                                     ]
                                     if filtered_list:
@@ -249,6 +247,8 @@ class ScheduleFrame(tk.Frame):
                                 else:
                                     all_data[key] = value
 
+                except json.JSONDecodeError:
+                    print(f"Eroare: Fișierul {filepath} nu respectă sintaxa JSON corectă și a fost sărit.")
                 except Exception as e:
                     print(f"Eroare la citirea fișierului {filepath}: {e}")
 
@@ -259,6 +259,7 @@ class ScheduleFrame(tk.Frame):
             print(f"Fișierul rezultat a fost salvat: {target_file}")
         except Exception as e:
             print(f"Eroare la scrierea fișierului {target_file}: {e}")
+
 
     def start_checking_schedule(self):
         """Pornește thread-ul care verifică programul."""

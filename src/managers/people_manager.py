@@ -64,24 +64,22 @@ class PeopleManager:
 
         # Protejează accesul la fișier pentru a preveni conflictele de scriere
         with self.lock:
-            # Citim fișierul existent și adăugăm noile date
+            # Citim fișierul existent și verificăm structura
             try:
                 with open(self.json_file_name, "r") as file:
                     all_data = json.load(file)
-                    
-                    # Asigură-te că "detections" este o listă, nu un dicționar
-                    if "detections" not in all_data:
-                        all_data["detections"] = []
-            except FileNotFoundError:
-                all_data = {"detections": []}  # Dacă fișierul nu există, creăm structura corectă
+            except (FileNotFoundError, json.JSONDecodeError):
+                all_data = {"detections": []}  # Creează structura corectă dacă fișierul este corupt sau inexistent
 
+            # Adaugă noile date în lista `detections`
+            if "detections" not in all_data:
+                all_data["detections"] = []
             all_data["detections"].append(data)
 
             # Scriem noile date în fișier
             with open(self.json_file_name, "w") as file:
                 json.dump(all_data, file, indent=4)
 
-    
     def get_people_count(self):
         return self.people_count
 
@@ -89,7 +87,7 @@ class PeopleManager:
         def auto_save_loop_people():
             while True:
                 self.save_to_json()
-                time.sleep(1)  # Așteaptă o secundă înainte de a relua salvarea
+                time.sleep(20)  # Așteaptă 20 de secunde înainte de a relua salvarea
 
         # Lansează auto_save_loop pe un thread separat
         save_thread = threading.Thread(target=auto_save_loop_people, daemon=True)
