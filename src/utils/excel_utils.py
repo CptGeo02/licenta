@@ -48,7 +48,7 @@ def apply_modern_design(ws):
                     max_length = max(max_length, len(str(cell.value)))
             except Exception as e:
                 print(f"Error resizing cell: {e}")
-        adjusted_width = max_length + len(str(cell.value))  # Adaugă spațiu extra
+        adjusted_width = max_length + 8  # Adaugă spațiu extra
         ws.column_dimensions[col_letter].width = adjusted_width
 
     # Ajustare automată a înălțimii rândurilor

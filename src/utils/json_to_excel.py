@@ -61,6 +61,7 @@ class JsonToExcel:
         sheet.title = 'Raw Data'
         for r, row in df_tables.iterrows():
             sheet.append(row.values.tolist())
+        sheet = apply_modern_design(sheet)
 
         # Calcularea mediilor și generarea histogramelor pentru medii
         avg_durations = self.calculate_avg_durations(df_tables)
@@ -467,6 +468,7 @@ class JsonToExcel:
         start_column = 2  # Coloanele de la 2 încolo vor avea filtre
         end_column = len(result_df.columns)  # Ultima coloană a tabelului
         worksheet.auto_filter.ref = worksheet.dimensions  # Adaugă filtre pentru întregul tabel
+        worksheet = apply_modern_design(worksheet)
 
     def calculate_averages(self):
         """
