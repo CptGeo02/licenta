@@ -1,13 +1,11 @@
 import sys
 import argparse
-import tkinter as tk
-from src.gui.main_gui import MainApp
+from src.gui.main_gui import MainGUI
 from src.web.main_web import MainWeb  
 
 def run_local_gui():
-    root = tk.Tk()
-    app = MainApp(root)
-    root.mainloop()
+    app = MainGUI()  # Creează o instanță a MainGUI
+    app.mainloop()   # Rulează bucla principală a tkinter
 
 def run_web_interface():
     main_web = MainWeb()  # Creăm o instanță a clasei MainWeb
@@ -15,7 +13,12 @@ def run_web_interface():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Select UI mode for AI Restaurant Monitoring System.")
-    parser.add_argument("--interface", choices=["local", "web"], required=True, help="Choose 'local' for the desktop GUI or 'web' for the web interface.")
+    parser.add_argument(
+        "--interface",
+        choices=["local", "web"],
+        default="local",  # Setăm "local" ca valoare implicită
+        help="Choose 'local' for the desktop GUI or 'web' for the web interface (default: local)."
+    )
 
     args = parser.parse_args()
 

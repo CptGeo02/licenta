@@ -28,6 +28,6 @@ from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
 from openpyxl.utils import get_column_letter
 from src.utils.excel_utils import apply_modern_design
 import tempfile
-
+from src.utils.gui_utils import apply_modern_style
 # Check if CUDA is available and set the device to GPU if so
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
