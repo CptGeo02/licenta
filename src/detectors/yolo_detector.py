@@ -38,7 +38,7 @@ class YoloDetector:
     def load_model(self, model_path):
         """Încarcă modelul YOLO de la calea specificată pe dispozitivul adecvat."""
         self.model_path = model_path
-        self.model = YOLO(model_path).to(self.device)
+        self.model = YOLO(model_path, verbose=False).to(self.device)
         print(f"Modelul {model_path} a fost încărcat pe {self.device}")
 
     def detect(self, frame):

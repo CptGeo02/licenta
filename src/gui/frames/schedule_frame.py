@@ -15,6 +15,7 @@ class ScheduleFrame(tk.Frame):
         self.create_widgets()
         self.stop_event = threading.Event()  # Eveniment pentru a opri threadul
         self.thread = None
+        self.stop_detection = False
 
     def create_widgets(self):
         # Header Row
@@ -113,7 +114,9 @@ class ScheduleFrame(tk.Frame):
                       f"Start Time: {data['start_time'].get()}, End Time: {data['end_time'].get()}")
             else:
                 print(f"{day}: Closed")
+        self.stop_detection = False
         self.start_checking_schedule()
+        self.destroy()
 
     def check_time(self):
         """
@@ -141,6 +144,7 @@ class ScheduleFrame(tk.Frame):
         if current_time < end_time:
             print(f"Timpul curent ({current_time}) nu a depășit end_time ({end_time}) pentru {current_day}.")
             return
+        self.stop_detection = True
         self.generate_reports(start_time, end_time, current_day, current_date)
 
     def generate_reports(self, start_time, end_time, current_day, current_date):

@@ -56,7 +56,7 @@ class PeopleManager:
         if not self.json_file_name:
             raise ValueError("Fișierul JSON nu a fost creat. Apelați create_new_files înainte de salvare.")
 
-        current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime())
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         data = {
             "time": current_time,
             "people_count": self.people_count

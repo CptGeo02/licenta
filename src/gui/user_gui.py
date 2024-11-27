@@ -7,6 +7,7 @@ from src.utils.json_to_excel import JsonToExcel
 from src.gui.frames.display_frame import display_live_frame
 from src.gui.frames.schedule_frame import ScheduleFrame
 from src.gui.frames.calendar_frame import StatisticsCalendar
+from src.gui.frames.move_camera_frame import MoveCameraFrame
 
 class UserGUI(tk.Tk):
     def __init__(self):
@@ -25,25 +26,31 @@ class UserGUI(tk.Tk):
         self.button_frame = ttk.Frame(self)
         self.button_frame.pack(pady=10)
 
+        # Button: Auto Set Camera
+        auto_set_btn = ttk.Button(self.button_frame, text="Auto Set Camera", command=self.auto_set_camera)
+        auto_set_btn.grid(row=0, column=0, padx=5, pady=5)
+        # Button: Move Camera
+        move_camera_btn = ttk.Button(self.button_frame, text="Move Camera", command=self.open_move_camera)
+        move_camera_btn.grid(row=0, column=1, padx=5, pady=5)
 
         self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables, state="normal")
-        self.detect_tables_btn.grid(row=0, column=0, padx=5, pady=5)
+        self.detect_tables_btn.grid(row=0, column=2, padx=5, pady=5)
 
         self.set_tables_btn = ttk.Button(self.button_frame, text="Set Tables", command=self.set_tables, state="disabled")
-        self.set_tables_btn.grid(row=0, column=1, padx=5, pady=5)
+        self.set_tables_btn.grid(row=0, column=3, padx=5, pady=5)
 
         self.reset_tables_btn = ttk.Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
-        self.reset_tables_btn.grid(row=0, column=2, padx=5, pady=5)
+        self.reset_tables_btn.grid(row=0, column=4, padx=5, pady=5)
 
         self.stop_detection_btn = ttk.Button(self.button_frame, text="Stop Detection", command=self.stop_detection, state="disabled")
-        self.stop_detection_btn.grid(row=0, column=3, padx=5, pady=5)
+        self.stop_detection_btn.grid(row=0, column=5, padx=5, pady=5)
 
         # Add a button to open the schedule window
         self.open_schedule_button = ttk.Button(self.button_frame, text="Set Weekly Schedule", command=self.open_schedule_window)
-        self.open_schedule_button.grid(row=0, column=4, padx=5, pady=5)
+        self.open_schedule_button.grid(row=0, column=6, padx=5, pady=5)
         # Add Generate Statistics Button
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
-        self.btn_generate_statistics.grid(row=0, column=5, padx=5, pady=5)
+        self.btn_generate_statistics.grid(row=0, column=7, padx=5, pady=5)
         # Creează un frame pentru butoane
         self.max_frame = ttk.Frame(self)
         self.max_frame.pack(pady=10)
@@ -63,7 +70,7 @@ class UserGUI(tk.Tk):
 
         self.info_label = tk.Label(self, text="Tables: 0 | People: 0")
         self.info_label.pack(side=tk.TOP, fill=tk.X)
-        #self.start_info_update()
+        self.start_info_update()
 
         self.canvas = Canvas(self, width=1920, height=1080)
         self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -92,8 +99,17 @@ class UserGUI(tk.Tk):
 
         apply_modern_style(self)
 
-   
- 
+    def auto_set_camera(self):
+        # Placeholder function for Auto Set Camera
+        print("Auto Set Camera function called.")
+
+    def open_move_camera(self):
+        # Open Move Camera frame
+        move_camera_window = tk.Toplevel(self)
+        move_camera_window.title("Move Camera")
+        move_camera_frame = MoveCameraFrame(move_camera_window)
+        move_camera_frame.pack(fill="both", expand=True)
+        
     def detect_tables(self):
         self.detector.detecting_tables_only = True
         self.detector.done_setting_tables = False

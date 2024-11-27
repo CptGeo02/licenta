@@ -30,7 +30,7 @@ class TableManager:
         elif status_type == "eating":
             self.max_time_eating = time_value
         elif status_type == "need to clean":
-            self.max_time_clean = time_value
+            self.max_time_need_to_clean = time_value
 
     def get_max_time(self, status_type):
         """
@@ -43,7 +43,7 @@ class TableManager:
         elif status_type == "eating":
             return self.max_time_eating
         elif status_type == "need to clean":
-            return self.max_time_clean
+            return self.max_time_need_to_clean
         return None
     
     def create_new_files(self):

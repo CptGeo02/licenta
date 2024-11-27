@@ -22,7 +22,7 @@ class MainGUI(tk.Tk):
 
     def launch_user_gui(self):
         """Lansează interfața UserGUI."""
-        #self.destroy()  # Închide fereastra principală
+        self.destroy()  # Închide fereastra principală
         user_gui = UserGUI()
         user_gui.mainloop()
 
