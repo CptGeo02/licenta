@@ -116,7 +116,6 @@ class ScheduleFrame(tk.Frame):
                 print(f"{day}: Closed")
         self.stop_detection = False
         self.start_checking_schedule()
-        self.destroy()
 
     def check_time(self):
         """

@@ -43,45 +43,70 @@ class JsonToExcel:
 
     def save_to_excel(self):
         """Salvează datele și graficele în Excel."""
-         # Încărcarea datelor din JSON
+        # Încărcarea datelor din JSON
         tables_data = self.load_json(self.tables_json_file)
         people_data = self.load_json(self.people_json_file)
 
-        # Crearea DataFrame-urilor pentru datele meselor și oamenilor
-        df_tables = pd.DataFrame(tables_data['table_statuses'])
-        df_people = pd.DataFrame(people_data['detections'])
+        # Verificare dacă 'table_statuses' există și nu este gol
+        if not tables_data.get('table_statuses'):
+            print("Fișierul JSON pentru mese nu conține 'table_statuses' sau lista este goală.")
+            df_tables = pd.DataFrame()  # Creează un DataFrame gol
+        else:
+            # Crearea DataFrame-ului pentru mese
+            df_tables = pd.DataFrame(tables_data['table_statuses'])
 
-        # Adăugăm intervalele de timp
-        df_tables = self.add_time_slot(df_tables)
+        # Verificare dacă 'detections' există și nu este gol
+        if not people_data.get('detections'):
+            print("Fișierul JSON pentru oameni nu conține 'detections' sau lista este goală.")
+            df_people = pd.DataFrame()  # Creează un DataFrame gol
+        else:
+            # Crearea DataFrame-ului pentru oameni
+            df_people = pd.DataFrame(people_data['detections'])
+
+        # Verifică dacă există date pentru a continua
+        if df_tables.empty and df_people.empty:
+            print("Nu există date disponibile pentru a genera raportul Excel.")
+            return  # Ieșire din funcție
+
+        # Continuarea procesării dacă există date
+        if not df_tables.empty:
+            # Adăugăm intervalele de timp
+            df_tables = self.add_time_slot(df_tables)
+
         # Crearea unui workbook nou cu openpyxl
         workbook = Workbook()
 
         # Scrierea datelor brute în sheet-ul 'Raw Data'
-        sheet = workbook.active
-        sheet.title = 'Raw Data'
-        for r, row in df_tables.iterrows():
-            sheet.append(row.values.tolist())
-        sheet = apply_modern_design(sheet)
+        if not df_tables.empty:
+            sheet = workbook.active
+            sheet.title = 'Raw Data'
+            for r, row in df_tables.iterrows():
+                sheet.append(row.values.tolist())
+            sheet = apply_modern_design(sheet)
 
-        # Calcularea mediilor și generarea histogramelor pentru medii
-        avg_durations = self.calculate_avg_durations(df_tables)
-        self.generate_average_histogram(avg_durations, workbook)
+            # Calcularea mediilor și generarea histogramelor pentru medii
+            avg_durations = self.calculate_avg_durations(df_tables)
+            self.generate_average_histogram(avg_durations, workbook)
 
-        # Generarea histogramei și adăugarea ei pe un sheet nou
-        self.generate_histogram(df_tables, workbook)
+            # Generarea histogramei și adăugarea ei pe un sheet nou
+            self.generate_histogram(df_tables, workbook)
 
-        # Adăugare Status Analysis
-        self.generate_status_analysis(df_tables, workbook)
+            # Adăugare Status Analysis
+            self.generate_status_analysis(df_tables, workbook)
 
-         # Adăugare Cycle Analysis
-        self.generate_cycle_histograms(df_tables, workbook)
+            # Adăugare Cycle Analysis
+            self.generate_cycle_histograms(df_tables, workbook)
 
-        self.generate_table_performance_report(df_tables, workbook)
+            self.generate_table_performance_report(df_tables, workbook)
 
         # Generarea histogramei pentru oameni
-        self.generate_people_histogram(df_people, workbook)
+        if not df_people.empty:
+            self.generate_people_histogram(df_people, workbook)
+
         # Salvarea fișierului Excel
         workbook.save(self.excel_file)
+        print(f"Fișierul Excel a fost salvat: {self.excel_file}")
+
 
     def generate_people_histogram(self, df_people, workbook):
         """Generează histograma pentru numărul de oameni și o adaugă în Excel."""
