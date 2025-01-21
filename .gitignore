@@ -1,6 +1,8 @@
-__pycache__
 __pycache__/
 *.onnx
 models/
-models
 *.pyc
+PCB/
+test_servos/
+arduino_servo_camera/
+outputs/

@@ -7,6 +7,7 @@ from src.utils.json_to_excel import JsonToExcel
 from src.gui.frames.display_frame import display_frame
 from src.gui.frames.schedule_frame import ScheduleFrame
 from src.gui.frames.calendar_frame import StatisticsCalendar
+from src.gui.frames.test_servos_frame import TestServosFrame
 
 class AdminGUI(tk.Tk):
     def __init__(self):
@@ -89,6 +90,28 @@ class AdminGUI(tk.Tk):
                 # Add Generate Statistics Button
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
         self.btn_generate_statistics.grid(row=1, column=6, padx=5, pady=5)
+        
+        # Lista de camere disponibile
+        self.cameras = self.get_camera_ports()
+        
+        # Variabila pentru camera selectată
+        self.selected_camera = tk.StringVar()
+        self.selected_camera.set(self.cameras[0] if self.cameras else "No Camera")
+
+        # Selector de Cameră
+        self.camera_label = ttk.Label(self.button_frame, text="Select Camera:")
+        self.camera_label.grid(row=2, column=0, padx=5, pady=5)
+
+        self.camera_selector = ttk.OptionMenu(self.button_frame, self.selected_camera, *self.cameras)
+        self.camera_selector.grid(row=2, column=1, padx=5, pady=5)
+
+        # Legăm schimbarea selecției de funcția care va tipări portul camerei selectate
+        self.selected_camera.trace_add("write", self.print_selected_camera)
+
+        # Buton Test Servos
+        self.test_servos_button = ttk.Button(self.button_frame, text="Test Servos", command=self.open_test_servos_frame)
+        self.test_servos_button.grid(row=2, column=2, padx=5, pady=5)
+
         # Creează un frame pentru butoane
         self.max_frame = ttk.Frame(self)
         self.max_frame.pack(pady=10)
@@ -628,6 +651,31 @@ class AdminGUI(tk.Tk):
         # Creează frame-ul pentru calendar și alte componente
         statistics_frame = StatisticsCalendar(statistics_window)  # Pass the Toplevel window to StatisticsCalendar
         statistics_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Adaugă frame-ul în fereastră
+
+    def open_test_servos_frame(self):
+        # Deschide fereastra TestServos
+        """Function to open the schedule frame in a new window."""
+        servos_window = tk.Toplevel()
+        servos_window.title("Set Weekly Schedule")
+        servos_window.geometry("600x400")  # Adjust size as needed
+
+        frame = TestServosFrame(servos_window)
+        frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+    # Funcție pentru a obține camerele disponibile
+    def get_camera_ports(self):
+        # Folosim OpenCV pentru a verifica camerele disponibile
+        available_cameras = []
+        for i in range(10):  # Verificăm primele 10 camere (poți extinde dacă este necesar)
+            cap = cv2.VideoCapture(i)
+            if cap.isOpened():
+                available_cameras.append(f"Camera {i}")
+                cap.release()
+        return available_cameras
+    
+    def print_selected_camera(self, *args):
+        # Afișăm camera selectată în consolă
+        print(f"Camera selectată: {self.selected_camera.get()}")
 
 if __name__ == "__main__":
     app = AdminGUI()
