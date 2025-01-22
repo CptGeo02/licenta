@@ -1,12 +1,13 @@
 from src.libs import tk
 import math
 import serial
+import time
 
 class MoveCameraFrame(tk.Frame):
-    def __init__(self, parent, serial_port='COM4', baud_rate=921600):
+    def __init__(self, app, parent, serial_port='COM4', baud_rate=921600):
         super().__init__(parent)
         self.parent = parent  # Referință la fereastra părinte
-
+        self.app = app
         # Joystick canvas size
         self.canvas_size = 300
         self.joystick_radius = 100
@@ -62,8 +63,17 @@ class MoveCameraFrame(tk.Frame):
         reset_button = tk.Button(self, text="Reset Position", command=self.reset_position)
         reset_button.pack(pady=10)
 
+        # Auto Set Camera Button
+        auto_set_button = tk.Button(self, text="Auto Set Camera", command=self.start_auto_set_camera)
+        auto_set_button.pack(pady=10)
+
         # Update loop for continuous value generation
         self.running = False
+        self.auto_camera_active = False
+
+        # State for auto camera
+        self.auto_x_index = 0
+        self.auto_y_index = 0
 
     def move_joystick(self, event):
         # Calculate the new position based on mouse cursor
@@ -136,6 +146,73 @@ class MoveCameraFrame(tk.Frame):
         # Placeholder for continuous update logic
         if self.running:
             self.after(100, self.continuous_update)  # Adjust interval as needed
+
+    def auto_set_camera(self):
+        """
+        Mișcă camera în formă de spirală pentru a acoperi toată aria vizuală,
+        de sus până jos, detectând mesele.
+        """
+        try:
+            step_size = 10
+            max_table_count = 0
+
+            x_range = list(range(0, 181, step_size))
+            y_range = list(range(0, 181, step_size))
+
+            if self.auto_y_index >= len(y_range):
+                self.auto_y_index = 0
+
+            y = y_range[self.auto_y_index]
+            x_iter = x_range if self.auto_y_index % 2 == 0 else list(reversed(x_range))
+
+            if self.auto_x_index >= len(x_iter):
+                self.auto_x_index = 0
+                self.auto_y_index += 1
+                if self.auto_y_index >= len(y_range):
+                    self.auto_camera_active = False
+                    print("Auto set camera finished.")
+                    return
+
+            x = x_iter[self.auto_x_index]
+            self.auto_x_index += 1
+
+            # Trimitem doar coordonatele spiralate
+            self.send_to_arduino(x, y)
+            print(f"Mișcare camera la coordonate: X={x}, Y={y}")
+
+            # Verificăm dacă numărul de mese a crescut
+            table_count = self.app.detector.tables_number
+            if table_count > max_table_count:
+                max_table_count = table_count
+                max_x, max_y = x, y
+                print(f"Număr maxim de mese: {max_table_count} la X={max_x}, Y={max_y}")
+
+                # Trimitem coordonatele maxime doar când acestea se schimbă
+                self.send_to_arduino(max_x, max_y)
+        except Exception as e:
+            print(f"Eroare în funcția auto_set_camera: {e}")
+
+
+    def start_auto_set_camera(self):
+        """
+        Începe procesul de auto setare a camerei, reapelând funcția la fiecare 100ms.
+        """
+        if not self.auto_camera_active:
+            self.auto_camera_active = True
+            self.auto_x_index = 0
+            self.auto_y_index = 0
+            self.auto_set_camera_loop()
+
+    def auto_set_camera_loop(self):
+        if self.auto_camera_active:
+            self.auto_set_camera()
+            self.after(100, self.auto_set_camera_loop)
+
+    def stop_auto_set_camera(self):
+        """
+        Oprește procesul de auto setare a camerei.
+        """
+        self.auto_camera_active = False
 
 # Test GUI
 if __name__ == "__main__":

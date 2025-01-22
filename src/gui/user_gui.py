@@ -27,7 +27,7 @@ class UserGUI(tk.Tk):
         self.button_frame.pack(pady=10)
 
         # Button: Auto Set Camera
-        auto_set_btn = ttk.Button(self.button_frame, text="Auto Set Camera", command=self.auto_set_camera)
+        auto_set_btn = ttk.Button(self.button_frame, text="Auto Set Camera", command=None)
         auto_set_btn.grid(row=0, column=0, padx=5, pady=5)
         # Button: Move Camera
         move_camera_btn = ttk.Button(self.button_frame, text="Move Camera", command=self.open_move_camera)
@@ -98,18 +98,17 @@ class UserGUI(tk.Tk):
         self.update_frame()
 
         apply_modern_style(self)
-
-    def auto_set_camera(self):
-        # Placeholder function for Auto Set Camera
-        print("Auto Set Camera function called.")
+      
 
     def open_move_camera(self):
-        # Open Move Camera frame
+        """
+        Deschide frame-ul Move Camera pe un thread separat, fără a bloca execuția principală.
+        """
         move_camera_window = tk.Toplevel(self)
         move_camera_window.title("Move Camera")
-        move_camera_frame = MoveCameraFrame(move_camera_window)
+        move_camera_frame = MoveCameraFrame(self, move_camera_window)
         move_camera_frame.pack(fill="both", expand=True)
-        
+
     def detect_tables(self):
         self.detector.detecting_tables_only = True
         self.detector.done_setting_tables = False
