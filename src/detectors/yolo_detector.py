@@ -23,7 +23,7 @@ class YoloDetector:
         self.tables_number = 0
         self.people_number = 0
         self.overlap_threshold = 0.2
-
+        self.frame_score=0
         print("Yolo running on", self.device)
 
         # Aici definim clasele obiectelor speciale
@@ -73,16 +73,41 @@ class YoloDetector:
     
     def draw_only_tables(self, frame, detections):
         self.tables_detected = [det for det in detections if det['class'] == 60]
+        num_tables = len(self.tables_detected)
+        frame_height, frame_width, _ = frame.shape
+        total_score = 0
+
         if self.tables_detected:
             for table in self.tables_detected:
                 box = table['box']
                 x1, y1, x2, y2 = box
+                center_x = (x1 + x2) / 2
+                center_y = (y1 + y2) / 2
+
+                # Calculăm abaterea centrului mesei față de centrul cadrului, normalizată la dimensiunile cadrului.
+                center_deviation_x = abs(center_x - frame_width / 2) / (frame_width / 2)
+                center_deviation_y = abs(center_y - frame_height / 2) / (frame_height / 2)
+
+                # Cu cât abaterea este mai mică, cu atât scorul local este mai mare (max 1 pentru fiecare axă).
+                center_score = (1 - center_deviation_x) * (1 - center_deviation_y)
+
                 color = (0, 255, 0)
-                label = "table"
+                label = "table (score: {:.2f})".format(center_score)  # Afișăm scorul local al mesei
                 frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
                 frame = cv2.putText(frame, label, (int(x1), int(y1) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
-        
+
+                total_score += center_score
+
+            # Scorul final este media scorurilor meselor, ponderată cu numărul de mese.
+            self.frame_score = (total_score / num_tables) * num_tables if num_tables > 0 else 0
+            cv2.putText(frame, "Frame Score: {:.2f}".format(self.frame_score), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2) # Afisam scorul total al frame-ului
+        else:
+            self.frame_score=0
+            cv2.putText(frame, "Frame Score: {:.2f}".format(self.frame_score), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2) # Afisam scorul total al frame-ului
+
+
         return frame
+
 
     def draw_detection_with_table_id(self, frame, detections):
             if detections:

@@ -13,8 +13,9 @@ class MoveCameraFrame(tk.Frame):
         self.joystick_radius = 100
         self.inner_radius = 20
         self.center = self.canvas_size // 2
-
-        # Create Canvas
+        self.max_score = 0
+        self.max_x = 90
+        self.max_y = 90
         self.canvas = tk.Canvas(self, width=self.canvas_size, height=self.canvas_size, bg="lightblue")
         self.canvas.pack(pady=10)
 
@@ -169,6 +170,7 @@ class MoveCameraFrame(tk.Frame):
                 self.auto_x_index = 0
                 self.auto_y_index += 1
                 if self.auto_y_index >= len(y_range):
+                    self.send_to_arduino(self.max_x, self.max_y)
                     self.auto_camera_active = False
                     print("Auto set camera finished.")
                     return
@@ -176,19 +178,15 @@ class MoveCameraFrame(tk.Frame):
             x = x_iter[self.auto_x_index]
             self.auto_x_index += 1
 
+            # Verificăm dacă numărul de mese a crescut
+            current_score = self.app.detector.frame_score
+            if current_score > self.max_score:
+                self.max_score = current_score
+                self.max_x, self.max_y = x, y
             # Trimitem doar coordonatele spiralate
             self.send_to_arduino(x, y)
             print(f"Mișcare camera la coordonate: X={x}, Y={y}")
 
-            # Verificăm dacă numărul de mese a crescut
-            table_count = self.app.detector.tables_number
-            if table_count > max_table_count:
-                max_table_count = table_count
-                max_x, max_y = x, y
-                print(f"Număr maxim de mese: {max_table_count} la X={max_x}, Y={max_y}")
-
-                # Trimitem coordonatele maxime doar când acestea se schimbă
-                self.send_to_arduino(max_x, max_y)
         except Exception as e:
             print(f"Eroare în funcția auto_set_camera: {e}")
 

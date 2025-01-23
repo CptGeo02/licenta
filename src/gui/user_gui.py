@@ -26,31 +26,28 @@ class UserGUI(tk.Tk):
         self.button_frame = ttk.Frame(self)
         self.button_frame.pack(pady=10)
 
-        # Button: Auto Set Camera
-        auto_set_btn = ttk.Button(self.button_frame, text="Auto Set Camera", command=None)
-        auto_set_btn.grid(row=0, column=0, padx=5, pady=5)
         # Button: Move Camera
         move_camera_btn = ttk.Button(self.button_frame, text="Move Camera", command=self.open_move_camera)
-        move_camera_btn.grid(row=0, column=1, padx=5, pady=5)
+        move_camera_btn.grid(row=0, column=0, padx=5, pady=5)
 
         self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables, state="normal")
-        self.detect_tables_btn.grid(row=0, column=2, padx=5, pady=5)
+        self.detect_tables_btn.grid(row=0, column=1, padx=5, pady=5)
 
         self.set_tables_btn = ttk.Button(self.button_frame, text="Set Tables", command=self.set_tables, state="disabled")
-        self.set_tables_btn.grid(row=0, column=3, padx=5, pady=5)
+        self.set_tables_btn.grid(row=0, column=2, padx=5, pady=5)
 
         self.reset_tables_btn = ttk.Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
-        self.reset_tables_btn.grid(row=0, column=4, padx=5, pady=5)
+        self.reset_tables_btn.grid(row=0, column=3, padx=5, pady=5)
 
         self.stop_detection_btn = ttk.Button(self.button_frame, text="Stop Detection", command=self.stop_detection, state="disabled")
-        self.stop_detection_btn.grid(row=0, column=5, padx=5, pady=5)
+        self.stop_detection_btn.grid(row=0, column=4, padx=5, pady=5)
 
         # Add a button to open the schedule window
         self.open_schedule_button = ttk.Button(self.button_frame, text="Set Weekly Schedule", command=self.open_schedule_window)
-        self.open_schedule_button.grid(row=0, column=6, padx=5, pady=5)
+        self.open_schedule_button.grid(row=0, column=5, padx=5, pady=5)
         # Add Generate Statistics Button
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
-        self.btn_generate_statistics.grid(row=0, column=7, padx=5, pady=5)
+        self.btn_generate_statistics.grid(row=0, column=6, padx=5, pady=5)
         # Creează un frame pentru butoane
         self.max_frame = ttk.Frame(self)
         self.max_frame.pack(pady=10)
