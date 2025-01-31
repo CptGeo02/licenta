@@ -4,7 +4,7 @@ import serial
 import time
 
 class MoveCameraFrame(tk.Frame):
-    def __init__(self, app, parent, serial_port='COM4', baud_rate=921600):
+    def __init__(self, app, parent, serial_port='COM7', baud_rate=921600):
         super().__init__(parent)
         self.parent = parent  # Referință la fereastra părinte
         self.app = app
@@ -154,19 +154,20 @@ class MoveCameraFrame(tk.Frame):
         de sus până jos, detectând mesele.
         """
         try:
-            step_size = 10
-            max_table_count = 0
+            step_size = 4 
 
-            x_range = list(range(0, 181, step_size))
-            y_range = list(range(0, 181, step_size))
+            x_range = list(range(20, 160, step_size))
+            y_range = list(range(60, 100, step_size))
 
+            # Verificăm dacă auto_y_index depășește limita
             if self.auto_y_index >= len(y_range):
-                self.auto_y_index = 0
+                self.send_to_arduino(self.max_x, self.max_y)
+                self.auto_camera_active = False
+                print("Auto set camera finished.")
+                return
 
-            y = y_range[self.auto_y_index]
-            x_iter = x_range if self.auto_y_index % 2 == 0 else list(reversed(x_range))
-
-            if self.auto_x_index >= len(x_iter):
+            # Verificăm și resetăm auto_x_index înainte de acces
+            if self.auto_x_index >= len(x_range):
                 self.auto_x_index = 0
                 self.auto_y_index += 1
                 if self.auto_y_index >= len(y_range):
@@ -175,17 +176,24 @@ class MoveCameraFrame(tk.Frame):
                     print("Auto set camera finished.")
                     return
 
+            # Determinăm direcția mișcării pe axa X
+            x_iter = x_range if self.auto_y_index % 2 == 0 else list(reversed(x_range))
             x = x_iter[self.auto_x_index]
-            self.auto_x_index += 1
+            y = y_range[self.auto_y_index]
 
             # Verificăm dacă numărul de mese a crescut
             current_score = self.app.detector.frame_score
             if current_score > self.max_score:
                 self.max_score = current_score
                 self.max_x, self.max_y = x, y
+                print(f"MAXIM LA: X={x}, Y={y}")
+
             # Trimitem doar coordonatele spiralate
             self.send_to_arduino(x, y)
             print(f"Mișcare camera la coordonate: X={x}, Y={y}")
+
+            # Incrementează indexul pentru următorul pas
+            self.auto_x_index += 1
 
         except Exception as e:
             print(f"Eroare în funcția auto_set_camera: {e}")
@@ -199,12 +207,17 @@ class MoveCameraFrame(tk.Frame):
             self.auto_camera_active = True
             self.auto_x_index = 0
             self.auto_y_index = 0
+            self.max_score = -1  # Resetăm scorul maxim
+            self.max_x, self.max_y = 0, 0  # Resetăm coordonatele
             self.auto_set_camera_loop()
 
+
     def auto_set_camera_loop(self):
-        if self.auto_camera_active:
-            self.auto_set_camera()
-            self.after(100, self.auto_set_camera_loop)
+        if not self.auto_camera_active:
+            return  # Oprire sigură
+        self.auto_set_camera()
+        self.after(200, self.auto_set_camera_loop)  # Creștem timpul de așteptare pentru a evita suprasolicitarea
+
 
     def stop_auto_set_camera(self):
         """
