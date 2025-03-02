@@ -1,0 +1,14 @@
+{
+    "selected_camera": "Camera 0",
+    "selected_model": "yolov10n.pt",
+    "max_times": {
+        "available": "02:30:00",
+        "ready_to_order": "00:25:00",
+        "eating": "02:30:00",
+        "need_to_clean": "00:20:00"
+    },
+    "max_people": 123,
+    "overlap_threshold": 0.42,
+    "red_threshold": 0.47,
+    "blue_threshold": 0.33
+}

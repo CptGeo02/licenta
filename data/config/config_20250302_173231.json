@@ -1,0 +1,14 @@
+{
+    "selected_camera": "Camera 0",
+    "selected_model": "Select model",
+    "max_times": {
+        "available": "Select max available time",
+        "ready_to_order": "Select max ready to order time",
+        "eating": "Select max eating time",
+        "need_to_clean": "Select max need to clean time"
+    },
+    "max_people": 99999,
+    "overlap_threshold": 0.2,
+    "red_threshold": 0.1,
+    "blue_threshold": 0.1
+}

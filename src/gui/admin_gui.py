@@ -20,7 +20,7 @@ class AdminGUI(tk.Tk):
         # Inițializează YOLO Detector cu un model implicit
         self.current_model = "models/yolov8n.pt"
         self.detector = YoloDetector()
-
+        self.selected_camera = "Camera 0"
         # Creează un frame pentru butoane
         self.button_frame = ttk.Frame(self)
         self.button_frame.pack(pady=10)
@@ -66,47 +66,50 @@ class AdminGUI(tk.Tk):
             offvalue=False,
             state="disabled"
         )
-        self.auto_detect_switch.grid(row=0, column=7, padx=5, pady=5)
+        self.auto_detect_switch.grid(row=0, column=8, padx=5, pady=5)
+        # Crearea butonului în interfața Tkinter
+        self.export_button = ttk.Button(self.button_frame, text="Export Parameters", command=self.export_parameters)
+        self.export_button.grid(row=1, column=0, padx=5, pady=5)
 
         self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables, state="disabled")
-        self.detect_tables_btn.grid(row=1, column=0, padx=5, pady=5)
+        self.detect_tables_btn.grid(row=1, column=1, padx=5, pady=5)
 
         self.set_tables_btn = ttk.Button(self.button_frame, text="Set Tables", command=self.set_tables, state="disabled")
-        self.set_tables_btn.grid(row=1, column=1, padx=5, pady=5)
+        self.set_tables_btn.grid(row=1, column=2, padx=5, pady=5)
 
         self.reset_tables_btn = ttk.Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
-        self.reset_tables_btn.grid(row=1, column=2, padx=5, pady=5)
+        self.reset_tables_btn.grid(row=1, column=3, padx=5, pady=5)
 
         self.stop_detection_btn = ttk.Button(self.button_frame, text="Stop Detection", command=self.stop_detection, state="disabled")
-        self.stop_detection_btn.grid(row=1, column=3, padx=5, pady=5)
+        self.stop_detection_btn.grid(row=1, column=4, padx=5, pady=5)
 
         # Buton pentru analiza fișierului JSON
         self.analyze_json_btn = ttk.Button(self.button_frame, text="Analyze Records", command=self.analyze_json)
-        self.analyze_json_btn.grid(row=1, column=4, padx=5, pady=5)
+        self.analyze_json_btn.grid(row=1, column=5, padx=5, pady=5)
 
         # Add a button to open the schedule window
         self.open_schedule_button = ttk.Button(self.button_frame, text="Set Weekly Schedule", command=self.open_schedule_window)
-        self.open_schedule_button.grid(row=1, column=5, padx=5, pady=5)
-                # Add Generate Statistics Button
+        self.open_schedule_button.grid(row=1, column=6, padx=5, pady=5)
+        # Add Generate Statistics Button
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
-        self.btn_generate_statistics.grid(row=1, column=6, padx=5, pady=5)
+        self.btn_generate_statistics.grid(row=1, column=7, padx=5, pady=5)
         
         # Lista de camere disponibile
         self.cameras = self.get_camera_ports()
         
         # Variabila pentru camera selectată
-        self.selected_camera = tk.StringVar()
-        self.selected_camera.set(self.cameras[0] if self.cameras else "No Camera")
+        self.sel_camera = tk.StringVar()
+        self.sel_camera.set(self.cameras[0] if self.cameras else "No Camera")
 
         # Selector de Cameră
         self.camera_label = ttk.Label(self.button_frame, text="Select Camera:")
         self.camera_label.grid(row=2, column=0, padx=5, pady=5)
 
-        self.camera_selector = ttk.OptionMenu(self.button_frame, self.selected_camera, *self.cameras)
+        self.camera_selector = ttk.OptionMenu(self.button_frame, self.sel_camera, *self.cameras)
         self.camera_selector.grid(row=2, column=1, padx=5, pady=5)
 
         # Legăm schimbarea selecției de funcția care va tipări portul camerei selectate
-        self.selected_camera.trace_add("write", self.print_selected_camera)
+        self.sel_camera.trace_add("write", self.print_sel_camera)
 
         # Buton Test Servos
         self.test_servos_button = ttk.Button(self.button_frame, text="Test Servos", command=self.open_test_servos_frame)
@@ -673,9 +676,42 @@ class AdminGUI(tk.Tk):
                 cap.release()
         return available_cameras
     
-    def print_selected_camera(self, *args):
+    def print_sel_camera(self, *args):
         # Afișăm camera selectată în consolă
-        print(f"Camera selectată: {self.selected_camera.get()}")
+        print(f"Camera selectată: {self.sel_camera.get()}")
+        self.selected_camera = self.sel_camera.get()
+        
+    def export_parameters(self):
+        # Crearea directorului dacă nu există
+        config_dir = "data/config"
+        os.makedirs(config_dir, exist_ok=True)
+        
+        # Crearea numelui de fișier
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        config_filename = f"config_{timestamp}.json"
+        config_path = os.path.join(config_dir, config_filename)
+         
+        # Structura datelor
+        config_data = {
+            "selected_camera": self.sel_camera.get(),
+            "selected_model": self.model_var.get(),
+            "max_times": {
+                "available": self.time_available.get(),
+                "ready_to_order": self.time_ready.get(),
+                "eating": self.time_eating.get(),
+                "need_to_clean": self.time_clean.get()
+            },
+            "max_people": int(self.max_people_var.get()),
+            "overlap_threshold": round(float(self.overlap_threshold_var.get()),2),
+            "red_threshold": round(float(self.red_threshold_var.get()),2),
+            "blue_threshold": round(float(self.blue_threshold_var.get()),2)
+        }
+        
+        # Salvare în JSON
+        with open(config_path, "w") as json_file:
+            json.dump(config_data, json_file, indent=4)
+        
+        print(f"Configurația a fost salvată în {config_path}")
 
 if __name__ == "__main__":
     app = AdminGUI()

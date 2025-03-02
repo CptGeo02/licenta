@@ -21,33 +21,36 @@ class UserGUI(tk.Tk):
         # Inițializează YOLO Detector cu un model implicit
         self.current_model = "models/yolov8n.pt"
         self.detector = YoloDetector()
-
+        self.selected_camera = "Camera 0"
         # Creează un frame pentru butoane
         self.button_frame = ttk.Frame(self)
         self.button_frame.pack(pady=10)
 
+        import_parameters_btn = ttk.Button(self.button_frame, text="Import Parameters", command=self.import_parameters)
+        import_parameters_btn.grid(row=0, column=0, padx=5, pady=5)
+
         # Button: Move Camera
         move_camera_btn = ttk.Button(self.button_frame, text="Move Camera", command=self.open_move_camera)
-        move_camera_btn.grid(row=0, column=0, padx=5, pady=5)
+        move_camera_btn.grid(row=0, column=1, padx=5, pady=5)
 
         self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables, state="normal")
-        self.detect_tables_btn.grid(row=0, column=1, padx=5, pady=5)
+        self.detect_tables_btn.grid(row=0, column=2, padx=5, pady=5)
 
         self.set_tables_btn = ttk.Button(self.button_frame, text="Set Tables", command=self.set_tables, state="disabled")
-        self.set_tables_btn.grid(row=0, column=2, padx=5, pady=5)
+        self.set_tables_btn.grid(row=0, column=3, padx=5, pady=5)
 
         self.reset_tables_btn = ttk.Button(self.button_frame, text="Reset Tables", command=self.reset_tables, state="disabled")
-        self.reset_tables_btn.grid(row=0, column=3, padx=5, pady=5)
+        self.reset_tables_btn.grid(row=0, column=4, padx=5, pady=5)
 
         self.stop_detection_btn = ttk.Button(self.button_frame, text="Stop Detection", command=self.stop_detection, state="disabled")
-        self.stop_detection_btn.grid(row=0, column=4, padx=5, pady=5)
+        self.stop_detection_btn.grid(row=0, column=5, padx=5, pady=5)
 
         # Add a button to open the schedule window
         self.open_schedule_button = ttk.Button(self.button_frame, text="Set Weekly Schedule", command=self.open_schedule_window)
-        self.open_schedule_button.grid(row=0, column=5, padx=5, pady=5)
+        self.open_schedule_button.grid(row=0, column=6, padx=5, pady=5)
         # Add Generate Statistics Button
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
-        self.btn_generate_statistics.grid(row=0, column=6, padx=5, pady=5)
+        self.btn_generate_statistics.grid(row=0, column=7, padx=5, pady=5)
         # Creează un frame pentru butoane
         self.max_frame = ttk.Frame(self)
         self.max_frame.pack(pady=10)
@@ -85,15 +88,7 @@ class UserGUI(tk.Tk):
         self.images = []
         self.image_index = 0
         self.stop_event = threading.Event()
-
-        
-        self.stop_running_thread()
-        self.running = True
-        self.stop_event.clear()
-        self.frame_thread = threading.Thread(target=run_camera, args=(self,))
-        self.frame_thread.start()
-        self.update_frame()
-
+        self.start_camera()
         apply_modern_style(self)
       
 
@@ -309,6 +304,42 @@ class UserGUI(tk.Tk):
         # Creează frame-ul pentru calendar și alte componente
         statistics_frame = StatisticsCalendar(statistics_window)  # Pass the Toplevel window to StatisticsCalendar
         statistics_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Adaugă frame-ul în fereastră
+        
+    
+    def import_parameters(self):
+        # Deschide fereastra de selecție fișier
+        file_path = filedialog.askopenfilename(
+            initialdir="data/config", 
+            title="Select Config File",
+            filetypes=(("JSON files", "*.json"), ("All files", "*.*"))
+        )
+        
+        if file_path:
+            try:
+                # Citește fișierul JSON
+                with open(file_path, "r") as json_file:
+                    config_data = json.load(json_file)
+
+                # Afișează valorile în consolă
+                print("Selected Camera:", config_data.get("selected_camera", "Not set"))
+                self.selected_camera = config_data.get("selected_camera", "Not set")
+                print("Selected Model:", config_data.get("selected_model", "Not set"))
+                self.current_model = config_data.get("selected_model", "Not set")
+                max_times = config_data.get("max_times", {})
+                print("Max Time Available:", max_times.get("available", "Not set"))
+                print("Max Time Ready to Order:", max_times.get("ready_to_order", "Not set"))
+                print("Max Time Eating:", max_times.get("eating", "Not set"))
+                print("Max Time Need to Clean:", max_times.get("need_to_clean", "Not set"))
+                
+                print("Max People:", config_data.get("max_people", "Not set"))
+                print("Overlap Threshold:", config_data.get("overlap_threshold", "Not set"))
+                print("Red Threshold:", config_data.get("red_threshold", "Not set"))
+                print("Blue Threshold:", config_data.get("blue_threshold", "Not set"))
+
+            
+                self.start_camera()
+            except Exception as e:
+                print(f"Error reading the config file: {e}")
 
     def on_close(self):
         """Curăță toate apelurile 'after' și închide aplicația."""
@@ -316,6 +347,25 @@ class UserGUI(tk.Tk):
         self.after_cancel(self.start_info_update)
         self.destroy()  # Închide aplicația
 
+    def stop_running_thread(self):
+        if self.frame_thread and self.frame_thread.is_alive():
+            self.stop_event.set()
+            self.frame_thread.join()
+        self.running = False
+        
+    def start_camera(self,):
+        self.stop_running_thread()
+        self.running = True
+        self.stop_event.clear()
+        self.frame_thread = threading.Thread(target=run_camera, args=(self,))
+        self.frame_thread.start()
+        self.update_frame()
+        
+    def change_model(self, model_name):
+            """Schimbă modelul YOLO utilizat."""
+            self.current_model = model_name
+            self.detector.load_model(os.path.join("models", self.current_model))
+            self.status_label.config(text=f"Modelul a fost schimbat la {model_name}")
 if __name__ == "__main__":
     app = UserGUI()
     app.mainloop()

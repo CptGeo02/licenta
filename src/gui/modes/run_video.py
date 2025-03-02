@@ -2,7 +2,7 @@ from src.libs import *
 
 def run_video(app):
     cap = cv2.VideoCapture(app.video_source)  # Deschide sursa video selectată
-    while app.running:
+    while app.running and not app.stop_event.is_set():
         ret, frame = cap.read()  # Citește un cadru din video
         if not ret:
             break
