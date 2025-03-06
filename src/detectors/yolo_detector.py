@@ -241,6 +241,12 @@ class YoloDetector:
         """
         return self.table_manager.get_all_tables_status()
     
+    def set_overlap_threshold(self, threshold):
+        if 0 <= threshold <= 1:
+            self.overlap_threshold = threshold
+        else:
+            raise ValueError("Threshold must be between 0 and 1")
+
     def set_table_ids(self):
         self.reset_table_manager()
         if self.tables_detected:

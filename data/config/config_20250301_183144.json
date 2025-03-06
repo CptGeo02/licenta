@@ -1,6 +1,6 @@
 {
     "selected_camera": "Camera 0",
-    "selected_model": "yolov10n.pt",
+    "selected_model": "yolov8n.pt",
     "max_times": {
         "available": "02:30:00",
         "ready_to_order": "00:25:00",

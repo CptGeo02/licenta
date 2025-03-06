@@ -19,21 +19,21 @@ class UserGUI(tk.Tk):
         self.prev_time = time.time()
         self.last_time = time.time()  # Momentul în care a fost actualizat ultima dată
         # Inițializează YOLO Detector cu un model implicit
-        self.current_model = "models/yolov8n.pt"
+        self.current_model = "models/yolov10l.pt"
         self.detector = YoloDetector()
         self.selected_camera = "Camera 0"
         # Creează un frame pentru butoane
         self.button_frame = ttk.Frame(self)
         self.button_frame.pack(pady=10)
 
-        import_parameters_btn = ttk.Button(self.button_frame, text="Import Parameters", command=self.import_parameters)
-        import_parameters_btn.grid(row=0, column=0, padx=5, pady=5)
+        self.import_parameters_btn = ttk.Button(self.button_frame, text="Import Parameters", command=self.import_parameters)
+        self.import_parameters_btn.grid(row=0, column=0, padx=5, pady=5)
 
         # Button: Move Camera
-        move_camera_btn = ttk.Button(self.button_frame, text="Move Camera", command=self.open_move_camera)
-        move_camera_btn.grid(row=0, column=1, padx=5, pady=5)
+        self.move_camera_btn = ttk.Button(self.button_frame, text="Move Camera", command=self.open_move_camera)
+        self.move_camera_btn.grid(row=0, column=1, padx=5, pady=5)
 
-        self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables, state="normal")
+        self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables)
         self.detect_tables_btn.grid(row=0, column=2, padx=5, pady=5)
 
         self.set_tables_btn = ttk.Button(self.button_frame, text="Set Tables", command=self.set_tables, state="disabled")
@@ -113,6 +113,7 @@ class UserGUI(tk.Tk):
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = True
         self.detector.detecting_all = False
+        self.change_model(self.current_model)
         self.current_frame = self.detector.set_table_ids()
         self.set_tables_btn.config(state="disabled")
         self.reset_tables_btn.config(state="normal")
@@ -321,23 +322,49 @@ class UserGUI(tk.Tk):
                     config_data = json.load(json_file)
 
                 # Afișează valorile în consolă
-                print("Selected Camera:", config_data.get("selected_camera", "Not set"))
                 self.selected_camera = config_data.get("selected_camera", "Not set")
-                print("Selected Model:", config_data.get("selected_model", "Not set"))
+                print("Selected Camera:", self.selected_camera)
                 self.current_model = config_data.get("selected_model", "Not set")
+                print("Selected Model:", self.current_model)
+               
                 max_times = config_data.get("max_times", {})
-                print("Max Time Available:", max_times.get("available", "Not set"))
-                print("Max Time Ready to Order:", max_times.get("ready_to_order", "Not set"))
-                print("Max Time Eating:", max_times.get("eating", "Not set"))
-                print("Max Time Need to Clean:", max_times.get("need_to_clean", "Not set"))
-                
-                print("Max People:", config_data.get("max_people", "Not set"))
-                print("Overlap Threshold:", config_data.get("overlap_threshold", "Not set"))
-                print("Red Threshold:", config_data.get("red_threshold", "Not set"))
-                print("Blue Threshold:", config_data.get("blue_threshold", "Not set"))
 
-            
-                self.start_camera()
+                self.max_time_available =  max_times.get("available", "Not set")
+                self.max_time_ready_to_order = max_times.get("ready_to_order", "Not set")
+                self.max_time_eating = max_times.get("eating", "Not set")
+                self.max_time_need_to_clean = max_times.get("need_to_clean", "Not set")
+
+                self.detector.table_manager.set_max_time("available", self.max_time_available)
+                self.detector.table_manager.set_max_time("ready_to_order", self.max_time_ready_to_order)
+                self.detector.table_manager.set_max_time("eating", self.max_time_eating)
+                self.detector.table_manager.set_max_time("need_to_clean", self.max_time_need_to_clean)
+                print("Max Time Available:", self.max_time_available)
+                print("Max Time Ready to Order:", self.max_time_ready_to_order)
+                print("Max Time Eating:", self.max_time_eating)
+                print("Max Time Need to Clean:", self.max_time_need_to_clean)
+
+                self.max_people = config_data.get("max_people", "Not set")
+                self.detector.people_manager.set_max_people_number(self.max_people)
+                print("Max People:", self.max_people)
+
+                self.overlap_threshold = config_data.get("overlap_threshold", "Not set")
+                self.detector.set_overlap_threshold(self.overlap_threshold)
+                print("Overlap Threshold:", self.overlap_threshold)
+
+                self.red_threshold = config_data.get("red_threshold", "Not set")
+                self.detector.table_manager.set_red_threshold_for_all_tables(self.red_threshold)
+                print("Red Threshold:", config_data.get("red_threshold", "Not set"))
+
+                self.blue_threshold = config_data.get("blue_threshold", "Not set")
+                self.detector.table_manager.set_blue_threshold_for_all_tables(self.blue_threshold)
+                print("Blue Threshold:", self.blue_threshold)
+
+                self.time_available.set(str(self.max_time_available))
+                self.time_ready.set(str(self.max_time_ready_to_order))
+                self.time_eating.set(str(self.max_time_eating))
+                self.time_clean.set(str(self.max_time_need_to_clean))
+
+                self.max_people_var.set(str(self.max_people))
             except Exception as e:
                 print(f"Error reading the config file: {e}")
 

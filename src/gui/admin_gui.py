@@ -66,7 +66,7 @@ class AdminGUI(tk.Tk):
             offvalue=False,
             state="disabled"
         )
-        self.auto_detect_switch.grid(row=0, column=8, padx=5, pady=5)
+        self.auto_detect_switch.grid(row=0, column=7, padx=5, pady=5)
         # Crearea butonului în interfața Tkinter
         self.export_button = ttk.Button(self.button_frame, text="Export Parameters", command=self.export_parameters)
         self.export_button.grid(row=1, column=0, padx=5, pady=5)
