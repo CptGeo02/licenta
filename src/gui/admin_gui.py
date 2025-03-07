@@ -20,7 +20,8 @@ class AdminGUI(tk.Tk):
         # Inițializează YOLO Detector cu un model implicit
         self.current_model = "models/yolov8n.pt"
         self.detector = YoloDetector()
-        self.selected_camera = "Camera 0"
+        self.selected_camera = 0
+        self.video_resolution = (640, 480)
         # Creează un frame pentru butoane
         self.button_frame = ttk.Frame(self)
         self.button_frame.pack(pady=10)
@@ -40,7 +41,7 @@ class AdminGUI(tk.Tk):
         self.model_selector = ttk.OptionMenu(
             self.button_frame,
             self.model_var,
-            "Select model",  # Valoarea implicită afișată
+            "Select Model",  # Valoarea implicită afișată
             *self.get_model_files(),
             command=self.change_model
         )
@@ -94,22 +95,35 @@ class AdminGUI(tk.Tk):
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
         self.btn_generate_statistics.grid(row=1, column=7, padx=5, pady=5)
         
-        # Lista de camere disponibile
-        self.cameras = self.get_camera_ports()
-        
-        # Variabila pentru camera selectată
-        self.sel_camera = tk.StringVar()
-        self.sel_camera.set(self.cameras[0] if self.cameras else "No Camera")
+        # Obține camerele disponibile
+        self.camera_list = self.get_available_cameras()
 
-        # Selector de Cameră
-        self.camera_label = ttk.Label(self.button_frame, text="Select Camera:")
-        self.camera_label.grid(row=2, column=0, padx=5, pady=5)
+        # Variabila pentru selectorul de camere
+        self.camera_var = tk.StringVar(value="Select Camera")  # Valoare implicită
+        # Selectorul pentru camere
+        self.camera_selector = ttk.OptionMenu(
+            self.button_frame,
+            self.camera_var,
+            "Select Camera",  # Opțiunea implicită
+            *self.camera_list,  # Opțiuni de camere
+            command=self.update_camera
+        )
+        self.camera_selector.config(width=20)
+        self.camera_selector.grid(row=2, column=0, padx=5, pady=5)
 
-        self.camera_selector = ttk.OptionMenu(self.button_frame, self.sel_camera, *self.cameras)
-        self.camera_selector.grid(row=2, column=1, padx=5, pady=5)
 
-        # Legăm schimbarea selecției de funcția care va tipări portul camerei selectate
-        self.sel_camera.trace_add("write", self.print_sel_camera)
+        self.video_format_var = StringVar(value="480p")  # Valoare implicită
+        self.video_format_selector = ttk.OptionMenu(
+            self.button_frame,
+            self.video_format_var,
+            "Select Format",  # Valoare implicită
+            "480p", "720p", "1080p",  # Opțiuni de formate
+            command=self.update_video_format
+        )
+
+
+        self.video_format_selector.config(width=15)
+        self.video_format_selector.grid(row=2, column=1, padx=5, pady=5)
 
         # Buton Test Servos
         self.test_servos_button = ttk.Button(self.button_frame, text="Test Servos", command=self.open_test_servos_frame)
@@ -328,12 +342,26 @@ class AdminGUI(tk.Tk):
             self.reset_tables_btn.config(state="disabled")
             self.detect_all_btn.config(state="disabled")
             self.stop_detection_btn.config(state="disabled")
+    
+        if self.selected_mode == "camera":
+            self.start_camera_btn.config(state="disabled")
+            self.select_video_btn.config(state="normal")
+            self.images_btn.config(state="normal")
+
+        if self.selected_mode == "video":
+            self.start_camera_btn.config(state="normal")
+            self.select_video_btn.config(state="disabled")
+            self.images_btn.config(state="normal")
 
         if self.selected_mode == "show_images":
             self.auto_detect_switch.config(state="disabled")
             self.detect_tables_btn.config(state="disabled")
             self.set_tables_btn.config(state="disabled")
             self.reset_tables_btn.config(state="disabled")
+
+            self.start_camera_btn.config(state="normal")
+            self.select_video_btn.config(state="normal")
+            self.images_btn.config(state="disabled")
 
         self.previous_btn.config(state="normal" if self.selected_mode == 'show_images' else "disabled")
         self.next_btn.config(state="normal" if self.selected_mode == 'show_images' else "disabled")
@@ -665,22 +693,63 @@ class AdminGUI(tk.Tk):
         frame = TestServosFrame(servos_window)
         frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-    # Funcție pentru a obține camerele disponibile
-    def get_camera_ports(self):
-        # Folosim OpenCV pentru a verifica camerele disponibile
-        available_cameras = []
-        for i in range(10):  # Verificăm primele 10 camere (poți extinde dacă este necesar)
+    def update_video_format(self, selected_format):
+            """Actualizează dimensiunea video și afișează în consolă."""
+            if selected_format == "480p":
+                self.video_resolution = (640, 480)  # Rezoluție 480p
+            elif selected_format == "720p":
+                self.video_resolution = (1280, 720)  # Rezoluție HD
+            elif selected_format == "1080p":
+                self.video_resolution = (1920, 1080)  # Rezoluție FullHD
+            # Afișează dimensiunea selectată în consolă
+            print(f"Selected video format: {self.video_resolution[0]}x{self.video_resolution[1]} pixels")
+
+    def detect_available_cameras(self):
+        """Detectează camerele disponibile și actualizează opțiunile în selector."""
+        self.available_cameras = []
+        
+        # Testează camerele de la 0 la 9 (poți ajusta intervalul dacă ai mai multe camere)
+        for i in range(10):
             cap = cv2.VideoCapture(i)
             if cap.isOpened():
-                available_cameras.append(f"Camera {i}")
+                self.available_cameras.append(f"Camera {i}")
                 cap.release()
-        return available_cameras
-    
-    def print_sel_camera(self, *args):
-        # Afișăm camera selectată în consolă
-        print(f"Camera selectată: {self.sel_camera.get()}")
-        self.selected_camera = self.sel_camera.get()
+
+        if not self.available_cameras:
+            self.available_cameras.append("No cameras found")
+
+        # Actualizează opțiunile din OptionMenu cu camerele disponibile
+        self.update_camera_options()
+
+    def update_camera_options(self):
+        """Actualizează opțiunile din OptionMenu pentru selecția camerei."""
+        # Actualizează lista de opțiuni din OptionMenu
+        menu = self.camera_selector['menu']
+        menu.delete(0, 'end')  # Șterge opțiunile anterioare
         
+        # Adaugă camerele disponibile
+        for camera in self.available_cameras:
+            menu.add_command(label=camera, command=tk._setit(self.camera_var, camera))
+
+    def get_available_cameras(self):
+            """Detectează camerele video disponibile și le returnează ca o listă."""
+            camera_list = []
+            # Verifică camerele de la 0 la 10 (poți ajusta acest număr pentru alte camere)
+            for i in range(10):
+                cap = cv2.VideoCapture(i)
+                if cap.isOpened():
+                    camera_list.append(f"Camera {i}")
+                    cap.release()
+            return camera_list
+
+    def update_camera(self, selected_camera):
+        """Actualizează camera aleasă și afișează în consolă."""
+        if selected_camera != "Select Camera":
+            print(f"Selected camera: {selected_camera}")
+            self.selected_camera = int(selected_camera[-1])
+        else:
+            print("No camera selected")
+
     def export_parameters(self):
         # Crearea directorului dacă nu există
         config_dir = "data/config"
@@ -693,8 +762,9 @@ class AdminGUI(tk.Tk):
          
         # Structura datelor
         config_data = {
-            "selected_camera": self.sel_camera.get(),
+            "selected_camera": self.selected_camera,
             "selected_model": self.model_var.get(),
+            "video_resolution": self.video_resolution,
             "max_times": {
                 "available": self.time_available.get(),
                 "ready_to_order": self.time_ready.get(),

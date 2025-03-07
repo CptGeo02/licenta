@@ -1,6 +1,10 @@
 {
-    "selected_camera": "Camera 0",
+    "selected_camera": 0,
     "selected_model": "yolov8n.pt",
+    "video_resolution": [
+        640,
+        480
+    ],
     "max_times": {
         "available": "02:30:00",
         "ready_to_order": "00:25:00",

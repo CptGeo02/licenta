@@ -21,7 +21,8 @@ class UserGUI(tk.Tk):
         # Inițializează YOLO Detector cu un model implicit
         self.current_model = "models/yolov10l.pt"
         self.detector = YoloDetector()
-        self.selected_camera = "Camera 0"
+        self.selected_camera = 0
+        self.video_resolution = (640, 480)
         # Creează un frame pentru butoane
         self.button_frame = ttk.Frame(self)
         self.button_frame.pack(pady=10)
@@ -326,7 +327,9 @@ class UserGUI(tk.Tk):
                 print("Selected Camera:", self.selected_camera)
                 self.current_model = config_data.get("selected_model", "Not set")
                 print("Selected Model:", self.current_model)
-               
+                self.video_resolution = config_data.get("video_resolution", "Not set")
+                print("Selected Format:", self.video_resolution)
+
                 max_times = config_data.get("max_times", {})
 
                 self.max_time_available =  max_times.get("available", "Not set")
