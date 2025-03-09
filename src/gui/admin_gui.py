@@ -33,7 +33,7 @@ class AdminGUI(tk.Tk):
         self.select_video_btn = ttk.Button(self.button_frame, text="Select Video", command=self.select_video)
         self.select_video_btn.grid(row=0, column=1, padx=5, pady=5)
 
-        self.images_btn = ttk.Button(self.button_frame, text="Show Images", command=self.show_images)
+        self.images_btn = ttk.Button(self.button_frame, text="Show Images", command=self.start_show_images)
         self.images_btn.grid(row=0, column=2, padx=5, pady=5)
 
         # Selector de model YOLO
@@ -226,7 +226,11 @@ class AdminGUI(tk.Tk):
         self.video_source = None
         self.current_frame = None
         self.running = False
-        self.frame_thread = None
+
+        self.camera_thread = None
+        self.video_thread = None
+        self.image_thread = None
+
         self.images = []
         self.image_index = 0
         self.stop_event = threading.Event()
@@ -372,24 +376,34 @@ class AdminGUI(tk.Tk):
         self.selected_mode = 'camera'
         self.auto_detect_switch.config(state="normal")
         self.stop_running_thread()
-        self.running = True
         self.stop_event.clear()
-        self.frame_thread = threading.Thread(target=run_camera, args=(self,))
-        self.frame_thread.start()
+        self.running = True
+        self.camera_thread = threading.Thread(target=run_camera, args=(self,))
+        self.camera_thread.start()
         self.update_frame()
 
     def select_video(self):
         self.selected_mode = 'video'
         self.stop_running_thread()
+        self.stop_event.clear()
         video_path = filedialog.askopenfilename(filetypes=[("Video Files", "*.mp4;*.avi;*.mov")])
 
         if video_path:
             self.video_source = video_path
             self.running = True
-            self.stop_event.clear()
-            self.frame_thread = threading.Thread(target=run_video, args=(self,))
-            self.frame_thread.start()
+            self.video_thread = threading.Thread(target=run_video, args=(self,))
+            self.video_thread.start()
             self.update_frame()
+
+    def start_show_images(self):
+        """Pornește afișarea unei singure imagini într-un thread separat."""
+        self.selected_mode = 'show_images'
+        self.stop_running_thread()  # Oprire thread-uri active
+
+        self.stop_event.clear()  # Resetare stop_event
+        self.running = True
+        self.show_images_thread = threading.Thread(target=self.show_images)
+        self.show_images_thread.start()
 
     def show_images(self):
         self.selected_mode = 'show_images'
@@ -455,26 +469,43 @@ class AdminGUI(tk.Tk):
         self.status_label.config(text=status_report)
 
     def update_frame(self):
-            # Obține timpul curent
-            current_time = time.time()
+        if not self.running:
+            return  # Oprește execuția dacă thread-urile sunt închise
+
+        current_time = time.time()
+        elapsed_time = current_time - self.last_time
+
+        if elapsed_time >= 0.01667:  # Dacă au trecut cel puțin 16.67 ms
+            if self.current_frame is not None:
+                display_frame(self, self.current_frame)  # Afișează cadrul
             
-            # Calculează timpul necesar pentru a ajunge la 16.67 ms (1/60 FPS)
-            elapsed_time = current_time - self.last_time
-            if elapsed_time >= 0.01667:  # Dacă au trecut cel puțin 16.67 ms
-                if self.current_frame is not None:
-                    display_frame(self, self.current_frame)  # Afișează cadrul
-                
-                # Actualizează timpul ultimei actualizări
-                self.last_time = current_time
-            
-            # Reapelează funcția după 1 ms, pentru a verifica timpul
-            self.after(1, self.update_frame)
+            # Actualizează timpul ultimei actualizări
+            self.last_time = current_time
+
+        # Reapelează funcția după 1 ms, doar dacă aplicația rulează
+        self.after(1, self.update_frame)
 
     def stop_running_thread(self):
-        if self.frame_thread and self.frame_thread.is_alive():
-            self.stop_event.set()
-            self.frame_thread.join()
-        self.running = False
+        """Oprește orice thread activ înainte de a porni unul nou."""
+        self.stop_event.set()  # Semnalăm oprirea thread-urilor
+
+        # Oprire thread cameră
+        if self.camera_thread and self.camera_thread.is_alive():
+            self.camera_thread.join()
+            self.camera_thread = None  
+
+        # Oprire thread video
+        if self.video_thread and self.video_thread.is_alive():
+            self.video_thread.join()
+            self.video_thread = None  
+
+        # Oprire thread imagini
+        if self.image_thread and self.image_thread.is_alive():
+            self.image_thread.join()
+            self.image_thread = None  
+
+        self.running = False  # Setăm starea aplicației ca oprită
+        time.sleep(2)
 
     def next_image(self):
         if self.images:

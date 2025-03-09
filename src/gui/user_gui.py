@@ -146,20 +146,22 @@ class UserGUI(tk.Tk):
         self.status_label.config(text=status_report)
 
     def update_frame(self):
-            # Obține timpul curent
+            if not self.running:
+                return  # Oprește execuția dacă thread-urile sunt închise
+
             current_time = time.time()
-            
-            # Calculează timpul necesar pentru a ajunge la 16.67 ms (1/60 FPS)
             elapsed_time = current_time - self.last_time
+
             if elapsed_time >= 0.01667:  # Dacă au trecut cel puțin 16.67 ms
                 if self.current_frame is not None:
                     display_live_frame(self, self.current_frame)  # Afișează cadrul
                 
                 # Actualizează timpul ultimei actualizări
                 self.last_time = current_time
-            
-            # Reapelează funcția după 1 ms, pentru a verifica timpul
+
+            # Reapelează funcția după 1 ms, doar dacă aplicația rulează
             self.after(1, self.update_frame)
+
 
     def stop_running_thread(self):
         if self.frame_thread and self.frame_thread.is_alive():
