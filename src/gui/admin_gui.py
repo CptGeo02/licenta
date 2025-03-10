@@ -9,9 +9,11 @@ from src.gui.frames.schedule_frame import ScheduleFrame
 from src.gui.frames.calendar_frame import StatisticsCalendar
 from src.gui.frames.test_servos_frame import TestServosFrame
 
-class AdminGUI(tk.Tk):
-    def __init__(self):
+class AdminGUI(tk.Toplevel):
+    def __init__(self, main_gui):
         super().__init__()
+        self.name="admin"
+        self.main_gui = main_gui 
         self.title("AI Restaurant Monitoring System")
         self.geometry(f"{self.winfo_screenwidth()}x{self.winfo_screenheight()}")
 
@@ -26,15 +28,18 @@ class AdminGUI(tk.Tk):
         self.button_frame = ttk.Frame(self)
         self.button_frame.pack(pady=10)
 
+        self.button_back = ttk.Button(self.button_frame, text="Back", command=self.go_back)
+        self.button_back.grid(row=0, column=0, padx=5, pady=5)
+
         # Adăugarea elementelor în button_frame utilizând grid
         self.start_camera_btn = ttk.Button(self.button_frame, text="Start Live Camera", command=self.start_camera)
-        self.start_camera_btn.grid(row=0, column=0, padx=5, pady=5)
+        self.start_camera_btn.grid(row=0, column=1, padx=5, pady=5)
 
         self.select_video_btn = ttk.Button(self.button_frame, text="Select Video", command=self.select_video)
-        self.select_video_btn.grid(row=0, column=1, padx=5, pady=5)
+        self.select_video_btn.grid(row=0, column=2, padx=5, pady=5)
 
         self.images_btn = ttk.Button(self.button_frame, text="Show Images", command=self.start_show_images)
-        self.images_btn.grid(row=0, column=2, padx=5, pady=5)
+        self.images_btn.grid(row=0, column=3, padx=5, pady=5)
 
         # Selector de model YOLO
         self.model_var = StringVar(value=self.current_model)
@@ -46,17 +51,17 @@ class AdminGUI(tk.Tk):
             command=self.change_model
         )
         self.model_selector.config(width=15)
-        self.model_selector.grid(row=0, column=3, padx=5, pady=5)
+        self.model_selector.grid(row=0, column=4, padx=5, pady=5)
 
         # Butoane de navigare, detectare și resetare mese
         self.previous_btn = ttk.Button(self.button_frame, text="Previous", command=self.previous_image, state="disabled")
-        self.previous_btn.grid(row=0, column=4, padx=5, pady=5)
+        self.previous_btn.grid(row=0, column=5, padx=5, pady=5)
 
         self.next_btn = ttk.Button(self.button_frame, text="Next", command=self.next_image, state="disabled")
-        self.next_btn.grid(row=0, column=5, padx=5, pady=5)
+        self.next_btn.grid(row=0, column=6, padx=5, pady=5)
 
         self.detect_all_btn = ttk.Button(self.button_frame, text="Detect all", command=self.detect_all, state="disabled")
-        self.detect_all_btn.grid(row=0, column=6, padx=5, pady=5)
+        self.detect_all_btn.grid(row=0, column=7, padx=5, pady=5)
 
         self.auto_detect_enabled = BooleanVar(value=False)
         self.auto_detect_switch = Checkbutton(
@@ -67,7 +72,7 @@ class AdminGUI(tk.Tk):
             offvalue=False,
             state="disabled"
         )
-        self.auto_detect_switch.grid(row=0, column=7, padx=5, pady=5)
+        self.auto_detect_switch.grid(row=0, column=8, padx=5, pady=5)
         # Crearea butonului în interfața Tkinter
         self.export_button = ttk.Button(self.button_frame, text="Export Parameters", command=self.export_parameters)
         self.export_button.grid(row=1, column=0, padx=5, pady=5)
@@ -505,7 +510,7 @@ class AdminGUI(tk.Tk):
             self.image_thread = None  
 
         self.running = False  # Setăm starea aplicației ca oprită
-        time.sleep(2)
+        print("[INFO] All threads have stopped in Admin mode")
 
     def next_image(self):
         if self.images:
@@ -780,6 +785,12 @@ class AdminGUI(tk.Tk):
             self.selected_camera = int(selected_camera[-1])
         else:
             print("No camera selected")
+
+    def go_back(self):
+        """Închide această fereastră și revine la MainGUI."""
+        self.stop_running_thread()
+        self.destroy()  # Închide fereastra curentă
+        self.main_gui.deiconify()  # Afișează din nou MainGUI
 
     def export_parameters(self):
         # Crearea directorului dacă nu există

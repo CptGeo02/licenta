@@ -25,10 +25,16 @@ class MainGUI(tk.Tk):
         button_admin.pack(pady=10)
 
     def launch_user_gui(self):
-        """Lansează interfața UserGUI."""
-        self.destroy()
-        user_gui = UserGUI()
+        """Lansează interfața UserGUI și ascunde fereastra principală."""
+        self.withdraw()  # Ascunde fereastra MainGUI
+        user_gui = UserGUI(self)  # Trimite referința către MainGUI
         user_gui.mainloop()
+
+    def launch_admin_gui(self):
+        """Lansează interfața AdminGUI și ascunde fereastra principală."""
+        self.withdraw()  # Ascunde fereastra MainGUI
+        admin_gui = AdminGUI(self)  # Trimite referința către MainGUI
+        admin_gui.mainloop()
 
     def request_admin_password(self):
         """Solicită parola și verifică dacă este corectă înainte de a lansa interfața admin."""
@@ -38,12 +44,6 @@ class MainGUI(tk.Tk):
             self.launch_admin_gui()
         else:
             messagebox.showerror("Access Denied", "Incorrect password!")
-
-    def launch_admin_gui(self):
-        """Lansează interfața AdminGUI."""
-        self.destroy()
-        admin_gui = AdminGUI()
-        admin_gui.mainloop()
 
 if __name__ == "__main__":
     app = MainGUI()
