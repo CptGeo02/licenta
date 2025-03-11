@@ -4,14 +4,14 @@ from src.libs import *
 
 def run_camera(app):
     # Se folosește rezoluția setată în self.video_resolution (ex: (640, 480), (1920, 1080), etc.)
-    if hasattr(app, 'selected_camera') and app.selected_camera:
+    if app.selected_camera:
         current_camera = app.selected_camera
     else:
         # Valoare implicită, dacă nu este setată o rezoluție
         current_camera = 0
 
     # Se folosește rezoluția setată în self.video_resolution (ex: (640, 480), (1920, 1080), etc.)
-    if hasattr(app, 'video_resolution') and app.video_resolution:
+    if app.video_resolution:
         resolution = app.video_resolution
     else:
         # Valoare implicită, dacă nu este setată o rezoluție

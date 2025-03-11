@@ -380,22 +380,25 @@ class AdminGUI(tk.Toplevel):
     def start_camera(self):
         self.selected_mode = 'camera'
         self.auto_detect_switch.config(state="normal")
+
         self.stop_running_thread()
         self.stop_event.clear()
         self.running = True
+
         self.camera_thread = threading.Thread(target=run_camera, args=(self,))
         self.camera_thread.start()
         self.update_frame()
 
     def select_video(self):
         self.selected_mode = 'video'
-        self.stop_running_thread()
-        self.stop_event.clear()
+
         video_path = filedialog.askopenfilename(filetypes=[("Video Files", "*.mp4;*.avi;*.mov")])
 
         if video_path:
-            self.video_source = video_path
+            self.stop_running_thread()
+            self.stop_event.clear()
             self.running = True
+            self.video_source = video_path
             self.video_thread = threading.Thread(target=run_video, args=(self,))
             self.video_thread.start()
             self.update_frame()
@@ -403,25 +406,24 @@ class AdminGUI(tk.Toplevel):
     def start_show_images(self):
         """Pornește afișarea unei singure imagini într-un thread separat."""
         self.selected_mode = 'show_images'
-        self.stop_running_thread()  # Oprire thread-uri active
-
+        self.stop_running_thread()
         self.stop_event.clear()  # Resetare stop_event
         self.running = True
-        self.show_images_thread = threading.Thread(target=self.show_images)
-        self.show_images_thread.start()
+        
+        self.image_thread = threading.Thread(target=self.show_images)
+        self.image_thread.start()
+        
 
     def show_images(self):
-        self.selected_mode = 'show_images'
-        self.stop_running_thread()
         self.images = load_images('data/images/')
         self.image_index = 0
-        self.running = False
 
-        if self.images:
-            img_path = os.path.join('data/images/', self.images[self.image_index])
-            self.current_frame = cv2.imread(img_path)
-            if self.current_frame is not None:
-                display_frame(self, self.current_frame)
+        if self.running:
+            if self.images:
+                img_path = os.path.join('data/images/', self.images[self.image_index])
+                self.current_frame = cv2.imread(img_path)
+                if self.current_frame is not None:
+                    display_frame(self, self.current_frame)
 
     def detect_all(self):
         self.detector.detecting_tables_only = False
@@ -492,24 +494,28 @@ class AdminGUI(tk.Toplevel):
 
     def stop_running_thread(self):
         """Oprește orice thread activ înainte de a porni unul nou."""
+        self.stop_detection()
         self.stop_event.set()  # Semnalăm oprirea thread-urilor
-
+        self.running = False
         # Oprire thread cameră
         if self.camera_thread and self.camera_thread.is_alive():
             self.camera_thread.join()
             self.camera_thread = None  
-
+            print("[INFO] camera_thread has stopped in Admin mode")
         # Oprire thread video
         if self.video_thread and self.video_thread.is_alive():
             self.video_thread.join()
             self.video_thread = None  
+            print("[INFO] video_thread has stopped in Admin mode")
 
         # Oprire thread imagini
         if self.image_thread and self.image_thread.is_alive():
             self.image_thread.join()
             self.image_thread = None  
+            print("[INFO] image_thread has stopped in Admin mode")
 
-        self.running = False  # Setăm starea aplicației ca oprită
+          # Setăm starea aplicației ca oprită
+
         print("[INFO] All threads have stopped in Admin mode")
 
     def next_image(self):
@@ -549,13 +555,13 @@ class AdminGUI(tk.Toplevel):
         Funcție care returnează timpii disponibili pentru un anumit tip de status.
         """
         if status_type == 'available':
-            return self.generate_time_options('00:30:00', '10:00:00', 30)
+            return self.generate_time_options('00:00:00', '10:00:00', 30)
         elif status_type == 'ready to order':
-            return self.generate_time_options('00:05:00', '01:00:00', 5)
+            return self.generate_time_options('00:00:00', '01:00:00', 5)
         elif status_type == 'eating':
-            return self.generate_time_options('00:30:00', '06:00:00', 30)
+            return self.generate_time_options('00:00:00', '06:00:00', 30)
         elif status_type == 'need to clean':
-            return self.generate_time_options('00:05:00', '02:00:00', 5)
+            return self.generate_time_options('00:00:00', '02:00:00', 5)
         else:
             return []
         

@@ -117,9 +117,10 @@ class YoloDetector:
                     x1, y1, x2, y2 = box
                     if class_id == 0:  # Persoană
                         label = "people"
-                        if self.people_manager.people_count >= self.people_manager.get_max_people_number():
+                        people_diff = self.people_manager.people_count - self.people_manager.get_max_people_number()
+                        if people_diff > 0:
                             color = (0, 0, 255)
-                            self.trigger_alarm()
+                            self.trigger_alarm(people_diff=people_diff)
                         else:
                             color = (255, 0, 0)
                     elif class_id in self.special_object_classes:
@@ -147,10 +148,10 @@ class YoloDetector:
                     formatted_duration = format_time(duration)  # Formatează durata
                     label = f"TABLE{table_id} {status} for {formatted_duration}"
                     max_time = self.table_manager.get_max_time(status)
-                
-                    if max_time is not None and duration >= convert_duration(max_time):
+                    time_diff = duration - convert_duration(max_time)
+                    if max_time is not None and time_diff > 0:
                         color = (0, 0, 255)
-                        self.trigger_alarm()
+                        self.trigger_alarm(time_diff=time_diff, table_id=table_id, status=status)
                     else:
                         color = (0, 255, 0)
                     frame = cv2.rectangle(frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
@@ -258,7 +259,10 @@ class YoloDetector:
     def reset_table_manager(self):
         self.table_manager.reset_tables()
 
-    def trigger_alarm(self):
+    def trigger_alarm(self, people_diff = 0, time_diff= 0, table_id = -1, status="unknown"):
         """Apelăm funcția de alarmă din AlarmManager"""
         self.alarm_manager.play_alarm_sound()  # Redă alarmă
+        self.alarm_manager.popup(people_diff, time_diff, table_id, status)
+                                
+
         
