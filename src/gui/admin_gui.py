@@ -1,6 +1,7 @@
 from src.libs import *
 from src.gui.modes.run_camera import run_camera
 from src.gui.modes.run_video import run_video
+
 from src.utils.image_utils import *
 from src.detectors.yolo_detector import YoloDetector
 from src.utils.json_to_excel import JsonToExcel
@@ -38,7 +39,7 @@ class AdminGUI(tk.Toplevel):
         self.select_video_btn = ttk.Button(self.button_frame, text="Select Video", command=self.select_video)
         self.select_video_btn.grid(row=0, column=2, padx=5, pady=5)
 
-        self.images_btn = ttk.Button(self.button_frame, text="Show Images", command=self.start_show_images)
+        self.images_btn = ttk.Button(self.button_frame, text="Show Images", command=self.show_images)
         self.images_btn.grid(row=0, column=3, padx=5, pady=5)
 
         # Selector de model YOLO
@@ -243,6 +244,7 @@ class AdminGUI(tk.Toplevel):
         # Inițializează starea modurilor și a apelului pentru actualizarea stării butoanelor
         self.selected_mode = None  # Stochează modurile 'camera', 'video' sau 'show_images'
         self.update_button_states()
+        self.update_frame()
         apply_modern_style(self)
 
     def analyze_json(self):
@@ -364,7 +366,7 @@ class AdminGUI(tk.Toplevel):
 
         if self.selected_mode == "show_images":
             self.auto_detect_switch.config(state="disabled")
-            self.detect_tables_btn.config(state="disabled")
+            self.detect_tables_btn.config(state="normal")
             self.set_tables_btn.config(state="disabled")
             self.reset_tables_btn.config(state="disabled")
 
@@ -387,7 +389,7 @@ class AdminGUI(tk.Toplevel):
 
         self.camera_thread = threading.Thread(target=run_camera, args=(self,))
         self.camera_thread.start()
-        self.update_frame()
+      
 
     def select_video(self):
         self.selected_mode = 'video'
@@ -401,30 +403,33 @@ class AdminGUI(tk.Toplevel):
             self.video_source = video_path
             self.video_thread = threading.Thread(target=run_video, args=(self,))
             self.video_thread.start()
-            self.update_frame()
+            
 
-    def start_show_images(self):
+    def show_images(self):
         """Pornește afișarea unei singure imagini într-un thread separat."""
         self.selected_mode = 'show_images'
         self.stop_running_thread()
         self.stop_event.clear()  # Resetare stop_event
-        self.running = True
-        
-        self.image_thread = threading.Thread(target=self.show_images)
-        self.image_thread.start()
-        
 
-    def show_images(self):
         self.images = load_images('data/images/')
         self.image_index = 0
 
-        if self.running:
-            if self.images:
-                img_path = os.path.join('data/images/', self.images[self.image_index])
-                self.current_frame = cv2.imread(img_path)
-                if self.current_frame is not None:
-                    display_frame(self, self.current_frame)
+        if self.images:
+            img_path = os.path.join('data/images/', self.images[self.image_index])
+            self.current_frame = cv2.imread(img_path)
 
+    def next_image(self):
+        if self.images:
+            self.image_index = (self.image_index + 1) % len(self.images)
+            img_path = os.path.join('data/images/', self.images[self.image_index])
+            self.current_frame = cv2.imread(img_path)
+
+    def previous_image(self):
+        if self.images:
+            self.image_index = (self.image_index - 1) % len(self.images)
+            img_path = os.path.join('data/images/', self.images[self.image_index])
+            self.current_frame = cv2.imread(img_path)
+            
     def detect_all(self):
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = False
@@ -476,63 +481,25 @@ class AdminGUI(tk.Toplevel):
         self.status_label.config(text=status_report)
 
     def update_frame(self):
-        if not self.running:
-            return  # Oprește execuția dacă thread-urile sunt închise
-
-        current_time = time.time()
-        elapsed_time = current_time - self.last_time
-
-        if elapsed_time >= 0.01667:  # Dacă au trecut cel puțin 16.67 ms
-            if self.current_frame is not None:
-                display_frame(self, self.current_frame)  # Afișează cadrul
-            
-            # Actualizează timpul ultimei actualizări
-            self.last_time = current_time
-
-        # Reapelează funcția după 1 ms, doar dacă aplicația rulează
-        self.after(1, self.update_frame)
+        """Actualizează și afișează cadrul la fiecare 17 ms."""
+        display_frame(self, self.current_frame)
+        self.after(17, self.update_frame)  # Reapelează funcția la fiecare 17 ms
 
     def stop_running_thread(self):
         """Oprește orice thread activ înainte de a porni unul nou."""
         self.stop_detection()
-        self.stop_event.set()  # Semnalăm oprirea thread-urilor
+        self.stop_event.set()  # Semnalăm oprirea thread-urilors
         self.running = False
         # Oprire thread cameră
         if self.camera_thread and self.camera_thread.is_alive():
             self.camera_thread.join()
-            self.camera_thread = None  
+            self.camera_thread = None
             print("[INFO] camera_thread has stopped in Admin mode")
         # Oprire thread video
         if self.video_thread and self.video_thread.is_alive():
             self.video_thread.join()
             self.video_thread = None  
             print("[INFO] video_thread has stopped in Admin mode")
-
-        # Oprire thread imagini
-        if self.image_thread and self.image_thread.is_alive():
-            self.image_thread.join()
-            self.image_thread = None  
-            print("[INFO] image_thread has stopped in Admin mode")
-
-          # Setăm starea aplicației ca oprită
-
-        print("[INFO] All threads have stopped in Admin mode")
-
-    def next_image(self):
-        if self.images:
-            self.image_index = (self.image_index + 1) % len(self.images)
-            img_path = os.path.join('data/images/', self.images[self.image_index])
-            self.current_frame = cv2.imread(img_path)
-            if self.current_frame is not None:
-                display_frame(self, self.current_frame)
-
-    def previous_image(self):
-        if self.images:
-            self.image_index = (self.image_index - 1) % len(self.images)
-            img_path = os.path.join('data/images/', self.images[self.image_index])
-            self.current_frame = cv2.imread(img_path)
-            if self.current_frame is not None:
-                display_frame(self, self.current_frame)
 
     def generate_time_options(self, start_time, end_time, step_minutes):
         """

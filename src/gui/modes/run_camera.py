@@ -51,4 +51,3 @@ def run_camera(app):
 
     cap.release()  # Eliberăm camera la ieșire
     print("[INFO] Camera oprită.")
-    app.running = False

@@ -11,4 +11,3 @@ def run_video(app):
         app.current_frame = frame  # Cadrul brut, fără prelucrare
         time.sleep(1 / 10) 
     cap.release()  # Eliberăm resursele video
-    app.running = False
