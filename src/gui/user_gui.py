@@ -77,7 +77,7 @@ class UserGUI(tk.Toplevel):
         self.info_label = tk.Label(self, text="Tables: 0 | People: 0")
         self.info_label.pack(side=tk.TOP, fill=tk.X)
         self.start_info_update()
-
+        
         self.canvas = Canvas(self, width=1920, height=1080)
         self.canvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
@@ -90,10 +90,11 @@ class UserGUI(tk.Toplevel):
         self.video_source = None
         self.current_frame = None
         self.running = False
-        self.frame_thread = None
+        self.camera_thread = None
         self.images = []
         self.image_index = 0
         self.stop_event = threading.Event()
+        self.update_frame()
         self.start_camera()
         apply_modern_style(self)
       
@@ -156,29 +157,20 @@ class UserGUI(tk.Toplevel):
         self.status_label.config(text=status_report)
 
     def update_frame(self):
-            if not self.running:
-                return  # Oprește execuția dacă thread-urile sunt închise
-
-            current_time = time.time()
-            elapsed_time = current_time - self.last_time
-
-            if elapsed_time >= 0.01667:  # Dacă au trecut cel puțin 16.67 ms
-                if self.current_frame is not None:
-                    display_frame(self, self.current_frame)  # Afișează cadrul
-                
-                # Actualizează timpul ultimei actualizări
-                self.last_time = current_time
-
-            # Reapelează funcția după 1 ms, doar dacă aplicația rulează
-            self.after(1, self.update_frame)
-
-
+        """Actualizează și afișează cadrul la fiecare 17 ms."""
+        display_frame(self, self.current_frame)
+        self.after(17, self.update_frame)  # Reapelează funcția la fiecare 17 ms
+        
     def stop_running_thread(self):
-        if self.frame_thread and self.frame_thread.is_alive():
-            self.stop_event.set()
-            self.frame_thread.join()
-        self.running = False
-        print("[INFO] All threads have stopped in User moder")
+            """Oprește orice thread activ înainte de a porni unul nou."""
+            self.stop_detection()
+            self.stop_event.set()  # Semnalăm oprirea thread-urilors
+            self.running = False
+            # Oprire thread cameră
+            if self.camera_thread and self.camera_thread.is_alive():
+                self.camera_thread.join()
+                self.camera_thread = None
+                print("[INFO] camera_thread has stopped in User mode")
 
 
     def generate_time_options(self, start_time, end_time, step_minutes):
@@ -382,6 +374,7 @@ class UserGUI(tk.Toplevel):
                 self.time_clean.set(str(self.max_time_need_to_clean))
 
                 self.max_people_var.set(str(self.max_people))
+                self.start_camera()
             except Exception as e:
                 print(f"Error reading the config file: {e}")
 
@@ -391,19 +384,16 @@ class UserGUI(tk.Toplevel):
         self.after_cancel(self.start_info_update)
         self.destroy()  # Închide aplicația
 
-    def stop_running_thread(self):
-        if self.frame_thread and self.frame_thread.is_alive():
-            self.stop_event.set()
-            self.frame_thread.join()
-        self.running = False
-        
-    def start_camera(self,):
+    def start_camera(self):
+        self.selected_mode = 'camera'
+
         self.stop_running_thread()
-        self.running = True
         self.stop_event.clear()
-        self.frame_thread = threading.Thread(target=run_camera, args=(self,))
-        self.frame_thread.start()
-        self.update_frame()
+        self.running = True
+
+        self.camera_thread = threading.Thread(target=run_camera, args=(self,))
+        self.camera_thread.start()
+      
         
     def change_model(self, model_name):
             """Schimbă modelul YOLO utilizat."""

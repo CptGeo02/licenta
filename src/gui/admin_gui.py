@@ -17,6 +17,7 @@ class AdminGUI(tk.Toplevel):
         self.main_gui = main_gui 
         self.title("AI Restaurant Monitoring System")
         self.geometry(f"{self.winfo_screenwidth()}x{self.winfo_screenheight()}")
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.prev_time = time.time()
         self.last_time = time.time()  # Momentul în care a fost actualizat ultima dată
@@ -127,7 +128,6 @@ class AdminGUI(tk.Toplevel):
             command=self.update_video_format
         )
 
-
         self.video_format_selector.config(width=15)
         self.video_format_selector.grid(row=2, column=1, padx=5, pady=5)
 
@@ -151,7 +151,6 @@ class AdminGUI(tk.Toplevel):
 
         # Crearea input-ului pentru numărul maxim de oameni
         self.create_people_number_input()
-
 
         # Frame pentru afișarea informațiilor de performanță
         self.performance_frame = ttk.Frame(self)
@@ -241,9 +240,6 @@ class AdminGUI(tk.Toplevel):
         self.image_index = 0
         self.stop_event = threading.Event()
 
-        # Inițializează starea modurilor și a apelului pentru actualizarea stării butoanelor
-        self.selected_mode = None  # Stochează modurile 'camera', 'video' sau 'show_images'
-        self.update_button_states()
         self.update_frame()
         apply_modern_style(self)
 
@@ -340,60 +336,75 @@ class AdminGUI(tk.Toplevel):
         self.detector.load_model(os.path.join("models", self.current_model))
         self.status_label.config(text=f"Modelul a fost schimbat la {model_name}")
 
-    def update_button_states(self):
-        mode_selected = self.selected_mode is not None
-        if mode_selected:
-            self.auto_detect_switch.config(state="normal")
-            self.detect_tables_btn.config(state="normal")
-            self.detect_all_btn.config(state="normal")          
+    def update_button_states(self, selected_btn):
+            if selected_btn == "camera":
+                self.auto_detect_switch.config(state="normal")
+                self.detect_all_btn.config(state="normal")
+                self.start_camera_btn.config(state="disabled")
+                self.select_video_btn.config(state="normal")
+                self.images_btn.config(state="normal")
+                self.previous_btn.config(state="disabled")
+                self.next_btn.config(state="disabled")
 
-        if mode_selected and self.auto_detect_enabled.get():
-            self.detect_tables_btn.config(state="disabled")
-            self.set_tables_btn.config(state="disabled")
-            self.reset_tables_btn.config(state="disabled")
-            self.detect_all_btn.config(state="disabled")
-            self.stop_detection_btn.config(state="disabled")
-    
-        if self.selected_mode == "camera":
-            self.start_camera_btn.config(state="disabled")
-            self.select_video_btn.config(state="normal")
-            self.images_btn.config(state="normal")
+            if selected_btn == "video":
+                self.auto_detect_switch.config(state="normal")
+                self.detect_all_btn.config(state="normal")
+                self.start_camera_btn.config(state="normal")
+                self.select_video_btn.config(state="disabled")
+                self.images_btn.config(state="normal")
+                self.previous_btn.config(state="disabled")
+                self.next_btn.config(state="disabled")
 
-        if self.selected_mode == "video":
-            self.start_camera_btn.config(state="normal")
-            self.select_video_btn.config(state="disabled")
-            self.images_btn.config(state="normal")
+            if selected_btn == "show_images":
+                self.auto_detect_switch.config(state="normal")
+                self.detect_all_btn.config(state="normal")         
+                self.start_camera_btn.config(state="normal")
+                self.select_video_btn.config(state="normal")
+                self.images_btn.config(state="disabled")
+                self.previous_btn.config(state="normal")
+                self.next_btn.config(state="normal")
 
-        if self.selected_mode == "show_images":
-            self.auto_detect_switch.config(state="disabled")
-            self.detect_tables_btn.config(state="normal")
-            self.set_tables_btn.config(state="disabled")
-            self.reset_tables_btn.config(state="disabled")
+            if selected_btn == "detect_all":
+                self.detect_tables_btn.config(state="normal")
+                self.set_tables_btn.config(state="disabled")
+                self.reset_tables_btn.config(state="disabled")
+                self.stop_detection_btn.config(state="normal")
 
-            self.start_camera_btn.config(state="normal")
-            self.select_video_btn.config(state="normal")
-            self.images_btn.config(state="disabled")
+            if selected_btn == "detect_tables":    
+                self.detect_tables_btn.config(state="disabled")
+                self.set_tables_btn.config(state="normal")
+                self.reset_tables_btn.config(state="disabled")
+                self.stop_detection_btn.config(state="normal")
 
-        self.previous_btn.config(state="normal" if self.selected_mode == 'show_images' else "disabled")
-        self.next_btn.config(state="normal" if self.selected_mode == 'show_images' else "disabled")
-
-        self.after(200, self.update_button_states)
+            if selected_btn == "set_tables":
+                self.detect_tables_btn.config(state="disabled")
+                self.set_tables_btn.config(state="disabled")
+                self.reset_tables_btn.config(state="normal")
+                self.stop_detection_btn.config(state="normal")
+                
+            if selected_btn == "reset_tables":
+                self.detect_tables_btn.config(state="disabled")
+                self.set_tables_btn.config(state="normal")
+                self.reset_tables_btn.config(state="disabled")
+                self.stop_detection_btn.config(state="normal")
+            
+            if selected_btn == "stop_detection":
+                self.detect_tables_btn.config(state="normal")
+                self.set_tables_btn.config(state="disabled")
+                self.reset_tables_btn.config(state="disabled")
+                self.stop_detection_btn.config(state="disabled")
 
     def start_camera(self):
-        self.selected_mode = 'camera'
-        self.auto_detect_switch.config(state="normal")
-
         self.stop_running_thread()
         self.stop_event.clear()
         self.running = True
-
         self.camera_thread = threading.Thread(target=run_camera, args=(self,))
         self.camera_thread.start()
-      
+
+        self.update_button_states('camera')
+        
 
     def select_video(self):
-        self.selected_mode = 'video'
-
         video_path = filedialog.askopenfilename(filetypes=[("Video Files", "*.mp4;*.avi;*.mov")])
 
         if video_path:
@@ -403,11 +414,12 @@ class AdminGUI(tk.Toplevel):
             self.video_source = video_path
             self.video_thread = threading.Thread(target=run_video, args=(self,))
             self.video_thread.start()
+
+        self.update_button_states('video')
             
 
     def show_images(self):
         """Pornește afișarea unei singure imagini într-un thread separat."""
-        self.selected_mode = 'show_images'
         self.stop_running_thread()
         self.stop_event.clear()  # Resetare stop_event
 
@@ -417,6 +429,8 @@ class AdminGUI(tk.Toplevel):
         if self.images:
             img_path = os.path.join('data/images/', self.images[self.image_index])
             self.current_frame = cv2.imread(img_path)
+
+        self.update_button_states('show_images')
 
     def next_image(self):
         if self.images:
@@ -434,30 +448,24 @@ class AdminGUI(tk.Toplevel):
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = False
         self.detector.detecting_all = True
-        self.set_tables_btn.config(state="disabled")
-        self.reset_tables_btn.config(state="disabled")
-        self.stop_detection_btn.config(state="normal")
+        self.update_button_states('detect_all')
 
     def detect_tables(self):
         self.detector.detecting_tables_only = True
         self.detector.done_setting_tables = False
         self.detector.detecting_all = False
-        self.set_tables_btn.config(state="normal")
-        self.reset_tables_btn.config(state="disabled")
-        self.stop_detection_btn.config(state="normal")
+        self.update_button_states('detect_tables')
 
     def set_tables(self):
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = True
         self.detector.detecting_all = False
         self.current_frame = self.detector.set_table_ids()
-        self.set_tables_btn.config(state="disabled")
-        self.reset_tables_btn.config(state="normal")
-        self.stop_detection_btn.config(state="normal")
         self.detector.table_manager.create_new_files()
         self.detector.table_manager.start_auto_save()
         self.detector.people_manager.create_new_files()
         self.detector.people_manager.start_auto_save()
+        self.update_button_states('set_tables')
         
         
     def reset_tables(self):
@@ -465,16 +473,14 @@ class AdminGUI(tk.Toplevel):
         self.detector.done_setting_tables = False
         self.detector.detecting_all = False
         self.detector.reset_table_manager()
-        self.set_tables_btn.config(state="disabled")
-        self.reset_tables_btn.config(state="disabled")
+        self.update_button_states('reset_tables')
 
     def stop_detection(self):
         self.detector.detecting_tables_only = False
         self.detector.done_setting_tables = False
         self.detector.detecting_all = False
         self.detector.reset_table_manager()
-        self.set_tables_btn.config(state="disabled")
-        self.reset_tables_btn.config(state="disabled")
+        self.update_button_states('stop_detection')
 
     def update_status_label(self):
         status_report = self.detector.get_tables_status_report()
@@ -500,6 +506,13 @@ class AdminGUI(tk.Toplevel):
             self.video_thread.join()
             self.video_thread = None  
             print("[INFO] video_thread has stopped in Admin mode")
+
+    def on_close(self):
+        """Curăță toate apelurile 'after' și închide aplicația."""
+        self.stop_running_thread()
+        self.after_cancel(self.update_frame)
+        self.after_cancel(self.start_info_update)
+        self.destroy()  # Închide aplicația
 
     def generate_time_options(self, start_time, end_time, step_minutes):
         """
@@ -713,42 +726,14 @@ class AdminGUI(tk.Toplevel):
             # Afișează dimensiunea selectată în consolă
             print(f"Selected video format: {self.video_resolution[0]}x{self.video_resolution[1]} pixels")
 
-    def detect_available_cameras(self):
-        """Detectează camerele disponibile și actualizează opțiunile în selector."""
-        self.available_cameras = []
-        
-        # Testează camerele de la 0 la 9 (poți ajusta intervalul dacă ai mai multe camere)
-        for i in range(10):
-            cap = cv2.VideoCapture(i)
-            if cap.isOpened():
-                self.available_cameras.append(f"Camera {i}")
-                cap.release()
-
-        if not self.available_cameras:
-            self.available_cameras.append("No cameras found")
-
-        # Actualizează opțiunile din OptionMenu cu camerele disponibile
-        self.update_camera_options()
-
-    def update_camera_options(self):
-        """Actualizează opțiunile din OptionMenu pentru selecția camerei."""
-        # Actualizează lista de opțiuni din OptionMenu
-        menu = self.camera_selector['menu']
-        menu.delete(0, 'end')  # Șterge opțiunile anterioare
-        
-        # Adaugă camerele disponibile
-        for camera in self.available_cameras:
-            menu.add_command(label=camera, command=tk._setit(self.camera_var, camera))
-
     def get_available_cameras(self):
             """Detectează camerele video disponibile și le returnează ca o listă."""
             camera_list = []
-            # Verifică camerele de la 0 la 10 (poți ajusta acest număr pentru alte camere)
             for i in range(10):
-                cap = cv2.VideoCapture(i)
-                if cap.isOpened():
-                    camera_list.append(f"Camera {i}")
-                    cap.release()
+                    cap = cv2.VideoCapture(i, cv2.CAP_DSHOW)
+                    if cap is not None and cap.isOpened():
+                        camera_list.append(f"Camera {i}")
+                        cap.release()
             return camera_list
 
     def update_camera(self, selected_camera):
