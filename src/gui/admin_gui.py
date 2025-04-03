@@ -9,6 +9,7 @@ from src.gui.frames.display_frame import display_frame
 from src.gui.frames.schedule_frame import ScheduleFrame
 from src.gui.frames.calendar_frame import StatisticsCalendar
 from src.gui.frames.test_servos_frame import TestServosFrame
+from src.gui.frames.move_camera_frame import MoveCameraFrame
 
 class AdminGUI(tk.Toplevel):
     def __init__(self, main_gui):
@@ -32,16 +33,20 @@ class AdminGUI(tk.Toplevel):
 
         self.button_back = ttk.Button(self.button_frame, text="Back", command=self.go_back)
         self.button_back.grid(row=0, column=0, padx=5, pady=5)
+        
+        # Button: Move Camera
+        self.move_camera_btn = ttk.Button(self.button_frame, text="Move Camera", command=self.open_move_camera)
+        self.move_camera_btn.grid(row=0, column=1, padx=5, pady=5)
 
         # Adăugarea elementelor în button_frame utilizând grid
         self.start_camera_btn = ttk.Button(self.button_frame, text="Start Live Camera", command=self.start_camera)
-        self.start_camera_btn.grid(row=0, column=1, padx=5, pady=5)
+        self.start_camera_btn.grid(row=0, column=2, padx=5, pady=5)
 
         self.select_video_btn = ttk.Button(self.button_frame, text="Select Video", command=self.select_video)
-        self.select_video_btn.grid(row=0, column=2, padx=5, pady=5)
+        self.select_video_btn.grid(row=0, column=3, padx=5, pady=5)
 
         self.images_btn = ttk.Button(self.button_frame, text="Show Images", command=self.show_images)
-        self.images_btn.grid(row=0, column=3, padx=5, pady=5)
+        self.images_btn.grid(row=0, column=4, padx=5, pady=5)
 
         # Selector de model YOLO
         self.model_var = StringVar(value=self.current_model)
@@ -53,17 +58,17 @@ class AdminGUI(tk.Toplevel):
             command=self.change_model
         )
         self.model_selector.config(width=15)
-        self.model_selector.grid(row=0, column=4, padx=5, pady=5)
+        self.model_selector.grid(row=0, column=5, padx=5, pady=5)
 
         # Butoane de navigare, detectare și resetare mese
         self.previous_btn = ttk.Button(self.button_frame, text="Previous", command=self.previous_image, state="disabled")
-        self.previous_btn.grid(row=0, column=5, padx=5, pady=5)
+        self.previous_btn.grid(row=0, column=6, padx=5, pady=5)
 
         self.next_btn = ttk.Button(self.button_frame, text="Next", command=self.next_image, state="disabled")
-        self.next_btn.grid(row=0, column=6, padx=5, pady=5)
+        self.next_btn.grid(row=0, column=7, padx=5, pady=5)
 
         self.detect_all_btn = ttk.Button(self.button_frame, text="Detect all", command=self.detect_all, state="disabled")
-        self.detect_all_btn.grid(row=0, column=7, padx=5, pady=5)
+        self.detect_all_btn.grid(row=0, column=8, padx=5, pady=5)
 
         self.auto_detect_enabled = BooleanVar(value=False)
         self.auto_detect_switch = Checkbutton(
@@ -74,7 +79,7 @@ class AdminGUI(tk.Toplevel):
             offvalue=False,
             state="disabled"
         )
-        self.auto_detect_switch.grid(row=0, column=8, padx=5, pady=5)
+        self.auto_detect_switch.grid(row=0, column=9, padx=5, pady=5)
         # Crearea butonului în interfața Tkinter
         self.export_button = ttk.Button(self.button_frame, text="Export Parameters", command=self.export_parameters)
         self.export_button.grid(row=1, column=0, padx=5, pady=5)
@@ -104,7 +109,7 @@ class AdminGUI(tk.Toplevel):
         
         # Obține camerele disponibile
         self.camera_list = self.get_available_cameras()
-
+        self.move_camera_frame = None
         # Variabila pentru selectorul de camere
         self.camera_var = tk.StringVar(value="Select Camera")  # Valoare implicită
         # Selectorul pentru camere
@@ -307,7 +312,14 @@ class AdminGUI(tk.Toplevel):
 
         # Programare actualizare periodică a informațiilor (la fiecare 1 secundă)
         self.after(1000, self.update_performance)
-
+    def open_move_camera(self):
+            """
+            Deschide frame-ul Move Camera pe un thread separat, fără a bloca execuția principală.
+            """
+            move_camera_window = tk.Toplevel(self)
+            move_camera_window.title("Move Camera")
+            self.move_camera_frame = MoveCameraFrame(self, move_camera_window)
+            self.move_camera_frame.pack(fill="both", expand=True)
     def get_gpu_usage(self):
         try:
             # Apelăm nvidia-smi pentru a obține date despre GPU
@@ -759,7 +771,7 @@ class AdminGUI(tk.Toplevel):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         config_filename = f"config_{timestamp}.json"
         config_path = os.path.join(config_dir, config_filename)
-         
+
         # Structura datelor
         config_data = {
             "selected_camera": self.selected_camera,
@@ -774,7 +786,7 @@ class AdminGUI(tk.Toplevel):
             "max_people": int(self.max_people_var.get()),
             "overlap_threshold": round(float(self.overlap_threshold_var.get()),2),
             "red_threshold": round(float(self.red_threshold_var.get()),2),
-            "blue_threshold": round(float(self.blue_threshold_var.get()),2)
+            "blue_threshold": round(float(self.blue_threshold_var.get()),2),
         }
         
         # Salvare în JSON

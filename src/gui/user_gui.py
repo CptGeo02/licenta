@@ -7,7 +7,6 @@ from src.utils.json_to_excel import JsonToExcel
 from src.gui.frames.display_frame import display_frame
 from src.gui.frames.schedule_frame import ScheduleFrame
 from src.gui.frames.calendar_frame import StatisticsCalendar
-from src.gui.frames.move_camera_frame import MoveCameraFrame
 
 class UserGUI(tk.Toplevel):
     def __init__(self, main_gui):
@@ -34,10 +33,6 @@ class UserGUI(tk.Toplevel):
 
         self.import_parameters_btn = ttk.Button(self.button_frame, text="Import Parameters", command=self.import_parameters)
         self.import_parameters_btn.grid(row=0, column=1, padx=5, pady=5)
-
-        # Button: Move Camera
-        self.move_camera_btn = ttk.Button(self.button_frame, text="Move Camera", command=self.open_move_camera)
-        self.move_camera_btn.grid(row=0, column=2, padx=5, pady=5)
 
         self.detect_tables_btn = ttk.Button(self.button_frame, text="Detect Tables", command=self.detect_tables)
         self.detect_tables_btn.grid(row=0, column=3, padx=5, pady=5)
@@ -104,15 +99,6 @@ class UserGUI(tk.Toplevel):
         self.destroy()  # Închide fereastra curentă
         self.main_gui.deiconify()  # Afișează din nou MainGUI
 
-    def open_move_camera(self):
-        """
-        Deschide frame-ul Move Camera pe un thread separat, fără a bloca execuția principală.
-        """
-        move_camera_window = tk.Toplevel(self)
-        move_camera_window.title("Move Camera")
-        move_camera_frame = MoveCameraFrame(self, move_camera_window)
-        move_camera_frame.pack(fill="both", expand=True)
-
     def detect_tables(self):
         self.detector.detecting_tables_only = True
         self.detector.done_setting_tables = False
@@ -162,15 +148,15 @@ class UserGUI(tk.Toplevel):
         self.after(17, self.update_frame)  # Reapelează funcția la fiecare 17 ms
         
     def stop_running_thread(self):
-            """Oprește orice thread activ înainte de a porni unul nou."""
-            self.stop_detection()
-            self.stop_event.set()  # Semnalăm oprirea thread-urilors
-            self.running = False
-            # Oprire thread cameră
-            if self.camera_thread and self.camera_thread.is_alive():
-                self.camera_thread.join()
-                self.camera_thread = None
-                print("[INFO] camera_thread has stopped in User mode")
+        """Oprește orice thread activ înainte de a porni unul nou."""
+        self.stop_detection()
+        self.stop_event.set()  # Semnalăm oprirea thread-urilors
+        self.running = False
+        # Oprire thread cameră
+        if self.camera_thread and self.camera_thread.is_alive():
+            self.camera_thread.join()
+            self.camera_thread = None
+            print("[INFO] camera_thread has stopped in User mode")
 
 
     def generate_time_options(self, start_time, end_time, step_minutes):
@@ -313,7 +299,7 @@ class UserGUI(tk.Toplevel):
         statistics_frame = StatisticsCalendar(statistics_window)  # Pass the Toplevel window to StatisticsCalendar
         statistics_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Adaugă frame-ul în fereastră
         
-    
+        
     def import_parameters(self):
         # Deschide fereastra de selecție fișier
         file_path = filedialog.askopenfilename(
@@ -377,6 +363,7 @@ class UserGUI(tk.Toplevel):
                 self.start_camera()
             except Exception as e:
                 print(f"Error reading the config file: {e}")
+
 
     def on_close(self):
         """Curăță toate apelurile 'after' și închide aplicația."""

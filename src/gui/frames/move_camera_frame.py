@@ -18,7 +18,8 @@ class MoveCameraFrame(tk.Frame):
         self.max_y = 90
         self.canvas = tk.Canvas(self, width=self.canvas_size, height=self.canvas_size, bg="lightblue")
         self.canvas.pack(pady=10)
-
+        self.last_sent_x = None
+        self.last_sent_y = None
         # Draw Joystick Base
         self.canvas.create_oval(
             self.center - self.joystick_radius,
@@ -133,15 +134,22 @@ class MoveCameraFrame(tk.Frame):
             self.send_to_arduino(default_x, default_y)
 
     def send_to_arduino(self, x_val, y_val):
-        """
-        Trimite valorile X și Y sub forma unui string "<valueX>_<valueY>" către Arduino prin USB.
-        """
         try:
-            data = f"{x_val}_{y_val}\n"  # Formatează ca string și adaugă newline pentru delimitare
-            self.arduino.write(data.encode('utf-8'))  # Trimite string-ul ca bytes
+            data = f"{x_val}_{y_val}\n"
+            self.arduino.write(data.encode('utf-8'))
             print(f"Trimis către Arduino: {data.strip()}")
+
+            # Actualizăm ultimele coordonate trimise
         except Exception as e:
+            self.last_sent_x = x_val
+            self.last_sent_y = y_val
             print(f"Eroare la transmiterea datelor: {e}")
+
+    def get_last_sent_coordinates(self):
+        """
+        Returnează ultimele coordonate X și Y trimise către Arduino.
+        """
+        return self.last_sent_x, self.last_sent_y
 
     def continuous_update(self):
         # Placeholder for continuous update logic
