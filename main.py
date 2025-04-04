@@ -1,7 +1,7 @@
-import sys
 import argparse
 from src.gui.main_gui import MainGUI
-from src.web.main_web import MainWeb  
+from src.web.main_web import MainWeb
+
 
 def run_local_gui():
     app = MainGUI()  # Creează o instanță a MainGUI

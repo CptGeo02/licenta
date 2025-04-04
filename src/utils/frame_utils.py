@@ -46,3 +46,11 @@ def correct_illumination(frame, enable_denoise=True, clahe_clip=2.0, clahe_tile_
         frame_norm = cv2.fastNlMeansDenoisingColored(frame_norm, None, 10, 10, 7, 21)
 
     return frame_norm
+
+# Adăugăm o funcție pentru redimensionarea cadrului la dimensiuni compatibile YOLO
+def resize_frame_for_yolo(frame):
+    """Redimensionează imaginea/cadrul la o dimensiune divizibilă cu 32."""
+    h, w = frame.shape[:2]
+    new_w = (w // 32) * 32
+    new_h = (h // 32) * 32
+    return cv2.resize(frame, (new_w, new_h))

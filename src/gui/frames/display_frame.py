@@ -1,14 +1,5 @@
 from src.libs import *
-from src.utils.correct_illumination import correct_illumination
-
-# Adăugăm o funcție pentru redimensionarea cadrului la dimensiuni compatibile YOLO
-def resize_frame_for_yolo(frame):
-    """Redimensionează imaginea/cadrul la o dimensiune divizibilă cu 32."""
-    h, w = frame.shape[:2]
-    new_w = (w // 32) * 32
-    new_h = (h // 32) * 32
-    return cv2.resize(frame, (new_w, new_h))
-
+from src.utils.frame_utils import correct_illumination, resize_frame_for_yolo
 
 def display_frame(app, frame):
     """Afișează un cadru din orice sursă: imagine, video sau flux live și actualizează statusul meselor."""

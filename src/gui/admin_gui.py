@@ -2,14 +2,14 @@ from src.libs import *
 from src.gui.modes.run_camera import run_camera
 from src.gui.modes.run_video import run_video
 
-from src.utils.image_utils import *
+from src.utils.gui_utils import *
 from src.detectors.yolo_detector import YoloDetector
 from src.utils.json_to_excel import JsonToExcel
 from src.gui.frames.display_frame import display_frame
 from src.gui.frames.schedule_frame import ScheduleFrame
 from src.gui.frames.calendar_frame import StatisticsCalendar
-from src.gui.frames.test_servos_frame import TestServosFrame
 from src.gui.frames.move_camera_frame import MoveCameraFrame
+from idlelib.tooltip import Hovertip  # Pentru tooltips informative
 
 class AdminGUI(tk.Toplevel):
     def __init__(self, main_gui):
@@ -147,10 +147,6 @@ class AdminGUI(tk.Toplevel):
         self.video_format_selector.config(width=15)
         self.video_format_selector.grid(row=2, column=1, padx=5, pady=5)
 
-        # Buton Test Servos
-        self.test_servos_button = ttk.Button(self.button_frame, text="Test Servos", command=self.open_test_servos_frame)
-        self.test_servos_button.grid(row=2, column=2, padx=5, pady=5)
-
         # Creează un frame pentru butoane
         self.max_frame = ttk.Frame(self)
         self.max_frame.pack(pady=10)
@@ -277,10 +273,10 @@ class AdminGUI(tk.Toplevel):
 
         self.update_frame()
         apply_modern_style(self)
-        
+
     def create_slider_special(self, parent, label_text, variable, command, default_value, column):
         """
-        Creează un slider generic cu etichetă și afișarea valorii curente.
+        Creează un slider generic cu etichetă, tooltip și afișarea valorii curente.
         Asigură intervale sigure pentru CLAHE (contrast și tile size).
         """
         frame = ttk.Frame(parent)
@@ -292,10 +288,13 @@ class AdminGUI(tk.Toplevel):
         # Determinăm limitele în funcție de tipul variabilei și label
         if isinstance(variable, tk.DoubleVar) and "Clip" in label_text:
             from_, to_ = 1.0, 5.0  # CLAHE Clip Limit recomandat
+            tooltip_text = "Clip Limit controlează cât de puternic se aplică contrastul local. Valori mai mari evidențiază detaliile, dar pot genera zgomot vizual."
         elif isinstance(variable, tk.IntVar) and "Tile" in label_text:
             from_, to_ = 4, 32     # CLAHE Tile Size (X=Y) recomandat
+            tooltip_text = "Dimensiunea Tile controlează granularitatea corecției locale. Tile mai mic = contrast local fin, Tile mai mare = efect global."
         else:
-            from_, to_ = 0.0, 1.0  # fallback generic
+            from_, to_ = 0.0, 1.0
+            tooltip_text = "Slider generic."
 
         slider = ttk.Scale(
             frame,
@@ -311,8 +310,12 @@ class AdminGUI(tk.Toplevel):
         value_label = ttk.Label(frame, text=f"{default_value:.2f}" if isinstance(default_value, float) else str(default_value))
         value_label.pack(pady=5)
 
+        # Tooltip informativ
+        Hovertip(label, tooltip_text, hover_delay=300)
+
         # Salvează eticheta pentru actualizare dinamică
         variable.value_label = value_label
+
 
     def analyze_json(self):
         """Permite utilizatorului să selecteze fișierele JSON pentru analiză și salvează rezultatul într-un fișier Excel."""
@@ -782,16 +785,6 @@ class AdminGUI(tk.Toplevel):
         # Creează frame-ul pentru calendar și alte componente
         statistics_frame = StatisticsCalendar(statistics_window)  # Pass the Toplevel window to StatisticsCalendar
         statistics_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Adaugă frame-ul în fereastră
-
-    def open_test_servos_frame(self):
-        # Deschide fereastra TestServos
-        """Function to open the schedule frame in a new window."""
-        servos_window = tk.Toplevel()
-        servos_window.title("Set Weekly Schedule")
-        servos_window.geometry("600x400")  # Adjust size as needed
-
-        frame = TestServosFrame(servos_window)
-        frame.pack(fill="both", expand=True, padx=10, pady=10)
 
     def update_video_format(self, selected_format):
             """Actualizează dimensiunea video și afișează în consolă."""
