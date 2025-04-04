@@ -4,7 +4,6 @@ from src.utils.detection_utils import filter_detections
 from src.managers.table_manager import TableManager
 from src.managers.people_manager import PeopleManager
 from src.managers.alarm_manager import AlarmManager
-
 from src.utils.time_utils import format_time, convert_duration
 
 class YoloDetector:
@@ -265,4 +264,41 @@ class YoloDetector:
         self.alarm_manager.popup(people_diff, time_diff, table_id, status)
                                 
 
+    def preprocess_frame(self, frame):
+        """
+        Corectează automat iluminarea imaginii pentru îmbunătățirea detecției în YOLO.
+        Include egalizare histogramă, ajustare gamma și denoising adaptiv.
+        """
+
+        # Convertim în spațiu HSV pentru a analiza luminozitatea
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        h, s, v = cv2.split(hsv)
+
+        # Calculăm media luminozității
+        brightness = np.mean(v)
+
+        # Stabilim praguri de corecție (poți ajusta după testare)
+        low_light_threshold = 60
+        high_light_threshold = 200
+
+        # 1. Egalizare histogramă dacă imaginea e slab iluminată
+        if brightness < low_light_threshold:
+            v = cv2.equalizeHist(v)
+            hsv = cv2.merge([h, s, v])
+            frame = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+
+            # 2. Aplicăm și gamma correction (între 1.2 și 1.8)
+            gamma = np.interp(brightness, [0, 80], [1.8, 1.2])
+            inv_gamma = 1.0 / gamma
+            table = np.array([(i / 255.0) ** inv_gamma * 255 for i in np.arange(256)]).astype("uint8")
+            frame = cv2.LUT(frame, table)
+
+            # 3. Denoising pentru cadrele întunecate
+            frame = cv2.fastNlMeansDenoisingColored(frame, None, 10, 10, 7, 21)
+
+        # Supraluminozitate – opțional: reducem puțin contrastul
+        elif brightness > high_light_threshold:
+            frame = cv2.convertScaleAbs(frame, alpha=0.95, beta=-10)
+
+        return frame
         

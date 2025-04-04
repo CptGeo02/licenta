@@ -3,9 +3,6 @@ import matplotlib.pyplot as plt
 from openpyxl import Workbook
 from openpyxl.drawing.image import Image
 import tempfile
-import matplotlib.ticker as ticker
-from openpyxl import Workbook
-from openpyxl.drawing.image import Image
 import pandas as pd
 import tempfile
 import matplotlib.pyplot as plt

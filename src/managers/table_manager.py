@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 import threading
 import time
-from src.utils.table_status import TableStatus
+from src.managers.table_status import TableStatus
 from src.utils.detection_utils import *
 from src.libs import *
 import numpy as np

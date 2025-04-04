@@ -80,6 +80,17 @@ class AdminGUI(tk.Toplevel):
             state="disabled"
         )
         self.auto_detect_switch.grid(row=0, column=9, padx=5, pady=5)
+
+        self.illumination_enabled = BooleanVar(value=False)
+        self.illumination_switch = Checkbutton(
+        self.button_frame,
+        text="Light Correction",
+        variable=self.illumination_enabled,
+        onvalue=True,
+        offvalue=False
+        )
+        self.illumination_switch.grid(row=0, column=10, padx=5, pady=5)
+        
         # Crearea butonului în interfața Tkinter
         self.export_button = ttk.Button(self.button_frame, text="Export Parameters", command=self.export_parameters)
         self.export_button.grid(row=1, column=0, padx=5, pady=5)
@@ -212,6 +223,25 @@ class AdminGUI(tk.Toplevel):
             default_value=0.1,
             column=2,
         )
+        self.clahe_clip_var = tk.DoubleVar(value=2.0)
+        self.clahe_tile_var = tk.IntVar(value=8)
+        self.create_slider_special(
+            parent=sliders_frame,
+            label_text="CLAHE Clip Limit:",
+            variable=self.clahe_clip_var,
+            command=self.update_clahe_clip,
+            default_value=2.0,
+            column=3
+        )
+
+        self.create_slider_special(
+            parent=sliders_frame,
+            label_text="CLAHE Tile Size:",
+            variable=self.clahe_tile_var,
+            command=self.update_clahe_tile,
+            default_value=8,
+            column=4
+        )
 
         self.info_label = tk.Label(self, text="Tables: 0 | People: 0")
         self.info_label.pack(side=tk.TOP, fill=tk.X)
@@ -247,6 +277,42 @@ class AdminGUI(tk.Toplevel):
 
         self.update_frame()
         apply_modern_style(self)
+        
+    def create_slider_special(self, parent, label_text, variable, command, default_value, column):
+        """
+        Creează un slider generic cu etichetă și afișarea valorii curente.
+        Asigură intervale sigure pentru CLAHE (contrast și tile size).
+        """
+        frame = ttk.Frame(parent)
+        frame.grid(row=0, column=column, padx=10)
+
+        label = ttk.Label(frame, text=label_text)
+        label.pack(pady=5)
+
+        # Determinăm limitele în funcție de tipul variabilei și label
+        if isinstance(variable, tk.DoubleVar) and "Clip" in label_text:
+            from_, to_ = 1.0, 5.0  # CLAHE Clip Limit recomandat
+        elif isinstance(variable, tk.IntVar) and "Tile" in label_text:
+            from_, to_ = 4, 32     # CLAHE Tile Size (X=Y) recomandat
+        else:
+            from_, to_ = 0.0, 1.0  # fallback generic
+
+        slider = ttk.Scale(
+            frame,
+            from_=from_,
+            to=to_,
+            orient="horizontal",
+            length=150,
+            variable=variable,
+            command=command,
+        )
+        slider.pack(pady=5)
+
+        value_label = ttk.Label(frame, text=f"{default_value:.2f}" if isinstance(default_value, float) else str(default_value))
+        value_label.pack(pady=5)
+
+        # Salvează eticheta pentru actualizare dinamică
+        variable.value_label = value_label
 
     def analyze_json(self):
         """Permite utilizatorului să selecteze fișierele JSON pentru analiză și salvează rezultatul într-un fișier Excel."""
@@ -747,7 +813,15 @@ class AdminGUI(tk.Toplevel):
                         camera_list.append(f"Camera {i}")
                         cap.release()
             return camera_list
+    
+    def update_clahe_clip(self, _):
+        value = self.clahe_clip_var.get()
+        self.clahe_clip_var.value_label.config(text=f"{value:.2f}")
 
+    def update_clahe_tile(self, _):
+        value = self.clahe_tile_var.get()
+        self.clahe_tile_var.value_label.config(text=str(value))
+        
     def update_camera(self, selected_camera):
         """Actualizează camera aleasă și afișează în consolă."""
         if selected_camera != "Select Camera":

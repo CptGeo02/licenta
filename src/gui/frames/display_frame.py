@@ -1,5 +1,5 @@
 from src.libs import *
-from src.utils.table_status import TableStatus
+from src.utils.correct_illumination import correct_illumination
 
 # Adăugăm o funcție pentru redimensionarea cadrului la dimensiuni compatibile YOLO
 def resize_frame_for_yolo(frame):
@@ -15,7 +15,12 @@ def display_frame(app, frame):
     if frame is not None:
         # Redimensionează cadrul pentru a fi compatibil cu YOLO
         frame = resize_frame_for_yolo(frame)
-
+        if app.illumination_enabled.get():
+            frame = correct_illumination(
+                frame,
+                clahe_clip=app.clahe_clip_var.get(),
+                clahe_tile_size=app.clahe_tile_var.get()
+        )
         # Calcul FPS doar pt admin mode
         if hasattr(app, 'prev_time'):
             current_time = time.time()

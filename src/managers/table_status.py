@@ -1,8 +1,4 @@
-import os
 from datetime import datetime
-from openpyxl import Workbook, load_workbook
-from openpyxl.utils import get_column_letter
-from src.utils.time_utils import format_time
 from src.utils.detection_utils import calculate_area
 from src.utils.detection_utils import calculate_iou
 
