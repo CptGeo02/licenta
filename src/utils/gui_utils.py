@@ -1,4 +1,5 @@
-from src.libs import *
+import os
+from tkinter import ttk
 
 def load_images(folder_path):
     """Load all image files from a folder."""

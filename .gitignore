@@ -1,11 +1,50 @@
+# Python
 __pycache__/
-*.onnx
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# Jupyter
+.ipynb_checkpoints
+
+# Environments
+.env
+.venv/
+venv/
+
+# Logs / outputs
+*.log
+*.out
+*.bak
+*.tmp
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Data
+data/outputs/
+data/config/config_*.json
+
 models/
-*.pyc
-PCB/
-test_servos/
-arduino_servo_camera/
-outputs/
-scripts/
 docs/
-docs
+Documentatie/
+build/
+dist/
+hardware/
+PCB/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Histograms and reports
+*.png
+*.xlsx
+*.json

@@ -1,7 +1,4 @@
-import json
-import time
-import threading
-from datetime import datetime
+from src.libs import *
 
 class PeopleManager:
     def __init__(self):

@@ -1,5 +1,5 @@
 from src.libs import *
-from src.utils.frame_utils import correct_illumination, resize_frame_for_yolo
+from src.utils.frame_utils import *
 
 def display_frame(app, frame):
     """Afișează un cadru din orice sursă: imagine, video sau flux live și actualizează statusul meselor."""

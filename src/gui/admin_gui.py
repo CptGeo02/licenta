@@ -1,11 +1,10 @@
-from xmlrpc.client import boolean
 from src.libs import *
 from src.gui.modes.run_camera import run_camera
 from src.gui.modes.run_video import run_video
 from src.detectors.yolo_detector import YoloDetector
 from src.gui.frames.display_frame import display_frame
 from src.gui.frames.schedule_frame import ScheduleFrame
-from src.gui.frames.statistics_calendar_frame import StatisticsCalendarFrame
+from src.gui.frames.calendar_selector_frame import CalendarSelectorFrame
 from src.gui.frames.move_camera_frame import MoveCameraFrame
 
 class AdminGUI(tk.Toplevel):
@@ -732,7 +731,7 @@ class AdminGUI(tk.Toplevel):
         statistics_window.geometry("600x400")  # Setează dimensiunile ferestrei
 
         # Creează frame-ul pentru calendar și alte componente
-        statistics_frame = StatisticsCalendarFrame(statistics_window)  # Pass the Toplevel window to StatisticsCalendarFrame
+        statistics_frame = CalendarSelectorFrame(statistics_window)  # Pass the Toplevel window to CalendarSelectorFrame
         statistics_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Adaugă frame-ul în fereastră
 
     def update_video_format(self, selected_format):

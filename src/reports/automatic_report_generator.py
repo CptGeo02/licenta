@@ -1,17 +1,4 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-from openpyxl import Workbook
-from openpyxl.drawing.image import Image
-import tempfile
-import pandas as pd
-import tempfile
-import matplotlib.pyplot as plt
-import json
-from openpyxl import Workbook
-from datetime import datetime
-import numpy as np
-import os
-from src.utils.excel_utils import apply_modern_design
+from src.libs import *
 
 class AutomaticReportGenerator:
     def __init__(self, tables_json_file, people_json_file, excel_file):

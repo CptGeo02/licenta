@@ -1,11 +1,5 @@
-import json
-from datetime import datetime
-import threading
-import time
-from src.managers.table_status import TableStatus
-from src.utils.detection_utils import *
 from src.libs import *
-import numpy as np
+from src.managers.table_status import TableStatus
 
 class TableManager:
     def __init__(self):

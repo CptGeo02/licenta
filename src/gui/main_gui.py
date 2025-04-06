@@ -1,5 +1,3 @@
-import tkinter as tk
-from tkinter import ttk, simpledialog, messagebox
 from src.gui.user_gui import UserGUI
 from src.gui.admin_gui import AdminGUI
 from src.libs import *

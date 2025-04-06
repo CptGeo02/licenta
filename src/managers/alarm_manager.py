@@ -1,9 +1,4 @@
-import threading
-import pygame
-import os
-import tkinter as tk
 from src.libs import *
-import time
 
 class AlarmManager:
     def __init__(self):

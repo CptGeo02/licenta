@@ -1,4 +1,6 @@
-from src.libs import *
+from datetime import timedelta, datetime
+import time
+
 def format_time(seconds):
     """Formatează timpul în formatul hh:mm:ss."""
     hours = int(seconds // 3600)

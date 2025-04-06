@@ -1,6 +1,4 @@
-from src.libs import tk
-import math
-import serial
+from src.libs import *
 
 class MoveCameraFrame(tk.Frame):
     def __init__(self, app, parent, serial_port='COM7', baud_rate=921600):

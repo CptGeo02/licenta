@@ -1,7 +1,7 @@
 from src.libs import *
 from src.reports.manual_report_generator import ManualReportGenerator
 
-class StatisticsCalendarFrame(tk.Frame):
+class CalendarSelectorFrame(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent

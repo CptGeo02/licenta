@@ -1,12 +1,4 @@
-import os
-import json
-from datetime import datetime
-from openpyxl import Workbook
-from openpyxl.drawing.image import Image as ExcelImage
-from openpyxl.utils import get_column_letter
-import numpy as np
-import matplotlib.pyplot as plt
-from src.utils.gui_utils import apply_modern_design
+from src.libs import *
 
 class ManualReportGenerator:
     def __init__(self, report_dir="data/outputs/daily_report"):

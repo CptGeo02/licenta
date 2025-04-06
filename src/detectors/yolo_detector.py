@@ -1,10 +1,7 @@
-# src/detectors/yolo_detector.py
 from src.libs import *
-from src.utils.detection_utils import filter_detections
 from src.managers.table_manager import TableManager
 from src.managers.people_manager import PeopleManager
 from src.managers.alarm_manager import AlarmManager
-from src.utils.time_utils import format_time, convert_duration
 
 class YoloDetector:
     def __init__(self, model_path="models/yolov10l.pt"):  # Path to the YOLO model

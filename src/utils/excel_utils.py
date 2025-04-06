@@ -1,4 +1,4 @@
-from src.libs import *
+from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
 
 def apply_modern_design(ws):
     """Aplică un design modern și scalabil, cu alternanța culorilor pe coloane și un grid discret."""

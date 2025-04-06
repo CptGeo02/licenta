@@ -1,9 +1,3 @@
-import tkinter as tk
-from tkinter import ttk
-from datetime import datetime, timedelta
-import os
-import json
-from datetime import datetime
 from src.libs import *
 from src.reports.automatic_report_generator import AutomaticReportGenerator
 

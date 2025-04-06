@@ -1,5 +1,3 @@
-import numpy as np
-import cv2
 from src.libs import *
 
 def run_camera(app):

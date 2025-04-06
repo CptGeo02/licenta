@@ -1,0 +1,36 @@
+[project]
+name = "ai-restaurant-monitoring"
+version = "1.0.0"
+description = "Sistem inteligent de monitorizare a activității meselor dintr-un restaurant folosind detecție video și analiză statistică"
+authors = [
+    { name = "Sauciuc George", email = "georgesauciuc16@gmail.com" }
+]
+license = { text = "MIT" }
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "numpy",
+    "pandas",
+    "opencv-python",
+    "matplotlib",
+    "openpyxl",
+    "tk",
+    "customtkinter",
+    "tkcalendar",
+    "psutil",
+    "torch>=2.0",
+    "Pillow",
+    "ultralytics"
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "isort"
+]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
