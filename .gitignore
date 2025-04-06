@@ -35,8 +35,6 @@ data/config/config_*.json
 models/
 docs/
 Documentatie/
-build/
-dist/
 hardware/
 PCB/
 
