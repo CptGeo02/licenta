@@ -26,10 +26,16 @@ import matplotlib.pyplot as plt
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Side, Font, PatternFill
 from openpyxl.utils import get_column_letter
-from src.utils.excel_utils import apply_modern_design
 import tempfile
-from src.utils.gui_utils import apply_modern_style
 import logging
+from idlelib.tooltip import Hovertip  # Pentru tooltips informative
+
+from src.utils.detection_utils import *
+from src.utils.excel_utils import *
+from src.utils.frame_utils import *
+from src.utils.gui_utils import *
+from src.utils.time_utils import *
+
 logging.basicConfig(level=logging.ERROR)
 
 # Check if CUDA is available and set the device to GPU if so

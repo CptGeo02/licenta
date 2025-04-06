@@ -1,12 +1,10 @@
 from src.libs import *
 from src.gui.modes.run_camera import run_camera
-from src.gui.modes.run_video import run_video
 from src.utils.gui_utils import *
 from src.detectors.yolo_detector import YoloDetector
-from src.utils.json_to_excel import JsonToExcel
 from src.gui.frames.display_frame import display_frame
 from src.gui.frames.schedule_frame import ScheduleFrame
-from src.gui.frames.calendar_frame import StatisticsCalendar
+from src.gui.frames.statistics_calendar_frame import StatisticsCalendarFrame
 
 class UserGUI(tk.Toplevel):
     def __init__(self, main_gui):
@@ -81,6 +79,10 @@ class UserGUI(tk.Toplevel):
 
         self.status_label = ttk.Label(self, text="", wraplength=1000)
         self.status_label.pack(side=tk.TOP, pady=10)
+        
+        self.illumination_enabled = BooleanVar(value=False)
+        self.clahe_clip_var = tk.DoubleVar(value=2.0)
+        self.clahe_tile_var = tk.IntVar(value=8)
 
         self.video_source = None
         self.current_frame = None
@@ -296,10 +298,9 @@ class UserGUI(tk.Toplevel):
         statistics_window.geometry("600x400")  # Setează dimensiunile ferestrei
 
         # Creează frame-ul pentru calendar și alte componente
-        statistics_frame = StatisticsCalendar(statistics_window)  # Pass the Toplevel window to StatisticsCalendar
+        statistics_frame = StatisticsCalendarFrame(statistics_window)  # Pass the Toplevel window to StatisticsCalendarFrame
         statistics_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Adaugă frame-ul în fereastră
-        
-        
+ 
     def import_parameters(self):
         # Deschide fereastra de selecție fișier
         file_path = filedialog.askopenfilename(
@@ -323,7 +324,6 @@ class UserGUI(tk.Toplevel):
                 print("Selected Format:", self.video_resolution)
 
                 max_times = config_data.get("max_times", {})
-
                 self.max_time_available =  max_times.get("available", "Not set")
                 self.max_time_ready_to_order = max_times.get("ready_to_order", "Not set")
                 self.max_time_eating = max_times.get("eating", "Not set")
@@ -333,6 +333,7 @@ class UserGUI(tk.Toplevel):
                 self.detector.table_manager.set_max_time("ready_to_order", self.max_time_ready_to_order)
                 self.detector.table_manager.set_max_time("eating", self.max_time_eating)
                 self.detector.table_manager.set_max_time("need_to_clean", self.max_time_need_to_clean)
+
                 print("Max Time Available:", self.max_time_available)
                 print("Max Time Ready to Order:", self.max_time_ready_to_order)
                 print("Max Time Eating:", self.max_time_eating)
@@ -348,21 +349,32 @@ class UserGUI(tk.Toplevel):
 
                 self.red_threshold = config_data.get("red_threshold", "Not set")
                 self.detector.table_manager.set_red_threshold_for_all_tables(self.red_threshold)
-                print("Red Threshold:", config_data.get("red_threshold", "Not set"))
+                print("Red Threshold:", self.red_threshold)
 
                 self.blue_threshold = config_data.get("blue_threshold", "Not set")
                 self.detector.table_manager.set_blue_threshold_for_all_tables(self.blue_threshold)
                 print("Blue Threshold:", self.blue_threshold)
 
+                self.illumination_enabled.set(config_data.get("illumination_enabled", False))
+                print("Illumination Enabled:", self.illumination_enabled.get())
+
+                self.clahe_clip_var.set(float(config_data.get("clahe_clip_var", 2.0)))
+                print("CLAHE Clip Limit:", self.clahe_clip_var.get())
+
+                self.clahe_tile_var.set(int(config_data.get("clahe_tile_var", 8)))
+                print("CLAHE Tile Size:", self.clahe_tile_var.get())
+
+                # Actualizează UI
                 self.time_available.set(str(self.max_time_available))
                 self.time_ready.set(str(self.max_time_ready_to_order))
                 self.time_eating.set(str(self.max_time_eating))
                 self.time_clean.set(str(self.max_time_need_to_clean))
-
                 self.max_people_var.set(str(self.max_people))
+
                 self.start_camera()
             except Exception as e:
                 print(f"Error reading the config file: {e}")
+
 
 
     def on_close(self):

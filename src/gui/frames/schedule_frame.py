@@ -5,7 +5,7 @@ import os
 import json
 from datetime import datetime
 from src.libs import *
-from src.utils.json_to_excel import JsonToExcel
+from src.reports.automatic_report_generator import AutomaticReportGenerator
 
 class ScheduleFrame(tk.Frame):
     def __init__(self, parent):
@@ -176,7 +176,7 @@ class ScheduleFrame(tk.Frame):
         people_records_path = os.path.join("data", "outputs", "daily_report", current_date, "people_detected.json")
         excel_file = os.path.join("data", "outputs", "daily_report", current_date, "daily_statistics.xlsx")
         #try:
-        analyzer = JsonToExcel(table_records_path, people_records_path, excel_file)
+        analyzer = AutomaticReportGenerator(table_records_path, people_records_path, excel_file)
         analyzer.save_to_excel()
         print(f"Fișierul Excel a fost generat cu succes: {excel_file}")
         analyzer.save_average_statistics()

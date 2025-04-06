@@ -1,15 +1,12 @@
+from xmlrpc.client import boolean
 from src.libs import *
 from src.gui.modes.run_camera import run_camera
 from src.gui.modes.run_video import run_video
-
-from src.utils.gui_utils import *
 from src.detectors.yolo_detector import YoloDetector
-from src.utils.json_to_excel import JsonToExcel
 from src.gui.frames.display_frame import display_frame
 from src.gui.frames.schedule_frame import ScheduleFrame
-from src.gui.frames.calendar_frame import StatisticsCalendar
+from src.gui.frames.statistics_calendar_frame import StatisticsCalendarFrame
 from src.gui.frames.move_camera_frame import MoveCameraFrame
-from idlelib.tooltip import Hovertip  # Pentru tooltips informative
 
 class AdminGUI(tk.Toplevel):
     def __init__(self, main_gui):
@@ -107,16 +104,12 @@ class AdminGUI(tk.Toplevel):
         self.stop_detection_btn = ttk.Button(self.button_frame, text="Stop Detection", command=self.stop_detection, state="disabled")
         self.stop_detection_btn.grid(row=1, column=4, padx=5, pady=5)
 
-        # Buton pentru analiza fișierului JSON
-        self.analyze_json_btn = ttk.Button(self.button_frame, text="Analyze Records", command=self.analyze_json)
-        self.analyze_json_btn.grid(row=1, column=5, padx=5, pady=5)
-
         # Add a button to open the schedule window
         self.open_schedule_button = ttk.Button(self.button_frame, text="Set Weekly Schedule", command=self.open_schedule_window)
-        self.open_schedule_button.grid(row=1, column=6, padx=5, pady=5)
+        self.open_schedule_button.grid(row=1, column=5, padx=5, pady=5)
         # Add Generate Statistics Button
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
-        self.btn_generate_statistics.grid(row=1, column=7, padx=5, pady=5)
+        self.btn_generate_statistics.grid(row=1, column=6, padx=5, pady=5)
         
         # Obține camerele disponibile
         self.camera_list = self.get_available_cameras()
@@ -315,50 +308,6 @@ class AdminGUI(tk.Toplevel):
 
         # Salvează eticheta pentru actualizare dinamică
         variable.value_label = value_label
-
-
-    def analyze_json(self):
-        """Permite utilizatorului să selecteze fișierele JSON pentru analiză și salvează rezultatul într-un fișier Excel."""
-        # Directorul pentru salvarea raportului Excel
-        current_date = datetime.now().strftime("%Y-%m-%d")
-        # Creează calea completă a folderului
-        excel_output_dir = os.path.join("data", "outputs", "daily_report", current_date)
-        os.makedirs(excel_output_dir, exist_ok=True)  # Creează folderul dacă nu există
-
-
-        # Selecția fișierului pentru people_records
-        print("Selectați fișierul JSON pentru people_records.")
-        people_json_file = filedialog.askopenfilename(
-            title="Selectați fișierul JSON pentru People",
-            initialdir='data/outputs/people_records',
-            filetypes=(("JSON Files", "*.json"), ("All Files", "*.*"))
-        )
-
-        # Selecția fișierului pentru table_records
-        print("Selectați fișierul JSON pentru table_records.")
-        table_json_file = filedialog.askopenfilename(
-            title="Selectați fișierul JSON pentru Tables",
-            initialdir='data/outputs/table_records',
-            filetypes=(("JSON Files", "*.json"), ("All Files", "*.*"))
-        )
-
-        # Verificăm dacă ambele fișiere au fost selectate
-        if not people_json_file or not table_json_file:
-            print("Selecția fișierelor a fost anulată.")
-            return
-
-        # Salvarea fișierului Excel
-        excel_file = os.path.join(excel_output_dir, 'table_status_analysis.xlsx')
-
-        # Utilizăm JsonToExcel pentru analiza fișierelor JSON
-        try:
-            analyzer = JsonToExcel(table_json_file, people_json_file, excel_file)
-            analyzer.save_to_excel()
-            print(f"Fișierul Excel a fost generat cu succes: {excel_file}")
-            analyzer.save_average_statistics()
-            print(f"Fișierul JSON a fost generat cu succes")
-        except Exception as e:
-            print(f"Eroare la generarea fișierului Excel: {e}")
                 
     def update_performance(self):
         # Exemplu de calcul FPS
@@ -783,7 +732,7 @@ class AdminGUI(tk.Toplevel):
         statistics_window.geometry("600x400")  # Setează dimensiunile ferestrei
 
         # Creează frame-ul pentru calendar și alte componente
-        statistics_frame = StatisticsCalendar(statistics_window)  # Pass the Toplevel window to StatisticsCalendar
+        statistics_frame = StatisticsCalendarFrame(statistics_window)  # Pass the Toplevel window to StatisticsCalendarFrame
         statistics_frame.pack(fill="both", expand=True, padx=10, pady=10)  # Adaugă frame-ul în fereastră
 
     def update_video_format(self, selected_format):
@@ -854,6 +803,9 @@ class AdminGUI(tk.Toplevel):
             "overlap_threshold": round(float(self.overlap_threshold_var.get()),2),
             "red_threshold": round(float(self.red_threshold_var.get()),2),
             "blue_threshold": round(float(self.blue_threshold_var.get()),2),
+            "illumination_enabled": bool(self.illumination_enabled),
+            "clahe_clip_var": round(float(self.clahe_clip_var.get()),2),
+            "clahe_tile_var": int(self.clahe_tile_var.get())
         }
         
         # Salvare în JSON

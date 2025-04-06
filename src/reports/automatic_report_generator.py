@@ -13,7 +13,7 @@ import numpy as np
 import os
 from src.utils.excel_utils import apply_modern_design
 
-class JsonToExcel:
+class AutomaticReportGenerator:
     def __init__(self, tables_json_file, people_json_file, excel_file):
         self.tables_json_file = tables_json_file
         self.people_json_file = people_json_file
