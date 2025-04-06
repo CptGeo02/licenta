@@ -1,6 +1,6 @@
+from src.libs import *
 from src.gui.user_gui import UserGUI
 from src.gui.admin_gui import AdminGUI
-from src.libs import *
 
 ADMIN_PASSWORD = "1234"  # Setează parola corectă pentru accesul admin
 

@@ -1,4 +1,3 @@
-
 def filter_detections(detections, overlap_threshold=0.2):
     """
     Filtrează detectările pentru a elimina suprapunerile dintre obiectele detectate.

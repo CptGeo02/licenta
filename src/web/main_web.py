@@ -1,9 +1,5 @@
-from flask import Flask, render_template, Response
+from src.libs import *
 from src.detectors.yolo_detector import YoloDetector
-import threading
-import cv2
-import os
-import time
 
 class MainWeb:
     def __init__(self):
