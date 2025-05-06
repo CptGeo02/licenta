@@ -33,8 +33,6 @@ data/outputs/
 data/config/config_*.json
 
 models/
-docs/
-Documentatie/
 hardware/
 PCB/
 
