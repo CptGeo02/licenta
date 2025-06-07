@@ -96,11 +96,8 @@ class YoloDetector:
 
             # Scorul final este media scorurilor meselor, ponderată cu numărul de mese.
             self.frame_score = (total_score / num_tables) * num_tables if num_tables > 0 else 0
-            cv2.putText(frame, "Frame Score: {:.2f}".format(self.frame_score), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2) # Afisam scorul total al frame-ului
         else:
             self.frame_score=0
-            cv2.putText(frame, "Frame Score: {:.2f}".format(self.frame_score), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2) # Afisam scorul total al frame-ului
-
 
         return frame
 

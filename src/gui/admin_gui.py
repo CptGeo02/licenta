@@ -233,6 +233,10 @@ class AdminGUI(tk.Toplevel):
 
         self.info_label = tk.Label(self, text="Tables: 0 | People: 0")
         self.info_label.pack(side=tk.TOP, fill=tk.X)
+        
+        # Etichetă pentru scorul de frame
+        self.score_label = tk.Label(self, text="Frame Score: 0.00")
+        self.score_label.pack(side=tk.TOP, fill=tk.X)
         self.start_info_update()
 
         # Atribute pentru calculul FPS
@@ -318,7 +322,6 @@ class AdminGUI(tk.Toplevel):
         ram_usage = psutil.virtual_memory().percent
         self.cpu_label.config(text=f"CPU Usage: {cpu_usage}%")
         self.ram_label.config(text=f"RAM Usage: {ram_usage}%")
-
         # Verificare și afișare utilizare GPU dacă este disponibil
         if torch.cuda.is_available():
             gpu_usage, gpu_memory_used, gpu_memory_free = self.get_gpu_usage()
@@ -664,6 +667,10 @@ class AdminGUI(tk.Toplevel):
             text=f"Tables: {self.detector.tables_number} | "
                  f"People: {self.detector.people_number}"
         )
+        self.score_label.config(
+            text=f"Frame Score: {self.detector.frame_score:.2f}" if self.detector.detecting_tables_only
+              or self.detector.done_setting_tables or self.detector.detecting_all else "Frame Score: 0.00")
+
         
     def create_slider(self, parent, label_text, variable, command, default_value, column):
         """

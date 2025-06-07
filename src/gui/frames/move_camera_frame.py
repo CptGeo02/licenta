@@ -1,7 +1,7 @@
 from src.libs import *
 
 class MoveCameraFrame(tk.Frame):
-    def __init__(self, app, parent, serial_port='COM7', baud_rate=921600):
+    def __init__(self, app, parent, serial_port='COM6', baud_rate=921600):
         super().__init__(parent)
         self.parent = parent  # Referință la fereastra părinte
         self.app = app
