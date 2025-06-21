@@ -35,6 +35,7 @@ from PIL import Image, ImageTk
 from tkcalendar import Calendar
 from ultralytics import YOLO
 from flask import Flask, render_template, Response
+from serial.tools import list_ports
 
 # Local project imports
 from src.utils.detection_utils import *

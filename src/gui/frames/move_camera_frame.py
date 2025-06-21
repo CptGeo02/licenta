@@ -74,6 +74,19 @@ class MoveCameraFrame(tk.Frame):
         self.auto_x_index = 0
         self.auto_y_index = 0
 
+    def set_serial_port(self, port_name):
+        """Setează portul serial și îl inițializează."""
+        self.serial_port = port_name
+        try:
+            if hasattr(self, 'arduino') and self.arduino and self.arduino.is_open:
+                print("Închidem conexiunea serială existentă.")
+                self.arduino.close()
+            self.arduino = serial.Serial(port_name, 921600, timeout=1)
+            print(f"Portul serial {port_name} a fost deschis cu succes.")
+        except serial.SerialException as e:
+            self.arduino = None
+            print(f"Eroare la deschiderea portului {port_name}: {e}")
+
     def move_joystick(self, event):
         # Calculate the new position based on mouse cursor
         dx = event.x - self.center

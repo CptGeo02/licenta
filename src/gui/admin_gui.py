@@ -44,48 +44,15 @@ class AdminGUI(tk.Toplevel):
         self.images_btn = ttk.Button(self.button_frame, text="Show Images", command=self.show_images)
         self.images_btn.grid(row=0, column=4, padx=5, pady=5)
 
-        # Selector de model YOLO
-        self.model_var = StringVar(value=self.current_model)
-        self.model_selector = ttk.OptionMenu(
-            self.button_frame,
-            self.model_var,
-            "Select Model",  # Valoarea implicită afișată
-            *self.get_model_files(),
-            command=self.change_model
-        )
-        self.model_selector.config(width=15)
-        self.model_selector.grid(row=0, column=5, padx=5, pady=5)
-
         # Butoane de navigare, detectare și resetare mese
         self.previous_btn = ttk.Button(self.button_frame, text="Previous", command=self.previous_image, state="disabled")
-        self.previous_btn.grid(row=0, column=6, padx=5, pady=5)
+        self.previous_btn.grid(row=0, column=5, padx=5, pady=5)
 
         self.next_btn = ttk.Button(self.button_frame, text="Next", command=self.next_image, state="disabled")
-        self.next_btn.grid(row=0, column=7, padx=5, pady=5)
+        self.next_btn.grid(row=0, column=6, padx=5, pady=5)
 
         self.detect_all_btn = ttk.Button(self.button_frame, text="Detect all", command=self.detect_all, state="disabled")
-        self.detect_all_btn.grid(row=0, column=8, padx=5, pady=5)
-
-        self.auto_detect_enabled = BooleanVar(value=False)
-        self.auto_detect_switch = Checkbutton(
-            self.button_frame,
-            text="Auto-Detect",
-            variable=self.auto_detect_enabled,
-            onvalue=True,
-            offvalue=False,
-            state="disabled"
-        )
-        self.auto_detect_switch.grid(row=0, column=9, padx=5, pady=5)
-
-        self.illumination_enabled = BooleanVar(value=False)
-        self.illumination_switch = Checkbutton(
-        self.button_frame,
-        text="Light Correction",
-        variable=self.illumination_enabled,
-        onvalue=True,
-        offvalue=False
-        )
-        self.illumination_switch.grid(row=0, column=10, padx=5, pady=5)
+        self.detect_all_btn.grid(row=0, column=7, padx=5, pady=5)
         
         # Crearea butonului în interfața Tkinter
         self.export_button = ttk.Button(self.button_frame, text="Export Parameters", command=self.export_parameters)
@@ -110,12 +77,24 @@ class AdminGUI(tk.Toplevel):
         self.btn_generate_statistics = ttk.Button(self.button_frame, text="Generate Statistics", command=self.open_statistics_calendar)
         self.btn_generate_statistics.grid(row=1, column=6, padx=5, pady=5)
         
+        # Selector de porturi COM
+        self.serial_port_var = tk.StringVar(value="Select COM Port")
+        self.com_selector = ttk.OptionMenu(
+            self.button_frame,
+            self.serial_port_var,
+            "Select COM Port",
+            *self.get_serial_ports(),
+            command=self.set_selected_com_port
+        )
+        self.com_selector.config(width=20)
+        self.com_selector.grid(row=2, column=0, padx=5, pady=5)
+
         # Obține camerele disponibile
         self.camera_list = self.get_available_cameras()
         self.move_camera_frame = None
+        
         # Variabila pentru selectorul de camere
         self.camera_var = tk.StringVar(value="Select Camera")  # Valoare implicită
-        # Selectorul pentru camere
         self.camera_selector = ttk.OptionMenu(
             self.button_frame,
             self.camera_var,
@@ -124,7 +103,7 @@ class AdminGUI(tk.Toplevel):
             command=self.update_camera
         )
         self.camera_selector.config(width=20)
-        self.camera_selector.grid(row=2, column=0, padx=5, pady=5)
+        self.camera_selector.grid(row=2, column=1, padx=5, pady=5)
 
 
         self.video_format_var = StringVar(value="480p")  # Valoare implicită
@@ -137,8 +116,40 @@ class AdminGUI(tk.Toplevel):
         )
 
         self.video_format_selector.config(width=15)
-        self.video_format_selector.grid(row=2, column=1, padx=5, pady=5)
+        self.video_format_selector.grid(row=2, column=2, padx=5, pady=5)
+        
+        # Selector de model YOLO
+        self.model_var = StringVar(value=self.current_model)
+        self.model_selector = ttk.OptionMenu(
+            self.button_frame,
+            self.model_var,
+            "Select Model",  # Valoarea implicită afișată
+            *self.get_model_files(),
+            command=self.change_model
+        )
+        self.model_selector.config(width=15)
+        self.model_selector.grid(row=2, column=3, padx=5, pady=5)
 
+        self.auto_detect_enabled = BooleanVar(value=False)
+        self.auto_detect_switch = Checkbutton(
+            self.button_frame,
+            text="Auto-Detect",
+            variable=self.auto_detect_enabled,
+            onvalue=True,
+            offvalue=False,
+            state="disabled"
+        )
+        self.auto_detect_switch.grid(row=2, column=4, padx=5, pady=5)
+
+        self.illumination_enabled = BooleanVar(value=False)
+        self.illumination_switch = Checkbutton(
+        self.button_frame,
+        text="Light Correction",
+        variable=self.illumination_enabled,
+        onvalue=True,
+        offvalue=False
+        )
+        self.illumination_switch.grid(row=2, column=5, padx=5, pady=5)
         # Creează un frame pentru butoane
         self.max_frame = ttk.Frame(self)
         self.max_frame.pack(pady=10)
@@ -255,6 +266,7 @@ class AdminGUI(tk.Toplevel):
         self.status_label = ttk.Label(self, text="", wraplength=1000)
         self.status_label.pack(side=tk.TOP, pady=10)
 
+        self.selected_com_port = None
         self.video_source = None
         self.current_frame = None
         self.running = False
@@ -332,14 +344,23 @@ class AdminGUI(tk.Toplevel):
 
         # Programare actualizare periodică a informațiilor (la fiecare 1 secundă)
         self.after(1000, self.update_performance)
+
+    def set_selected_com_port(self, selected_port):
+        """Salvează portul COM selectat pentru controlul camerei."""
+        self.selected_com_port = selected_port
+        print(f"[INFO] Selected COM port: {self.selected_com_port}")
+          
     def open_move_camera(self):
-            """
-            Deschide frame-ul Move Camera pe un thread separat, fără a bloca execuția principală.
-            """
-            move_camera_window = tk.Toplevel(self)
-            move_camera_window.title("Move Camera")
-            self.move_camera_frame = MoveCameraFrame(self, move_camera_window)
-            self.move_camera_frame.pack(fill="both", expand=True)
+        """
+        Deschide frame-ul Move Camera într-un Toplevel nou și transmite COM-ul selectat.
+        """
+        move_camera_window = tk.Toplevel(self)
+        move_camera_window.title("Move Camera")
+        selected_port = self.selected_com_port if self.selected_com_port else "COM6"
+        self.move_camera_frame = MoveCameraFrame(self, move_camera_window)
+        self.move_camera_frame.set_serial_port(selected_port)
+        self.move_camera_frame.pack(fill="both", expand=True)
+
     def get_gpu_usage(self):
         try:
             # Apelăm nvidia-smi pentru a obține date despre GPU
@@ -731,6 +752,11 @@ class AdminGUI(tk.Toplevel):
         frame = ScheduleFrame(schedule_window)
         frame.pack(fill="both", expand=True, padx=10, pady=10)
 
+    def get_serial_ports(self):
+        """Returnează o listă cu porturile seriale disponibile pe sistem."""
+        ports = list_ports.comports()
+        return [port.device for port in ports]
+    
     def open_statistics_calendar(self):
         """Function to open the statistics calendar window in a new window."""
         statistics_window = tk.Toplevel()  # Creează o fereastră de tip Toplevel
